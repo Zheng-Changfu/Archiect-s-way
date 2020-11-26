@@ -3,27 +3,27 @@ function corePromise (p2, x, resolve, reject) {
     reject(new TypeError('孩子,别干傻事'))
   }
   if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
-    let called = false
+    let called = false // 默认既没有调用成功，也没有调用过失败
     try {
       const then = x.then
       if (typeof then === 'function') {
         then.call(x, y => {
           if (called) return
-          called = true
+          called = false // 禁止别人的promise既调用成功又调用失败，只能调用一次，状态不可逆
           corePromise(p2, y, resolve, reject)
         }, r => {
           if (called) return
-          called = true
+          called = false
           reject(r)
         })
       } else {
         if (called) return
-        called = true
+        called = false
         resolve(x)
       }
     } catch (error) {
       if (called) return
-      called = true
+      called = false
       reject(error)
     }
   } else {
@@ -58,6 +58,7 @@ class Promise {
     }
   }
   then (onResolved, onRejected) {
+    // 如果没传，我们给他加一个，让外部可以进行透传
     onResolved = typeof onResolved === 'function' ? onResolved : val => val
     onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err }
     let p2 = new Promise((resolve, reject) => {
@@ -69,7 +70,7 @@ class Promise {
           } catch (error) {
             reject(error)
           }
-        }, 0)
+        })
       }
       if (this._status === 'rejected') {
         setTimeout(() => {
@@ -79,7 +80,7 @@ class Promise {
           } catch (error) {
             reject(error)
           }
-        }, 0)
+        })
       }
       if (this._status === 'pending') {
         this._callbacks.onResolved.push(() => {
@@ -90,7 +91,7 @@ class Promise {
             } catch (error) {
               reject(error)
             }
-          }, 0)
+          })
         })
         this._callbacks.onRejected.push(() => {
           setTimeout(() => {
@@ -100,23 +101,11 @@ class Promise {
             } catch (error) {
               reject(error)
             }
-          }, 0)
+          })
         })
       }
     })
     return p2
   }
-}
-
-// 测试我们写的Promise是否符合promise a+ 规范
-// promise a+ 规范文档地址: https://promisesaplus.com/
-// promise a+ 规范测试地址: https://github.com/promises-aplus/promises-tests
-Promise.deferred = function () {
-  let dot = {}
-  dot.promise = new Promise((resolve, reject) => {
-    dot.resolve = resolve
-    dot.reject = reject
-  })
-  return dot
 }
 module.exports = Promise
