@@ -1,13 +1,35 @@
 const Promise = require('./index')
-let p2 = new Promise((resolve, reject) => {
-  console.log(111)
+// const obj = {}
+// Object.defineProperty(obj, 'then', {
+//   get () {
+//     throw 1
+//   }
+// })
+let p = new Promise((resolve, reject) => {
+  // console.log(1)
   setTimeout(() => {
-    resolve(333)
+    resolve(1111)
   }, 1000)
+  // throw new Error(111)
 })
-p2.then(value => {
+p.then((value) => {
   console.log(value)
-}, reason => {
-  console.log(reason)
 })
-console.log(222)
+// let p2 = p.then(value => {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => {
+
+//       resolve(2222)
+//     }, 1000)
+//   })
+// })
+
+// p2.then((value) => {
+//   console.log(value)
+// })
+
+
+
+
+
+

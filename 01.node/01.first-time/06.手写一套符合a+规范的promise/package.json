@@ -1,6 +1,9 @@
 {
-  "name": "06.手写一套符合a+规范的promise",
+  "name": "0611",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "promises-aplus-tests": "^2.1.2"
+  }
 }
