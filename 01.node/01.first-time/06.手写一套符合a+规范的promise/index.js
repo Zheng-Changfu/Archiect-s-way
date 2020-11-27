@@ -106,16 +106,57 @@ class Promise {
     })
     return p2
   }
+  catch (onRejected) {
+    this.then(null, onRejected)
+  }
+}
+Promise.all = function (values) {
+  return new Promise((resolve, reject) => {
+    let arr = [], count = 0
+    for (let i = 0; i < values.length; i++) {
+      const x = values[i]
+      // 判断x是否为promise
+      if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
+        const then = x.then
+        if (typeof then === 'function') {
+          // 调用then拿到promise内部的结果值
+          then.call(x, y => {
+            count++
+            arr[i] = y
+            /**
+             * 这里我们采用计数器的方式是为什么？
+             * 是因为我们js中的数组是有序的，如果arr[3] = xxxxx,那么我们数组的长度就变成了3
+             * 这样子我们返回出去的结果就会有问题，所以采用计数器来满足这个需求
+             */
+            if (count === values.length) {
+              resolve(arr)
+            }
+          }, r => {
+            reject(r)
+          })
+        } else {
+          count++
+          arr[i] = x // then不是一个函数
+        }
+      } else {
+        count++
+        // 普通值
+        arr[i] = x
+      }
+    }
+  })
 }
 
 // 测试我们写的Promise是否符合promise a+ 规范
 // promise a+ 规范文档地址: https://promisesaplus.com/
-// promise a+ 规范测试地址: https://github.com/promises-aplus/promises-tests
+// promise a+ 规范测试文档地址: https://github.com/promises-aplus/promises-tests
+// 测试流程: yarn --> 下载包    yarn start 跑测试
 Promise.deferred = function () {
   let dot = {}
+  // 测试我们的promise,a+规范中只有resolve，reject，并没有其他的一些方法
   dot.promise = new Promise((resolve, reject) => {
-    dot.resolve = resolve
-    dot.reject = reject
+    dot.resolve = resolve // 测试我们自己实现的resolve
+    dot.reject = reject // 测试我们自己实现的reject
   })
   return dot
 }
