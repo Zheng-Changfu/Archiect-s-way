@@ -60,9 +60,7 @@ class Promise {
       }
     })
   }
-  // 将传进来的函数promise化，并提供回调函数拿到结果值
   static promisify (fn) {
-    // 返回一个函数,该函数调用返回一个promise实例,可以调用promise原型上的方法
     return (...args) => {
       return new Promise((resolve, reject) => {
         fn(...args, (err, data) => {
@@ -74,6 +72,34 @@ class Promise {
         })
       })
     }
+  }
+  static resolve (value) {
+    // resolve方法返回的是一个promise对象
+    return new Promise((resolve, reject) => {
+      // 判断value是否为promise对象
+      if (value instanceof Promise) {
+        value.then(y => {
+          resolve(y)
+        }, r => {
+          // 内部抛错或者调用reject都会走进来
+          reject(r)
+        })
+      } else {
+        // 不是promise对象
+        resolve(value)
+      }
+    })
+  }
+  static reject (value) {
+    // reject方法返回的是一个promise对象
+    return new Promise((resolve, reject) => {
+      if (value instanceof Promise) {
+        value.then(reject, reject)
+      } else {
+        // 不是一个promise对象
+        reject(value)
+      }
+    })
   }
   constructor(executor) {
     this._status = 'pending'

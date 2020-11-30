@@ -54,15 +54,12 @@ class Promise {
           }
         } else {
           count++
-
           arr[i] = x
         }
       }
     })
   }
-  // 将传进来的函数promise化，并提供回调函数拿到结果值
   static promisify (fn) {
-    // 返回一个函数,该函数调用返回一个promise实例,可以调用promise原型上的方法
     return (...args) => {
       return new Promise((resolve, reject) => {
         fn(...args, (err, data) => {
@@ -74,6 +71,53 @@ class Promise {
         })
       })
     }
+  }
+  static resolve (value) {
+    return new Promise((resolve, reject) => {
+      if (value instanceof Promise) {
+        value.then(y => {
+          resolve(y)
+        }, r => {
+          reject(r)
+        })
+      } else {
+        resolve(value)
+      }
+    })
+  }
+  static reject (value) {
+    return new Promise((resolve, reject) => {
+      if (value instanceof Promise) {
+        value.then(reject, reject)
+      } else {
+        reject(value)
+      }
+    })
+  }
+  /**
+   * 
+   * Promise.race(iterable) 方法返回一个 promise，一旦迭代器中的某个promise解决或拒绝，返回的 promise就会解决或拒绝。
+   * values是存放多个promise的容器数组
+   */
+  static race (values) {
+    return new Promise((resolve, reject) => {
+      let called = false
+      for (let i = 0; i < values.length; i++) {
+        const x = values[i]
+        if (x instanceof Promise) {
+          called = true
+          x.then(y => {
+            resolve(y)
+          }, r => {
+            reject(r)
+          })
+        } else {
+          if (called) return
+          // 普通值
+          resolve(x)
+        }
+      }
+    })
   }
   constructor(executor) {
     this._status = 'pending'
@@ -151,6 +195,12 @@ class Promise {
   }
   catch (onRejected) {
     this.then(null, onRejected)
+  }
+  finally (fn) {
+    return this.then(
+      y => fn() || Promise.resolve(y),
+      r => fn() || Promise.reject(r)
+    )
   }
 }
 module.exports = Promise
