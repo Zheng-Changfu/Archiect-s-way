@@ -94,6 +94,26 @@ class Promise {
       }
     })
   }
+  static race (values) {
+    return new Promise((resolve, reject) => {
+      let called = false
+      for (let i = 0; i < values.length; i++) {
+        const x = values[i]
+        if (x instanceof Promise) {
+          called = true
+          x.then(y => {
+            resolve(y)
+          }, r => {
+            reject(r)
+          })
+        } else {
+          if (called) return
+          // 普通值
+          resolve(x)
+        }
+      }
+    })
+  }
   constructor(executor) {
     this._status = 'pending'
     this._value = undefined
