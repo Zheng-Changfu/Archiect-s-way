@@ -1,0 +1,21 @@
+#! /usr/bin/env node
+require('colors');
+console.log(`
+iiiiiiiiiiiiii   iiiiiiiiiiiiii   iiiiiiiiiiiiiii   
+          iii    ii               ii                
+       iii       ii               iiiiiiiiiiiiiii   
+    iii          ii               ii                
+iiiiiiiiiiiiiii  iiiiiiiiiiiiii   ii                
+`.cyan);
+console.log(`
+
+`)
+console.log(`
+yyyyyyyyyyyyyyy   yy      yy      yy          yy
+yy                  yy  yy        yy          yy
+yy                    yy          yyyyyyyyyyyyyy
+yy                  yy   yy       yy          yy
+yyyyyyyyyyyyyyy  yy         yy    yy          yy
+`.cyan)
+
+
