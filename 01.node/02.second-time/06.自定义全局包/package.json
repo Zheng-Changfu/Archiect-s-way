@@ -2,7 +2,8 @@
   "name": "globaltiem",
   "version": "1.0.0",
   "bin": {
-    "zcf": "./bin/zcf"
+    "zcf": "./bin/zcf",
+    "cxh": "./bin/zcf"
   },
   "main": "index.js",
   "license": "MIT"

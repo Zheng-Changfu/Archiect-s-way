@@ -7,6 +7,7 @@ function corePromise (p2, x, resolve, reject) {
     try {
       const then = x.then
       if (typeof then === 'function') {
+
         then.call(x, y => {
           if (called) return
           called = false // 禁止别人的promise既调用成功又调用失败，只能调用一次，状态不可逆

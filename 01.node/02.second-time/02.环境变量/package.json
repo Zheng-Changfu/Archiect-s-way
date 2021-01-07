@@ -1,0 +1,23 @@
+{
+  "name": "varvalid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=dev node index.js",
+    "prod": "cross-env NODE_ENV=prod node index.js",
+    "test": "cross-env NODE_ENV=test node index.js",
+    "bug": "cross-env NODE_ENV=bug node index.js",
+    "willProd": "cross-env NODE_ENV=willProd node index.js",
+    "dev:mac": "export NODE_ENV=dev && node index.js",
+    "prod:mac": "export NODE_ENV=prod && node index.js",
+    "test:mac": "export NODE_ENV=test && node index.js",
+    "bug:mac": "export NODE_ENV=bug && node index.js",
+    "willProd:mac": "export NODE_ENV=willProd && node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #app {
+      display: flex;
+    }
+
+    #app>div {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 20px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      transition: all 0.3s linear;
+    }
+
+    #app>div.red {
+      background-color: red;
+    }
+
+    #app>div.yellow {
+      background-color: yellow;
+    }
+
+    #app>div.green {
+      background-color: green;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <script>
+    const dom1 = document.querySelector('#app').children[0]
+    const dom2 = document.querySelector('#app').children[1]
+    const dom3 = document.querySelector('#app').children[2]
+    // 红灯3s，黄灯2s，绿灯1s
+    // 黄灯3s，绿灯2s，红灯1s
+    // 绿灯3s，红灯2s，黄灯1s
+    // 循环执行
+    trafficLights(dom1)
+    function trafficLights(dom, time = 3000, type = 0) {
+      let color = ''
+      switch (type) {
+        case 0:
+          color = 'red'
+          break;
+        case 1:
+          color = 'yellow'
+          break;
+        case 2:
+          color = 'green'
+          break;
+      }
+      dom.classList.add(color)
+      setTimeout(() => {
+        dom.classList.remove(color)
+      }, time)
+    }
+
+
+
+
+  </script>
+</body>
+
+</html>
