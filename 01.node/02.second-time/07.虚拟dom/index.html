@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const vDoms = [
+      {
+        type: 'h1',
+        attribute: 'h1',
+        content: '你好',
+        children: [
+          {
+            type: 'h2',
+            attribute: 'h2',
+            content: '你好2',
+            children: [
+              {
+                type: 'h3',
+                attribute: 'h3',
+                content: '你好3',
+              }
+            ]
+          }
+        ]
+      },
+      {
+        type: 'div',
+        attribute: 'div',
+        content: 'div1111',
+      },
+      {
+        type: 'p',
+        attribute: 'p',
+        content: 'p1111',
+        children: [
+          {
+            type: 'p',
+            attribute: 'p1111',
+            content: 'p儿子1111',
+          },
+          {
+            type: 'p',
+            attribute: 'p2222',
+            content: 'p儿子2222',
+          }
+        ]
+      },
+      {
+        type: 'span',
+        attribute: 'span',
+        content: 'span1111',
+        children: []
+      },
+    ]
+    class renderVDom {
+      constructor(vDoms) {
+        // 初始化文档碎片
+        this.fragment = document.createDocumentFragment()
+        this.count = 0
+        this.vDoms = vDoms
+        // 开始渲染vDoms
+        this.render(vDoms)
+      }
+      // 渲染成dom节点
+      render(vDoms, parentDom) {
+        // 判断数据类型
+        if (vDoms.constructor.name !== 'Array') {
+          console.error('传入数据格式需要为一个数组')
+        }
+        for (let i = 0; i < vDoms.length; i++) {
+          // 每一个虚拟dom对象
+          const vDom = vDoms[i]
+          // 解构拿到里面的3个属性
+          const { type, content, attribute } = vDom
+          // 如果type不存在,输出错误
+          if (!type) {
+            console.error('类型错误')
+          }
+          // 开始编译vDom，第一次的parentDom为undefined
+          this.compile(vDom, parentDom)
+        }
+      }
+      // 编译成dom
+      compile(vDom, parentDom) {
+        const { type, content, attribute } = vDom
+        // 判断parentDom是否为undefined，如果为undefiend就代表是一级节点，就应该插入到文档碎片里面，如果不是，就应该插入到父级节点中
+        const parentEl = parentDom ? parentDom : this.fragment
+        // 创建标签
+        const dom = document.createElement(type)
+        // 写入标签内容
+        dom.textContent = content
+        // 如果属性存在就设置属性
+        if (attribute) {
+          this.setDomAttribute(dom, attribute)
+        }
+        // 如果有children属性并且长度大于0
+        if (vDom.children && vDom.children.length > 0) {
+          // 递归渲染，这个传的dom就代表是父级了，那parentDom就会有值
+          this.render(vDom.children, dom)
+        }
+        // 如果
+        if (parentEl === this.fragment) {
+          this.count++
+        }
+        this.appendFragment(parentEl, dom)
+      }
+      // 设置属性
+      setDomAttribute(dom, attribute) {
+        dom.setAttribute('class', attribute)
+      }
+      // 插入到文档碎片
+      appendFragment(parentDom, dom) {
+        parentDom.appendChild(dom)
+        if (this.count === this.vDoms.length) {
+          this.appendNode(this.fragment)
+        }
+      }
+      // 把文档碎片插入到指定元素中
+      appendNode(fragment, node) {
+        node = node ? node : document.body
+        node.appendChild(fragment)
+      }
+    }
+    new renderVDom(vDoms)
+  </script>
+</body>
+
+</html>
