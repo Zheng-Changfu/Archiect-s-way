@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    div {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      transition: all 0.3s linear;
+      margin: 10px;
+    }
+
+    .red {
+      background-color: red;
+    }
+
+    .yellow {
+      background-color: yellow;
+    }
+
+    .green {
+      background-color: green;
+    }
+  </style>
+</head>
+
+<body>
+  <div></div>
+  <div></div>
+  <div></div>
+  <script>
+    const divList = document.querySelectorAll('div')
+    const red = divList[0]
+    const yellow = divList[1]
+    const green = divList[2]
+    !(function light() {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (red.className.indexOf('red') === -1) {
+            green.classList.remove('green')
+            red.classList.add('red')
+          }
+          resolve()
+        }, 3000)
+      })
+        .then(() => {
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (yellow.className.indexOf('yellow') === -1) {
+                red.classList.remove('red')
+                yellow.classList.add('yellow')
+              }
+              resolve()
+            }, 2000)
+          })
+        })
+        .then(() => {
+
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (green.className.indexOf('green') === -1) {
+                yellow.classList.remove('yellow')
+                green.classList.add('green')
+              }
+              resolve()
+            }, 1000)
+          })
+        })
+        .then(() => {
+          setTimeout(() => {
+            divList.forEach(item => item.className = '')
+          }, 1000)
+          light()
+        })
+    })()
+
+
+
+  </script>
+</body>
+
+</html>
