@@ -1,0 +1,28 @@
+#! /usr/bin/env node
+const program = require('commander')
+const chalk = require('chalk')
+const Server = require('../index.js')
+const config = require('./config')
+const { mergeObj } = require('./utils')
+let usageList = [], terminalOps = {} // 终端默认参数
+Object.entries(config).forEach(([key, value]) => {
+  program.option(value.option, value.desc) // 设置终端help打印
+  terminalOps[key] = value.default
+  usageList.push(value.usage)
+})
+// 监听用户--help事件
+program.on('--help', () => {
+  console.log('Examples:')
+  // 提示用法
+  usageList.forEach(line => {
+    console.log('  ' + chalk.green(`${line}`))
+  })
+})
+program.parse(process.argv) // 解析用户执行时的参数
+// console.log(program._optionValues) // 用户执行参数
+// 合并配置
+terminalOps = mergeObj(terminalOps, program._optionValues)
+
+const server = new Server(terminalOps)
+server.start()
+

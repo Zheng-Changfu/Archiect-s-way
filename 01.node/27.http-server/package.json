@@ -1,0 +1,15 @@
+{
+  "name": "hhz",
+  "bin": {
+    "hhz": "./bin/hhz"
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^7.0.0",
+    "ejs": "^3.1.5",
+    "mime": "^2.5.0"
+  }
+}

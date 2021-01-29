@@ -1,6 +1,7 @@
 {
   "name": "globaltiem",
   "version": "1.0.0",
+  "description": "",
   "bin": {
     "zcf": "./bin/zcf",
     "cxh": "./bin/zcf"
