@@ -5,6 +5,7 @@ const path = require('path')
 const mime = require('mime')
 const chalk = require('chalk')
 const ejs = require('ejs')
+const crypto = require('crypto')
 const { createReadStream } = require('fs')
 class Server {
   constructor(options) {
@@ -39,17 +40,45 @@ class Server {
         // 服务端渲染
       } else {
         // 如果是文件
-        this.sendFile(filePath, res)
+        return this.sendFile(filePath, res, req, statObj)
       }
     } catch (error) {
       this.sendError(error, res)
     }
   }
 
+  // 缓存文件
+  async cacheFile (file, res, req, statObj) {
+    /**
+     * 思路:
+     *    强制缓存 + 协商缓存
+     *    如果没超过强制缓存的时间，就不发请求，如果超过强制缓存的时间，就对比文件修改时间和etag标识，如果都一样，继续走缓存，如果不一样，就返回最新的资源
+     */
+    res.setHeader('Cache-Control', 'max-age=5')
+    const cTime = statObj.ctime.toUTCString()
+    const Etag = crypto.createHash('md5').update(await fs.readFile(file)).digest('base64')
+    res.setHeader('Last-Modified', cTime)
+    res.setHeader('Etag', Etag)
+    const IfModifiedSice = req.headers['if-modified-since']
+    const IfNoneMatch = req.headers['if-none-match']
+    if (Etag !== IfNoneMatch) {
+      return false
+    }
+    if (cTime !== IfModifiedSice) {
+      return false
+    }
+    return true
+  }
+
   // 返回文件
-  sendFile (file, res) {
+  async sendFile (file, res, req, statObj) {
     // 获取文件类型
     const fileType = mime.getType(file)
+    // 设置缓存
+    if (await this.cacheFile(file, res, req, statObj)) {
+      res.statusCode = 304
+      return res.end()
+    }
     // 设置响应头
     res.setHeader('Content-type', `${fileType};charset=utf-8`)
     // 返回
