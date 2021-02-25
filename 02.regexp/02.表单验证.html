@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    span {
+      color: red;
+      opacity: 0;
+      transition: all 0.3s linear;
+    }
+
+    span.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <input type="text">
+  <span></span>
+  <script>
+    const input = document.querySelector('input')
+    const span = document.querySelector('span')
+    input.addEventListener('keyup', function () {
+      // 匹配规则，3-6位英文字母
+      const flag = this.value.match(/^[a-z]{3,6}$/i)
+      if (!flag) {
+        span.innerHTML = '错误'
+        span.classList.add('show')
+      } else {
+        span.classList.remove('show')
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const str = `
+    <a class='zcf' href='http://www.zhengchangfu.com'>郑常富的网站1</a>
+    <a id='cxh' href     ='https://chengxiaohui.com'>程小惠的网站2</a>
+    <a class='zcfcxh' href='http://zhengchangfu.com.cn'>郑常富和程小惠的网站3</a>
+    `
+
+    // 将a标签中的链接地址和内容提取出来一个对象，放入一个数组中，如:[{link:'http://zhengchangfu.com',title:'郑常富的网站1'}]
+    // 思路: 正则匹配链接和内容放入原子组，然后给匹配到的原子组进行重命名
+    const reg = /<a.+?href\s*=(['"])(?<link>https?:\/\/(?:www.)?.*?\1)>(?<title>[\s\S]*?)<\/a>/ig
+    // console.log(str.match(reg))
+    let res = []
+    for (let item of str.matchAll(reg)) {
+      console.log(item['groups'])
+      res.push(item['groups'])
+    }
+    console.log(res, 'res')
+  </script>
+</body>
+
+</html>

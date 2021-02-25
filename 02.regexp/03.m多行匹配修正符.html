@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const str = `
+    # 1. node.js 100元 #
+    # 2. vue.js 100元 #
+    # 3. react.js 100元 #
+    # 4. dva 100元 #
+    # 55. next.js 100元 #
+    `
+    // 要求:将1，2，3，5提取成一个对象，类似于{name:'node.js',price:100元}放入一个数组，4不满足，所以排除掉
+    // m修饰符可以将多行看成一行对待
+    const strArr = str.match(/^\s*#\s*\d+\.\s*[a-z]+\.js.+\s+#$/gm)
+    let res = strArr.map(str => {
+      // 去除前面多余字符
+      str = str.replace(/\s*#\s*\d+\.\s*/, '')
+      // 去除后面多余字符
+      str = str.replace(/\s*#/, '')
+      let [name, price] = str.split(' ')
+      return {
+        name,
+        price
+      }
+    })
+    console.log(res, 'res')
+  </script>
+</body>
+
+</html>

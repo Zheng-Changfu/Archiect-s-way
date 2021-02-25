@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="content">
+    www.zhengchangfu.com
+  </div>
+  <script>
+    const div = document.querySelector('div')
+    const con = prompt('请输入要匹配的内容，支持正则')
+    const regexp = new RegExp(con, 'g')
+    div.innerHTML = div.innerHTML.replace(regexp, search => {
+      return `<span style="color:red">${search}</span>`
+    })
+  </script>
+</body>
+
+</html>

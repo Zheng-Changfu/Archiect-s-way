@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const phoneList = [
+      '18297523437',
+      '12345678901',
+      '18297523438',
+    ]
+    const reg = /(\d{3})\d{4}(\d{4})/
+    // 将手机号码中间4位替换成*
+    const newList = phoneList.map(item => {
+      return item.replace(reg, (v, p1, p2) => {
+        return `号码已被我惠哥保护,保护后的号码为:${p1}${'*'.repeat(4)}${p2}`
+      })
+    })
+    console.log(newList, 'newList')
+
+
+    const reg2 = /(?<=\d{3})\d{4}/   // 如果单纯的替换可以换成断言的方式
+    const newList1 = phoneList.map(item => {
+      return item.replace(reg2, (v) => {
+        return `${'*'.repeat(4)}`
+      })
+    })
+    console.log(newList1, 'newList1')
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const str = `
+    chengxiaohui
+    zhengchangfu
+    `
+    const reg = /.+/g
+    console.log(str.match(reg))
+    // s可以忽略换行符进行匹配
+    const reg1 = /.+/gs
+    console.log(str.match(reg1))
+    // 匹配所有内容
+    const reg2 = /[\s\S]+/g
+    console.log(str.match(reg2))
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input type="text" name='money'>
+  <script>
+    // 先分析转换的规律
+
+    //#region 
+    // const num1 = 123
+    // const num2 = 123.12
+    // const formatNum1 = num1.toLocaleString('en-US');
+    // const formatNum2 = num2.toLocaleString('en-US');
+    // console.log(formatNum1); // 123
+    // console.log(formatNum2); // 1,231.12
+
+    // const num3 = 1234
+    // const num4 = 1234.12
+    // const num5 = 12345
+    // const num6 = 12345.12
+    // const formatNum3 = num3.toLocaleString('en-US');
+    // const formatNum4 = num4.toLocaleString('en-US');
+    // const formatNum5 = num5.toLocaleString('en-US');
+    // const formatNum6 = num6.toLocaleString('en-US');
+    // console.log(formatNum3) // 1,234
+    // console.log(formatNum4) // 1,234.12
+    // console.log(formatNum5) // 12,345 
+    // console.log(formatNum6) // 12,345.12
+
+    // const num7 = 123456
+    // const num8 = 123456.12
+    // const num9 = 1234567
+    // const num10 = 1234567.12
+    // const formatNum7 = num7.toLocaleString('en-US');
+    // const formatNum8 = num8.toLocaleString('en-US');
+    // const formatNum9 = num9.toLocaleString('en-US');
+    // const formatNum10 = num10.toLocaleString('en-US');
+    // console.log(formatNum7) // 123,456
+    // console.log(formatNum8) // 123,456.12
+    // console.log(formatNum9) // 1,234,567
+    // console.log(formatNum10) // 1,234,567.12
+    //#endregion
+
+    /*
+      规律如下:
+       1. 如果小于等于3位连续的数字，不变
+       2. 如果大于3位的连续数字会从连续数字的最后一位往前数3位，依次加一个,号
+       3. ,号前面最少要有1位数字
+    */
+    let str = 'zcf1zcf中'
+    console.log(str.match(/zcf(?!(\d))/g))
+    const input = document.querySelector(`[name=money]`)
+    input.addEventListener('keyup', function () {
+      const reg = /(?<=\d{3})\d*/
+      //   div divaa out
+      const antdReg = /\B(?=(\d{3})+(?![0-9]))/g
+
+      console.log(this.value.replace(antdReg, str => {
+        console.log(str)
+      }))
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    span {
+      color: red;
+      opacity: 0;
+      transition: all 0.4s linear;
+    }
+
+    span.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <input type="text" name='username'>
+  <span>不可出现敏感词汇</span>
+  <script>
+    // 敏感词汇数组
+    const sensitiveWords = [
+      '操',
+      '麻痹',
+      '干',
+      '傻逼'
+    ]
+    // 思路:遍历敏感词汇数组，看是否匹配上了任意一个，如果匹配上了，就说明用户输入了敏感词，就提示
+    const input = document.querySelector(`[name = username]`)
+    const validatorSpan = document.querySelector('span')
+    input.addEventListener('keyup', e => {
+      const value = e.target.value
+      const isExits = sensitiveWords.some(word => value.match(new RegExp(word, 'g')))
+      isExits ? validatorSpan.classList.add('show') : validatorSpan.classList.remove('show')
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let str = `
+    <h1>chengxiaohui</h1>
+    <span>children</span>
+    <h2>zhengchangfu</h2>
+    `
+    // 要求:匹配h开头的标签，替换成p标签
+    // \1是代表拿到前面一个原子组匹配出来的结果，因为标签是成对的，不可以这样<h1></h2>
+    const reg = /<(h[1-6])>([\s\S]*)<\/\1>/gi
+    // $1是所有原子组中匹配出来的第1个结果,以此类推,$1-$9
+    // console.log(str.match(reg)) // ["<h1>chengxiaohui</h1>", "<h2>zhengchangfu</h2>"]
+    // str = str.replace(reg, `<p>$2</p>`)
+    // console.log(str)
+    // 还可以使用函数的形式
+    str = str.replace(reg, function (p0, p1, p2) {
+      // console.log(p0) // 匹配到的整体标签
+      // console.log(p1) // 原子组的第一个结果
+      // console.log(p2) // 原子组的第二个结果
+      return `<p>${p2}</p>`
+    })
+    console.log(str)
+  </script>
+</body>
+
+</html>
