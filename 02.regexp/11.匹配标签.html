@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div a='b' c="d" f=e>11</div>
+  <input a='b' c="d" f=e />
+  <script>
+    const div = document.querySelector('div').outerHTML
+    const input = document.querySelector('input').outerHTML
+    const ncname = `[a-zA-Z_][0-9_a-zA-Z]*`; // 标签名 
+    const qnameCapture = `((?:${ncname}\\:)?${ncname})`; //  用来获取的标签名的 match后的索引为1的
+    const startTagOpen = new RegExp(`^<${qnameCapture}`); // 匹配开始标签的 
+    const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`); // 匹配闭合标签的
+    //           aa  =   "  xxx "  | '  xxxx '  | xxx
+    const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/; // a=b  a="b"  a='b'
+    const startTagClose = /^\s*(\/?)>/; //     />   <div/>
+    const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g; // {{aaaaa}}
+    // console.log(div.match(new RegExp(ncname)))
+    // console.log(input.match(new RegExp(ncname)))
+    // console.log(div.match(new RegExp(qnameCapture)))
+    // console.log(input.match(new RegExp(qnameCapture)))
+    // console.log(div.match(startTagOpen))
+    // console.log(input.match(startTagOpen))
+    // console.log(div.match(endTag))
+    // console.log(input.match(endTag))
+    // console.log("   f=e>11</div>".match(attribute))
+    // console.log(input.match(attribute))
+    console.log(' />'.match(startTagClose))
+  </script>
+</body>
+
+</html>

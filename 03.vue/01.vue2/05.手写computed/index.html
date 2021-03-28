@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root">
+    <p>{{ fullName }}</p>
+  </div>
+  <script src="./dist/vue.js"></script>
+  <script>
+    /*
+     computed的原理:
+        本质其实也是一个Watcher,但是具有缓存功能，默认是不触发的，computed中的每一个key都是被定义在vm上的
+        对应的value其实就是Object.defineProperty中的get或者get/set,当依赖的值发生变化的时候，会重新执行
+        如果依赖的值没有发生变化，不会重新执行，会返回上一次的值(缓存)
+
+        计算属性中的key是没有收集渲染Watcher的，只有计算Watcher,计算属性中所依赖的值都有一个Dep，我们应该让这些Dep去收集渲染Watcher
+        这样的话，当依赖的值发生了变化，会通知渲染Watcher去更新
+
+        因为当我们去定义计算属性的时候，默认并不会调用watcher中的get方法,也就不会再Dep.target上面存放任何Watcher,
+        接着当我们去挂载组件的时候，我们会去new一个渲染Watcher，然后在Dep.target上面存放了渲染Watcher,接着去渲染模板的
+        时候，会在vm上面取计算属性中的key值，然后又在Dep.target上面存放了计算Watcher，此时计算Watcher覆盖了渲染Watcher
+        所以当我们去修改计算属性依赖值的时候，页面并不会重新渲染
+
+        解决方案:
+          每次在Dep.target上面赋值的时候，在重新维护一个栈结构，把Watcher存放进去，当我们的计算Watcher覆盖了渲染Watcher的时候，
+          让计算属性依赖的值去收集渲染Watcher即可
+          
+    */
+    const vm = new Vue({
+      el: '#root',
+      data() {
+        return {
+          firstName: 'zcf',
+          lastName: 'cxh'
+        }
+      },
+      computed: {
+        // 第一种写法，就是默认的get
+        fullName() {
+          console.log('我进来了')
+          return this.firstName + '-' + this.lastName
+        },
+        // 第二种写法，当需要set方法时，要这么写
+        // fullName:{
+        //   get(){
+
+        //   },
+        //   set(){
+
+        //   }
+        // }
+      }
+    })
+    // console.log(vm.fullName)
+    // console.log(vm.fullName)
+    // console.log(vm.fullName)
+    // console.log(vm.fullName)
+
+
+    // 当我们去修改计算属性中所依赖数据的值时，计算属性中的get要重新执行
+    setTimeout(() => {
+      vm.firstName = 'ZCF'
+    }, 1000)
+
+  </script>
+</body>
+
+</html>

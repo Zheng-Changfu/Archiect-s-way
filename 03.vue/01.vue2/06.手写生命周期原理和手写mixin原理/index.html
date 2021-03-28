@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script src="./dist/vue.js"></script>
+  <script>
+    /*
+      mixin原理:
+        Vue源码中在Vue上增加了一个静态属性options,默认为一个空对象,当我们去调用mixin函数进行混合的时候
+        内部会进行合并策略，不同的属性会应用不同的合并策略，内部使用了策略模式(设计模式)来解决if/else过多的
+        问题
+
+      生命周期原理:
+        用了策略模式，将所有的钩子函数以字符串的方式放入一个数组中，然后合并的时候会将外部存在的钩子重写成函数,
+        采用先进先出的方式来进行管理钩子函数，当外部调用钩子的时候，会触发callHooks函数，内部会按顺序依次调用,
+        并且将钩子函数内部的this修改为Vue的实例
+
+      主要的生命周期(8个)执行顺序:
+        beforeCreate: 在初始化数据之前，数据还没有被处理成响应式前调用
+        created: 初始化数据之后，初始化数据包括且不限于 初始化watch,computed,data,里面的数据已经是响应式了
+        beforeMount: 即将挂载组件之前，调用_render之前
+        mounted: 挂载完组件之后，页面渲染完毕，在触发mounted，只执行一次
+        beforeUpdate: 更新组件之前被调用
+        updated: 更新组件之后
+        beforeDestroy: 组件卸载之前
+        destroyed: 组件卸载之后
+
+        mixin中生命周期的合并策略:
+          将mixin配置对象中使用的钩子函数全部放入到一个数组中，先调用mixin函数的先放，调用的时候也是先进先出,
+          new Vue里面的配置项也会进行合并
+    */
+    Vue.mixin({
+      beforeCreate() {
+        console.log('beforeCreate 1')
+      },
+    })
+    Vue.mixin({
+      beforeCreate() {
+        console.log('beforeCreate 2')
+      }
+    })
+    new Vue({
+      el: '#root',
+      data() {
+        return {
+          a: 1
+        }
+      },
+      beforeCreate() {
+        console.log('beforeCreate 3')
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root">
+    <my-button></my-button>
+  </div>
+  <script src="./dist/vue.js"></script>
+  <script>
+    /*
+
+      extend原理:
+        传入一个对象，可以返回一个类，类名叫VueComponent，这个类继承自Vue，可以拥有Vue原型上所有的方法
+        传入的配置项会和Vue.options进行合并
+
+      子组件渲染流程:
+        子组件会被Vue.extend包装成一个类，这个类继承Vue，然后当我们创建虚拟dom的时候，判断是否是原生标签，如果
+        是原生标签，就创建原生标签的虚拟dom，如果不是原生原生标签，就创建组件的虚拟节点，在转换成真实dom时，判断
+        是否为组件，如果是组件，会调用data.init方法，这个方法内部就会调用类(被Vue.extend包装的),然后在类中调用
+        组件初始化方法,_init(),然后渲染子组件的template模板，template模板的优先级比el的优先级高
+
+    */
+
+    // 会被放入到Vue.options.componnets
+    Vue.component('my-button', {
+      template: '<button>click me 2</button>',
+    })
+    new Vue({
+      el: '#root',
+      beforeCreate() {
+        console.log('parent beforeCreate')
+      },
+      mounted() {
+        console.log('parent mounted')
+      },
+      // 这种方式创建的组件和全局创建的组件都会被extend包装成一个类，类继承Vue，他们彼此不会覆盖，会按照原型链的方式串联起来
+      // 如果组件内部没有，会去全局查找
+      components: {
+        'my-button': {
+          template: '<button>click me1</button>',
+          beforeCreate() {
+            console.log('child beforeCreate')
+          },
+          mounted() {
+            console.log('child mounted')
+          }
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

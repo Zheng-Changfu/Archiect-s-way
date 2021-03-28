@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="./dist/vue.js"></script>
+  <script>
+    /*
+      diff算法:
+        diff算法采用分层求异的方式，来控制粒度的最小变化，目的就是尽可能复用老的节点
+        只对比同层级节点，不会跨层级比较
+
+        注意:
+          初始化挂载不会进行diff算法比较，因为diff算法依赖的是新旧的虚拟dom，第一次挂载只会生成一次虚拟dom
+          在更新时会生成新的虚拟dom,这时候新旧虚拟dom会进行比较，差别化更新
+    */
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root">
+    <p>{{ hobby.a }}</p>
+  </div>
+  <script src="./dist/vue.js"></script>
+  <script>
+    /*
+     watch的原理:
+        其实就是一个用户Watcher，当key值发生变化的时候，会调用key对应的handler函数
+        其实在watch对象中书写和手动调用vm.$watch其实原理都是一样，watch对象中的handler函数
+        都会被转换成vm.$watch
+        watch中的key(表达式)其实最后会在vm中取值，然后当key值发生变化，会通知watcher去更新，
+    */
+    const vm = new Vue({
+      el: '#root',
+      data() {
+        return {
+          name: 'zcf',
+          hobby: {
+            a: 1
+          }
+        }
+      },
+      methods: {
+        fn(newVal, oldVal) {
+          console.log(newVal, oldVal, '6')
+        }
+      },
+      watch: {
+        // watch写法有好几种
+        // 第一种:
+        // name(newVal, oldVal) {
+        //   console.log(newVal, oldVal, '1')
+        // },
+        // 第二种,可以写表达式,比如想监听hobby.a的变化 'hobby.a'(){}
+        'hobby.a'(newVal, oldVal) {
+          console.log(newVal, oldVal, '2')
+        },
+        // 第三种,数组的形式，当name值发生变化的时候，会循环依次调用数组中的每一个函数
+        name: [
+          function (newVal, oldVal) {
+            console.log(newVal, oldVal, '3')
+          },
+          function (newVal, oldVal) {
+            console.log(newVal, oldVal, '4')
+          }
+        ],
+        // 第四种
+        // name: {
+        //   handler: function (newVal, oldVal) {
+        //     console.log(newVal, oldVal, '5')
+        //   },
+        //   immediate: true, // 是否立即触发
+        //   deep: true // 是否深度监视 ... 还有一系列参数
+        // },
+        // // 第五种，可以抽取函数到methods中
+        // name: 'fn' // 当name值发生变化时，会调用methods中的fn函数
+      }
+    })
+    // 第六种
+    vm.$watch('name', function (newVal, oldVal) {
+      console.log(newVal, oldVal, '7')
+    }, {/* 可以传入一些配置项 */ })
+
+    setTimeout(() => {
+      // vm.name = 'cxh'
+      vm.hobby.a = 2
+    }, 1000)
+  </script>
+</body>
+
+</html>

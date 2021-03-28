@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .drag {
+      position: relative;
+      margin: 100px auto 0;
+      width: 300px;
+      height: 30px;
+      background-color: #ccc;
+      text-align: center;
+      line-height: 30px;
+    }
+
+    .draginner {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 10%;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      background-color: #fff;
+      user-select: none;
+    }
+
+    .success {
+      position: absolute;
+      width: 0;
+      overflow: hidden;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      background-color: green;
+    }
+
+    .success>span {
+      color: #fff;
+    }
+
+    .result {
+      width: 100%;
+      height: 100%;
+
+    }
+
+    .result>div {
+      font-size: 30px;
+      visibility: hidden;
+      margin-top: 20px;
+    }
+
+    .result>div.show {
+      visibility: visible;
+    }
+
+    button {
+      outline: none;
+      border: 1px solid #ccc;
+      width: 150px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      margin: 20px auto 0;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="result">
+    <div class="start show">开始验证吧...</div>
+  </div>
+  <div class="drag">
+    <div class="success">
+      <span>验证通过</span>
+    </div>
+    <div class="draginner">
+      <span>>></span>
+    </div>
+    <span>拖动滑块验证</span>
+  </div>
+  <button>再次一次</button>
+  <script>
+    const dragOuter = document.querySelector('.drag')
+    const dragInner = document.querySelector('.draginner')
+    const success = document.querySelector('.success')
+    const start = document.querySelector('.start')
+    const button = document.querySelector('button')
+    let flag = true
+    dragInner.onmousedown = function (e) {
+      if (flag) {
+        start.innerHTML = '验证中...'
+        dragInner.style.transition = null
+        success.style.transition = null
+        const x = e.clientX
+        let resMoveX = null, resMaxX = null, resMinx = null
+        window.onmousemove = function (e) {
+          const ex = e.clientX
+          let moveX = ex - x
+          const maxX = dragOuter.clientWidth - dragInner.clientWidth
+          const minX = 0
+          if (moveX >= maxX) {
+            moveX = maxX
+            flag = false
+            start.innerHTML = '验证成功...'
+            window.onmousedown = null
+            window.onmousemove = null
+            window.onmouseup = null
+          } else {
+            resMoveX = moveX
+            resMaxX = maxX
+            resMinx = minX
+          }
+          if (moveX < minX) {
+            moveX = minX
+          }
+          dragInner.style.left = moveX + 'px'
+          success.style.width = moveX + 'px'
+        }
+        window.onmouseup = function () {
+          if (resMoveX < resMaxX) {
+            start.innerHTML = '验证失败...'
+            dragInner.style.transition = `all .3s linear`
+            success.style.transition = `all .3s linear`
+            dragInner.style.left = resMinx + 'px'
+            success.style.width = resMinx + 'px'
+          }
+          window.onmousemove = null
+        }
+      }
+    }
+    button.onclick = function () {
+      if (!flag) {
+        start.innerHTML = '开始验证吧...'
+        success.style.width = 0
+        dragInner.style.left = 0
+        flag = true
+      }
+    }
+  </script>
+</body>
+
+</html>

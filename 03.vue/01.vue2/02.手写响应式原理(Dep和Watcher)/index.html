@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root" name='zhengchangfu' style="color: red;background-color: #fff;">
+    <p>
+      <span>我叫{{ name }}哈哈 {{ age }}</span>
+    </p>
+  </div>
+  <script src="./dist/vue.js"></script>
+  <script>
+
+    const vm = new Vue({
+      el: '#root',
+      data() {
+        return {
+          arr: [1, { b: 2 }],
+          name: '郑常富',
+          age: 18,
+        }
+      }
+    })
+    // setTimeout(() => {
+    //   vm.name = '程小惠'
+    //   vm._update(vm._render())
+    // }, 1000)
+
+    setTimeout(() => {
+      vm.name = 'z'
+      vm.name = 'c'
+      vm.name = 'f'
+      vm.name = '程小惠'
+      vm.age = 2
+    }, 1000)
+    /*
+      如果更新的话，我们重新调用vm._update(vm._render即可)
+      在_render里面我们做了什么事？
+        1. 将ast生成的语法树转换成了代码 _c('div',{key:value},'哈哈')
+        2. 通过new Function + with语法将代码变成了render函数
+        3. 调用render函数生成虚拟dom对象
+      在_update里面我们做了什么事?
+        1. patch进行diff算法对比，现在我们还没有比对
+        2. 将虚拟dom对象转换成真实dom，实现页面更新
+    */
+
+    /*
+     我们更新的时候肯定是不需要用户主动去调用vm._update(vm._render())
+     Vue中是这么做的:
+        1. 每个组件都会有一个渲染Watcher，专门是渲染页面用的
+        2. 一个页面中的所有属性都有一个dep，dep中存放当前页面的watcher
+        3. 当前页面中的watcher存放当前页面中所有的dep
+        4. 当用户想要更新时，会触发Object.defineProperty中的set方法
+        5. 我们在set中通知dep去更新watcher
+        6. 组件化的代码中，一个组件就会对应一个Watcher,那么多个组件就会对应多个Watcher
+        7. 而有时候我们的属性会被共享到多个组件中，又因为每个属性都有一个自己的dep,所以也就是一个dep可以有多个Watcher的情况
+        8. 而一个页面中可能有多个属性，每个属性又有自己的dep，所以也就是一个Watcher可能有多个dep
+        9. 所以Dep和Watcher的关系可能会属于1 => 1 , 1 => 多, 多 = 1 , 多 => 多
+    */
+
+    vm.name = 2
+  </script>
+</body>
+
+</html>
