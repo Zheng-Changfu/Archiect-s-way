@@ -35,7 +35,7 @@ function gen (c) {
 function genChildren (root) {
   const children = root.children
   if (children && children.length) {
-    const res = children.map(c => gen(c)).join('+')
+    const res = children.map(c => gen(c)).join(',')
     return res
   }
   return false

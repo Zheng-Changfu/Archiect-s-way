@@ -721,30 +721,109 @@
       parent.removeChild(oldVnode);
       return elm;
     } else {
-      debugger; // diff算法比较
+      // diff算法比较
       // console.log(oldVnode, vNode)
       // 第一种，如果标签名不一样，直接新的覆盖老的
-
       if (oldVnode.tag !== vNode.tag) {
         return oldVnode.el.parentNode.replaceChild(createEl(vNode), oldVnode.el);
+      } // 说明标签肯定一样，复用老的节点
+
+
+      var el = vNode.el = oldVnode.el; // 如果文本不一样,用新的文本替换老的文本
+
+      if (oldVnode.tag === undefined) {
+        if (oldVnode.text !== vNode.text) {
+          el.textContent = vNode.text;
+        }
+
+        return;
+      } // 比对属性
+
+
+      patchProps(vNode, oldVnode.data); // 比对孩子
+
+      var oldChildren = oldVnode.children || [];
+      var newChildren = vNode.children || []; // 都有孩子
+
+      if (oldChildren.length > 0 && newChildren.length > 0) {
+        // 比对孩子
+        patchChildren(el, oldChildren, newChildren);
+      } else if (oldChildren.length > 0) {
+        // 老节点有孩子，新节点没孩子,应该删除孩子
+        el.innerHTML = '';
+      } else if (newChildren.length > 0) {
+        // 新节点有孩子，老节点没孩子,应该添加孩子
+        for (var i = 0; i < newChildren.length; i++) {
+          el.appendChild(createEl(newChildren[i]));
+        }
       }
-
-      var el = oldVnode.el; // if (oldVnode.text === vNode.text) {
-      // }
-      // 比对属性
-
-      patchProps(el, oldVnode, vNode);
     }
   }
 
-  function patchProps(el, oldVnode, vNode) {
-    // 如果旧虚拟dom上面没有属性，新的上面有，那就应该遍历新的，看新的属性在旧虚拟dom上有没有，如果没有，就添加属性
-    for (var key in vNode.props) {
-      var newValue = vNode.props[key]; // 如果新的属性在老的上面没有
+  function patchChildren(el, oldChildren, newChildren) {
+    // 双指针
+    var oldStartIndex = 0;
+    var oldStartNode = oldChildren[oldStartIndex];
+    var oldEndIndex = oldChildren.length - 1;
+    var oldEndNode = oldChildren[oldEndIndex];
+    var newStartIndex = 0;
+    var newStartNode = newChildren[newStartIndex];
+    var newEndIndex = newChildren.length - 1;
+    var newEndNode = newChildren[newEndIndex];
 
-      if (!oldVnode.props[newValue]) {
-        // 设置属性
-        el.setAttribute(key, newValue);
+    while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
+      // 只要新老节点 有一方没有，循环就结束
+      if (isSameNode(oldStartNode, newStartNode)) {
+        // 头头比较
+        // 递归比较文本,标签,属性,子节点
+        patch(oldStartNode, newStartNode); // 移动指针,更改节点
+
+        oldStartNode = oldChildren[++oldStartIndex];
+        newStartNode = newChildren[++newStartIndex];
+      } else if (isSameNode(oldEndNode, newEndNode)) ;
+    } // 新增一个的情况
+
+  }
+
+  function isSameNode(oldNode, newNode) {
+    return oldNode.tag === newNode.tag && oldNode.key === newNode.key;
+  }
+
+  function patchProps(vNode) {
+    var oldProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var el = vNode.el;
+    var newProps = vNode.data || {};
+    var newStyle = newProps.style || {};
+    var oldStyle = oldProps.style || {};
+
+    for (var key in oldStyle) {
+      // 如果老的样式在新的上面没有，应该删除老的样式
+      if (!newStyle[key]) {
+        el.style[key] = '';
+      }
+    }
+
+    for (var _key in oldProps) {
+      // 如果老的属性新的上面没有，应该删除老的
+      if (!newProps[_key]) {
+        if (_key === 'style') {
+          for (var attr in oldProps[_key]) {
+            el.style[attr] = '';
+          }
+        } else {
+          el.removeAttribute(_key);
+        }
+      }
+    } // 循环添加新属性
+
+
+    for (var _key2 in newProps) {
+      if (_key2 === 'style') {
+        for (var _attr in newProps[_key2]) {
+          el.style[_attr] = newProps[_key2][_attr];
+        }
+      } else {
+        el.setAttribute(_key2, newProps[_key2]);
       }
     }
   }
@@ -780,6 +859,8 @@
 
 
       elm = vNode.el = document.createElement(tag); // 虚拟节点上面都有一个el属性，对应真实元素，在做diff算法比较的时候有用
+
+      patchProps(vNode);
 
       if (children && children.length) {
         for (var i = 0; i < children.length; i++) {
@@ -840,7 +921,6 @@
   }
 
   function parserHtml(html) {
-    debugger;
     /**
      * 用正则匹配标签开始，标签名，然后提取标签名放入容器中，然后移除掉匹配的部分 
      * 用正则匹配标签属性，然后提取属性放入容器中，然后移除掉匹配的部分
@@ -849,7 +929,6 @@
      * 用正则匹配标签结束，然后提取标签结束名和标签开始的标签名进行匹配，如果相同，说明标签相同，不相同，抛错
      */
     // 树根
-
     var root = null;
 
     function advance(len) {
@@ -1037,7 +1116,7 @@
     if (children && children.length) {
       var res = children.map(function (c) {
         return gen(c);
-      }).join('+');
+      }).join(',');
       return res;
     }
 
@@ -1296,9 +1375,17 @@
   stateMixin(Vue);
   globalMixin(Vue);
   // let oldTemplate = `<p>{{message}}</p>`
-  // 第二种:如果没有标签，文本不一样，直接替换文本
+  // 第二种:比对属性
+  // let oldTemplate = `<div a="1" style="font-size:14px;">1</div>`
+  // 第三种:如果没有标签，文本不一样，直接替换文本
+  // let oldTemplate = `{{message}}`
+  // 第四种:如果标签一样，老的有孩子,新的没孩子
+  // let oldTemplate = `<div><li>A</li></div>`
+  // 第五种:如果标签一样，老的没孩子,新的有孩子
+  // let oldTemplate = `<div></div>`
+  // 第六种:都有孩子
 
-  var oldTemplate = "<div>1</div>";
+  var oldTemplate = "<div>\n<li>A</li>\n<li>B</li>\n<li>C</li>\n</div>";
   var render1 = CompileToFunction(oldTemplate);
   var vm1 = new Vue({
     data: {
@@ -1308,9 +1395,17 @@
   var oldNode = render1.call(vm1);
   document.body.appendChild(createEl(oldNode)); // 第一种:如果标签不一样，直接用新的标签替换掉老的标签
   // let newTemplate = `<div>{{message}}</div>`
-  // 第二种:如果没有标签，文本不一样，直接替换文本
+  // 第二种: 标签一样，对比属性
+  // let newTemplate = `<div a="b" style="color:red;">1</div>`
+  // 第三种:如果没有标签，文本不一样，直接替换文本
+  // let newTemplate = `{{message}}`
+  // 第四种:如果标签一样，老的有孩子,新的没孩子
+  // let newTemplate = `<div></div>`
+  // 第五种:如果标签一样，老的没孩子,新的有孩子
+  // let newTemplate = `<div><li>A</li></div>`
+  // 第六种:都有孩子
 
-  var newTemplate = "<div a=b>2</div>";
+  var newTemplate = "<div>\n<li>A</li>\n<li>D</li>\n<li>C</li>\n</div>";
   var render2 = CompileToFunction(newTemplate);
   var vm2 = new Vue({
     data: {

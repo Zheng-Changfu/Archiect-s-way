@@ -1,6 +1,5 @@
 import { compileTemplate } from '../utils'
 export function parserHtml (html) {
-  debugger
   /**
    * 用正则匹配标签开始，标签名，然后提取标签名放入容器中，然后移除掉匹配的部分 
    * 用正则匹配标签属性，然后提取属性放入容器中，然后移除掉匹配的部分
