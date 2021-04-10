@@ -8,6 +8,11 @@
 </head>
 
 <body>
+  <div id="app">
+    <ul>
+      <li key="A">{{a}}</li>
+    </ul>
+  </div>
   <script src="./dist/vue.js"></script>
   <script>
     /*
@@ -19,6 +24,15 @@
           初始化挂载不会进行diff算法比较，因为diff算法依赖的是新旧的虚拟dom，第一次挂载只会生成一次虚拟dom
           在更新时会生成新的虚拟dom,这时候新旧虚拟dom会进行比较，差别化更新
     */
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        a: 'hello',
+      }
+    })
+    setTimeout(() => {
+      vm.a = 'zcf'
+    }, 3000)
   </script>
 </body>
 

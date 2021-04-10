@@ -43,6 +43,7 @@ export function patch (oldVnode, vNode) {
         el.appendChild(createEl(newChildren[i]))
       }
     }
+    return el
   }
 }
 
@@ -57,8 +58,24 @@ function patchChildren (el, oldChildren, newChildren) {
   let newStartNode = newChildren[newStartIndex]
   let newEndIndex = newChildren.length - 1
   let newEndNode = newChildren[newEndIndex]
+
+  // 乱序情况的映射表
+  const makeIndexForKey = oldChildren.reduce((p, c, i) => {
+    // 用户key
+    const key = c.key
+    p[key] = i
+    return p
+  }, {}) // {A:0,B:1,C:2,D:3}
+
   while ((oldStartIndex <= oldEndIndex) && (newStartIndex <= newEndIndex)) {
     // 只要新老节点 有一方没有，循环就结束
+    // 如果老节点没值，说明已经被移动走了，直接跳过即可
+    if (!oldStartNode) {
+      oldStartNode = oldChildren[++oldStartIndex]
+    } else if (!oldEndNode) {
+      oldEndNode = oldChildren[--oldEndIndex]
+    }
+
     if (isSameNode(oldStartNode, newStartNode)) {
       // 头头比较
       // 递归比较文本,标签,属性,子节点
@@ -68,11 +85,63 @@ function patchChildren (el, oldChildren, newChildren) {
       newStartNode = newChildren[++newStartIndex]
     } else if (isSameNode(oldEndNode, newEndNode)) {
       // 尾尾比较
-      
+      patch(oldEndNode, newEndNode)
+      oldEndNode = oldChildren[--oldEndIndex]
+      newEndNode = newChildren[--newEndIndex]
+    } else if (isSameNode(oldStartNode, newEndNode)) {
+      // 老头和新尾比较
+      // 如果一样，应该插入到最后一个元素的下一项元素前面reverse
+      patch(oldStartNode, newEndNode)
+      el.insertBefore(oldStartNode.el, oldEndNode.el.nextSibling)
+      oldStartNode = oldChildren[++oldStartIndex]
+      newEndNode = newChildren[--newEndIndex]
+    } else if (isSameNode(oldEndNode, newStartNode)) {
+      // 老尾和新头比较
+      // 如果一样，应该插入到第一个元素的前面
+      patch(oldEndNode, newStartNode)
+      el.insertBefore(oldEndNode.el, oldStartNode.el)
+      oldEndNode = oldChildren[--oldEndIndex]
+      newStartNode = newChildren[++newStartIndex]
+    } else {
+      // 乱序比较
+      // 将老的节点形成一个映射表，然后用新元素去老的里面找，如果找到了，就给他插入到老开头指针的前面，没找到，就在老指针前面插入一个元素
+      // 找到了，就在映射表里面将找到的那一项填个坑，赋值为null,然后递归比较子节点
+      const newKey = newStartNode.key
+      // 如果newKey在映射表里面不存在，就说明是新节点，要创建的，创建的节点要放在老节点开始的前面
+      if (!makeIndexForKey[newKey]) {
+        el.insertBefore(createEl(newStartNode), oldStartNode.el)
+      } else {
+        const moveIndex = makeIndexForKey[newKey]
+        const moveNode = oldChildren[moveIndex]
+        // oldChildren中的这项值填充null，表示被移动走了,也防止数组塌陷
+        oldChildren[moveIndex] = null
+        // 移动
+        el.insertBefore(moveNode.el, oldStartNode.el)
+        // 递归比较子节点
+        patch(moveNode, newStartNode)
+      }
+      // 移动新指针
+      newStartNode = newChildren[++newStartIndex]
     }
   }
-  // 新增一个的情况
-
+  // 新增一个的情况,可能是头部增加，可能是尾部增加，这个时候我们就需要用key来进行判断了
+  if (newStartIndex <= newEndIndex) {
+    for (let i = newStartIndex; i <= newEndIndex; i++) {
+      // insertBefore可能实现appendChild功能
+      // 看尾指针元素的下一个元素是否存在，如果存在，就代表是往前追加，如果不存在，代表是往后追加
+      const nextNode = newChildren[newEndIndex + 1]
+      const anthor = nextNode ? nextNode.el : null
+      el.insertBefore(createEl(newChildren[i]), anthor)
+    }
+  }
+  // 删除一个的情况
+  if (oldStartIndex <= oldEndIndex) {
+    for (let i = oldStartIndex; i <= oldEndIndex; i++) {
+      if (oldChildren[i]) {
+        el.removeChild(oldChildren[i].el)
+      }
+    }
+  }
 }
 
 function isSameNode (oldNode, newNode) {

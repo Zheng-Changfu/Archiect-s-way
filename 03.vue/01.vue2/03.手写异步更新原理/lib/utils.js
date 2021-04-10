@@ -45,7 +45,7 @@ export let compileTemplate = {
 let callbacks = []
 let watting = false
 export function nextTick (cb) {
-  // 按照正常来说，肯定是内部源码调用的nextTick先进来，然后再是函数，因为代码是一行行执行的
+  // 按照正常情况来说，肯定是内部源码调用的nextTick先进来，然后再是函数，因为代码是一行行执行的
   callbacks.push(cb)
   // 也要做防抖，不能每次调用nextTick都循环一次
   if (!watting) {

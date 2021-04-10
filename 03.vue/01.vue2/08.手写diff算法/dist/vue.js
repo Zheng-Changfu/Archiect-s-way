@@ -757,6 +757,8 @@
           el.appendChild(createEl(newChildren[i]));
         }
       }
+
+      return el;
     }
   }
 
@@ -769,10 +771,24 @@
     var newStartIndex = 0;
     var newStartNode = newChildren[newStartIndex];
     var newEndIndex = newChildren.length - 1;
-    var newEndNode = newChildren[newEndIndex];
+    var newEndNode = newChildren[newEndIndex]; // 乱序情况的映射表
+
+    var makeIndexForKey = oldChildren.reduce(function (p, c, i) {
+      // 用户key
+      var key = c.key;
+      p[key] = i;
+      return p;
+    }, {}); // {A:0,B:1,C:2,D:3}
 
     while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
       // 只要新老节点 有一方没有，循环就结束
+      // 如果老节点没值，说明已经被移动走了，直接跳过即可
+      if (!oldStartNode) {
+        oldStartNode = oldChildren[++oldStartIndex];
+      } else if (!oldEndNode) {
+        oldEndNode = oldChildren[--oldEndIndex];
+      }
+
       if (isSameNode(oldStartNode, newStartNode)) {
         // 头头比较
         // 递归比较文本,标签,属性,子节点
@@ -780,9 +796,68 @@
 
         oldStartNode = oldChildren[++oldStartIndex];
         newStartNode = newChildren[++newStartIndex];
-      } else if (isSameNode(oldEndNode, newEndNode)) ;
-    } // 新增一个的情况
+      } else if (isSameNode(oldEndNode, newEndNode)) {
+        // 尾尾比较
+        patch(oldEndNode, newEndNode);
+        oldEndNode = oldChildren[--oldEndIndex];
+        newEndNode = newChildren[--newEndIndex];
+      } else if (isSameNode(oldStartNode, newEndNode)) {
+        // 老头和新尾比较
+        // 如果一样，应该插入到最后一个元素的下一项元素前面reverse
+        patch(oldStartNode, newEndNode);
+        el.insertBefore(oldStartNode.el, oldEndNode.el.nextSibling);
+        oldStartNode = oldChildren[++oldStartIndex];
+        newEndNode = newChildren[--newEndIndex];
+      } else if (isSameNode(oldEndNode, newStartNode)) {
+        // 老尾和新头比较
+        // 如果一样，应该插入到第一个元素的前面
+        patch(oldEndNode, newStartNode);
+        el.insertBefore(oldEndNode.el, oldStartNode.el);
+        oldEndNode = oldChildren[--oldEndIndex];
+        newStartNode = newChildren[++newStartIndex];
+      } else {
+        // 乱序比较
+        // 将老的节点形成一个映射表，然后用新元素去老的里面找，如果找到了，就给他插入到老开头指针的前面，没找到，就在老指针前面插入一个元素
+        // 找到了，就在映射表里面将找到的那一项填个坑，赋值为null,然后递归比较子节点
+        var newKey = newStartNode.key; // 如果newKey在映射表里面不存在，就说明是新节点，要创建的，创建的节点要放在老节点开始的前面
 
+        if (!makeIndexForKey[newKey]) {
+          el.insertBefore(createEl(newStartNode), oldStartNode.el);
+        } else {
+          var moveIndex = makeIndexForKey[newKey];
+          var moveNode = oldChildren[moveIndex]; // oldChildren中的这项值填充null，表示被移动走了,也防止数组塌陷
+
+          oldChildren[moveIndex] = null; // 移动
+
+          el.insertBefore(moveNode.el, oldStartNode.el); // 递归比较子节点
+
+          patch(moveNode, newStartNode);
+        } // 移动新指针
+
+
+        newStartNode = newChildren[++newStartIndex];
+      }
+    } // 新增一个的情况,可能是头部增加，可能是尾部增加，这个时候我们就需要用key来进行判断了
+
+
+    if (newStartIndex <= newEndIndex) {
+      for (var i = newStartIndex; i <= newEndIndex; i++) {
+        // insertBefore可能实现appendChild功能
+        // 看尾指针元素的下一个元素是否存在，如果存在，就代表是往前追加，如果不存在，代表是往后追加
+        var nextNode = newChildren[newEndIndex + 1];
+        var anthor = nextNode ? nextNode.el : null;
+        el.insertBefore(createEl(newChildren[i]), anthor);
+      }
+    } // 删除一个的情况
+
+
+    if (oldStartIndex <= oldEndIndex) {
+      for (var _i = oldStartIndex; _i <= oldEndIndex; _i++) {
+        if (oldChildren[_i]) {
+          el.removeChild(oldChildren[_i].el);
+        }
+      }
+    }
   }
 
   function isSameNode(oldNode, newNode) {
@@ -899,7 +974,17 @@
   function lifecycleMixin(Vue) {
     Vue.prototype._update = function (vNode) {
       var vm = this;
-      vm.$el = patch(vm.$el, vNode);
+      var preNode = vm._vNode;
+
+      if (!preNode) {
+        // 初始化渲染
+        vm.$el = patch(vm.$el, vNode);
+      } else {
+        // diff比较渲染
+        vm.$el = patch(preNode, vNode);
+      }
+
+      vm._vNode = vNode;
     };
 
     Vue.prototype.$nextTick = nextTick;
@@ -1373,49 +1458,7 @@
   renderMixin(Vue);
   lifecycleMixin(Vue);
   stateMixin(Vue);
-  globalMixin(Vue);
-  // let oldTemplate = `<p>{{message}}</p>`
-  // 第二种:比对属性
-  // let oldTemplate = `<div a="1" style="font-size:14px;">1</div>`
-  // 第三种:如果没有标签，文本不一样，直接替换文本
-  // let oldTemplate = `{{message}}`
-  // 第四种:如果标签一样，老的有孩子,新的没孩子
-  // let oldTemplate = `<div><li>A</li></div>`
-  // 第五种:如果标签一样，老的没孩子,新的有孩子
-  // let oldTemplate = `<div></div>`
-  // 第六种:都有孩子
-
-  var oldTemplate = "<div>\n<li>A</li>\n<li>B</li>\n<li>C</li>\n</div>";
-  var render1 = CompileToFunction(oldTemplate);
-  var vm1 = new Vue({
-    data: {
-      message: 1
-    }
-  });
-  var oldNode = render1.call(vm1);
-  document.body.appendChild(createEl(oldNode)); // 第一种:如果标签不一样，直接用新的标签替换掉老的标签
-  // let newTemplate = `<div>{{message}}</div>`
-  // 第二种: 标签一样，对比属性
-  // let newTemplate = `<div a="b" style="color:red;">1</div>`
-  // 第三种:如果没有标签，文本不一样，直接替换文本
-  // let newTemplate = `{{message}}`
-  // 第四种:如果标签一样，老的有孩子,新的没孩子
-  // let newTemplate = `<div></div>`
-  // 第五种:如果标签一样，老的没孩子,新的有孩子
-  // let newTemplate = `<div><li>A</li></div>`
-  // 第六种:都有孩子
-
-  var newTemplate = "<div>\n<li>A</li>\n<li>D</li>\n<li>C</li>\n</div>";
-  var render2 = CompileToFunction(newTemplate);
-  var vm2 = new Vue({
-    data: {
-      message: 2
-    }
-  });
-  var newNode = render2.call(vm2);
-  setTimeout(function () {
-    patch(oldNode, newNode);
-  }, 2000);
+  globalMixin(Vue); // import { CompileToFunction } from './compile/index'
 
   return Vue;
 

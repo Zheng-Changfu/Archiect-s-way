@@ -20,7 +20,15 @@ export function mountComponent (vm, el) {
 export function lifecycleMixin (Vue) {
   Vue.prototype._update = function (vNode) {
     const vm = this
-    vm.$el = patch(vm.$el, vNode)
+    const preNode = vm._vNode
+    if (!preNode) {
+      // 初始化渲染
+      vm.$el = patch(vm.$el, vNode)
+    } else {
+      // diff比较渲染
+      vm.$el = patch(preNode, vNode)
+    }
+    vm._vNode = vNode
   }
   Vue.prototype.$nextTick = nextTick
 }

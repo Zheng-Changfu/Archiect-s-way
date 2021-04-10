@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    function fn1() {
+      console.log('fn1')
+    }
+    function fn2() {
+      console.log('fn2')
+    }
+    Function.prototype.call = function (self) {
+      debugger
+      self = self ? self : this // self = function fn2(){} self = function fn2(){}
+
+      self.__proto__.fn = this // fn2的隐式原型上添加了一个属性，属性名是fn,属性值是a
+      // fn2的隐式原型上添加了一个属性，属性名是fn,属性值是fn2
+      // fn2.call()  
+      self.fn() // fn2.call() fn2.fn2()
+      delete self.__proto__.fn
+    }
+    var a = function (self) {
+      debugger
+      self = self ? self : this
+      // 第一次是self = fn2 fn2.__proto__.fn = call
+      self.__proto__.fn = this
+      // fn2.call()  
+      self.fn()
+      delete self.__proto__.fn
+    }
+    fn1.call(fn2) // 调用fn1函数,this指向fn2
+    fn2.call(fn1) // 调用fn2函数,this指向fn1
+    fn1.call.call(fn2) // 调用fn1.call函数，call函数内部this指向fn2
+    fn1.call.call.call.call.call.call(fn2)
+  </script>
+</body>
+
+</html>
