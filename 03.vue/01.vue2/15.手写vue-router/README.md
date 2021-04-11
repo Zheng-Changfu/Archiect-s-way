@@ -1,4 +1,4 @@
-# test_vuex
+# test
 
 ## Project setup
 ```

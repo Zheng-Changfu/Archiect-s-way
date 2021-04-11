@@ -3,3 +3,6 @@ export function forEachValue (obj, fn) {
     fn(obj[key], key)
   })
 }
+export function isArray (data) {
+  return Array.isArray(data)
+}
