@@ -1,28 +1,15 @@
-import craeteRouteMap from './create-route-map'
-/**
- * 
- * @param {*} routes user-config-map
- */
+import createRouteMap from "./create-route-map"
+
 export default function createMatcher (routes) {
-  let { pathMap } = craeteRouteMap(routes)
-
-  /**
-   * 
-   * @param {*} routes dynamic add route
-   */
-  function addRoutes (routes, oldPathMap) {
-    craeteRouteMap(routes, oldPathMap)
-  }
-
-  /**
-   * 
-   * @param {*} path matching path ==>  route record
-   */
+  let { pathMap } = createRouteMap(routes)
   function match (path) {
     return pathMap[path]
   }
+  function addRoutes (routes) {
+    createRouteMap(routes, pathMap)
+  }
   return {
-    addRoutes,
-    match
+    match,
+    addRoutes
   }
 }
