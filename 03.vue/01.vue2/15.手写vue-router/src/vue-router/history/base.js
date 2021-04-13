@@ -28,8 +28,10 @@ export default class History {
     // 比如跳转到/about/a，我们要收集/about和/aboutA组件
     // 找到匹配的记录
     const record = this.router.match(path)
+
     // current属性变化，要渲染视图，所以我们要将current属性变成响应式属性
     const route = createRoute(record, { path })
+
     // 防止重复跳转
     if (route.path === this.current.path && route.matched.length === this.current.matched.length) return
     this.current = route

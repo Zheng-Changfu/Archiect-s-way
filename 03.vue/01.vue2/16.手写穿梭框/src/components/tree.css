@@ -1,0 +1,12 @@
+.outer {
+  width: 300px;
+  border: 1px solid #ccc;
+  min-height: 300px;
+}
+.inner {
+  margin-bottom: 10px;
+}
+
+* {
+  list-style: none;
+}

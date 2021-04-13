@@ -5,6 +5,7 @@ import HashHistory from './history/hash'
 export default class VueRouter {
   constructor(options) {
     this.mode = options.mode || 'hash'
+    console.log(options.routes, '原来的')
     // 扁平化数据
     // matcher上面有match方法和addRoutes方法
     this.matcher = createMatcher(options.routes || [])

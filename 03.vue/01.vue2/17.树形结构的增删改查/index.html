@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script type="module">
+    import DelayerTree from './index.js'
+    const treeList = [
+      {
+        title: '菜单1',
+        id: '11111',
+        parentId: '0',
+        children: [
+          {
+            title: '菜单1-1',
+            parentId: '11111',
+            id: '222222',
+          },
+        ],
+      },
+      {
+        title: '菜单2',
+        id: '333',
+        parentId: '0',
+        children: [
+          {
+            title: '菜单2-1',
+            id: '444',
+            parentId: '333',
+            children: [
+              {
+                title: '菜单2-1-1',
+                id: '6666',
+                parentId: '444',
+              },
+            ],
+          },
+          {
+            title: '菜单2-2',
+            id: '555',
+            parentId: '333',
+          },
+        ],
+      },
+    ]
+    // 格式化后的树实例
+    const _tree1 = new DelayerTree(treeList)
+    // console.log(_tree1)
+    // 增加一条数据
+    const _tree2 = _tree1.add('222222', {
+      title: '我是新增的数据1'
+    })
+    // console.log(_tree2)
+    // 增加一条数据
+    const _tree3 = _tree1.add('6666', {
+      title: '我是新增的数据2'
+    })
+    const _tree4 = _tree1.add('555', {
+      title: '我是新增的数据3'
+    })
+    const _tree5 = _tree1.add('555', {
+      title: '我是新增的数据4'
+    })
+    // console.log(_tree3)
+    // 重新状态成树形结构
+    const tree5 = _tree1.resetLoad(_tree5)
+    console.log(tree5)
+  </script>
+</body>
+
+</html>
