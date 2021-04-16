@@ -1,0 +1,54 @@
+[
+  {
+    "username": "zcf",
+    "password": "zcf",
+    "menuPermission": [
+      "edit",
+      "add"
+    ],
+    "router": [
+      {
+        "path": "/zcf1",
+        "children": [
+          {
+            "path": "zcf2"
+          }
+        ]
+      },
+      {
+        "path": "/zcf11",
+        "children": [
+          {
+            "path": "zcf22"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "username": "cxh",
+    "password": "cxh",
+    "menuPermission": [
+      "get",
+      "remove"
+    ],
+    "router": [
+      {
+        "path": "/cxh1",
+        "children": [
+          {
+            "path": "cxh2"
+          }
+        ]
+      },
+      {
+        "path": "/cxh11",
+        "children": [
+          {
+            "path": "cxh22"
+          }
+        ]
+      }
+    ]
+  }
+]
