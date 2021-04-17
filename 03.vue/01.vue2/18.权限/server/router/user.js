@@ -3,8 +3,7 @@ const loginModel = require('../db/model/loginModel')
 const router = express.Router()
 const { verify, sign } = require('../utils/jwt')
 
-
-router.get('/validate', async (req, res) => {
+router.post('/validate', async (req, res) => {
   // 验证用户token
   const token = req.headers.authorization
   if (token) {
@@ -37,17 +36,17 @@ router.post('/login', async (req, res) => {
     })
   }
   try {
-    const user = await loginModel.findOne({ username, password })
-
-    const token = await sign(user._id)
+    let user = await loginModel.findOne({ username, password })
+    const token = await sign({ _id: user._id })
     user.token = token
     await user.save()
-    console.log(user, '1111')
     res.json({
       code: 200,
       data: {
         token,
-        ...user,
+        username: user.username,
+        menulist: user.menuPermission,
+        router: user.router,
       }
     })
   } catch (error) {

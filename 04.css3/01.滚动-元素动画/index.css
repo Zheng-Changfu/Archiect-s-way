@@ -1,0 +1,92 @@
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:root {
+  --pink: pink;
+  --blue: blue;
+  --gold: gold;
+  --sblue: skyblue;
+  --border: #ccc;
+}
+.common {
+  height: 1200px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.common > span {
+  font-size: 20px;
+  color: #fff;
+}
+
+.common > .box {
+  width: 200px;
+  height: 200px;
+  background-color: #fff;
+}
+
+.box1.animate-scroll {
+  animation: fadein 1s ease-in-out;
+}
+.box2.animate-scroll {
+  animation: fadein-left 1s ease-in-out;
+}
+.box3.animate-scroll {
+  animation: fadein-right 1s ease-in-out;
+}
+.box4.animate-scroll {
+  animation: fadein-top 1s ease-in-out;
+}
+.header {
+  background-color: var(--pink);
+}
+.main1 {
+  background-color: var(--blue);
+}
+.main2 {
+  background-color: var(--gold);
+}
+.footer {
+  background-color: var(--sblue);
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadein-left {
+  0% {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes fadein-right {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes fadein-top {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
