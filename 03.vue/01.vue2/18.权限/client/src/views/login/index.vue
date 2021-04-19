@@ -40,9 +40,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions([Types.SET_USERINFO]),
-    onSubmit(values) {
-      this[Types.SET_USERINFO](values)
+    ...mapActions([Types.SET_LOGIN]),
+    async onSubmit(values) {
+      await this[Types.SET_LOGIN](values)
+      this.$router.push('/user')
     },
   },
   components: {

@@ -6,5 +6,9 @@ export default {
   // 按钮权限数组
   btnlist: [],
   // 用户名
-  username: ''
+  username: '',
+  // 是否登录过
+  hasPermission: false,
+  // 是否拥有菜单权限
+  hasMenuPermission: false
 }

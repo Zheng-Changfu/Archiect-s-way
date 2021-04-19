@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <van-tabbar v-model="active" v-if="!$route.meta.hidden_navbar">
+    <van-tabbar route v-if="!$route.meta.hidden_navbar">
       <van-tabbar-item icon="home-o" to="/home">首页</van-tabbar-item>
       <van-tabbar-item icon="search" to="/detail">详情</van-tabbar-item>
       <van-tabbar-item icon="friends-o" to="/user">个人中心</van-tabbar-item>
@@ -11,11 +11,6 @@
 <script>
 export default {
   name: 'App',
-  data() {
-    return {
-      active: 0,
-    }
-  },
 }
 </script>
 <style lang="scss">

@@ -11,4 +11,12 @@ export const CANCEL_TOKENS = 'CANCEL_TOKENS'
 export const CLEAR_CANCELTOKEN = 'CLEAR_CANCELTOKEN'
 
 // 用户信息,包含菜单权限，按钮权限，token
+export const SET_LOGIN = 'SET_LOGIN'
+export const SET_USER = 'SET_USER'
 export const SET_USERINFO = 'SET_USERINFO'
+export const SET_PERMISSION = 'SET_PERMISSION'
+export const VALIDATE = 'VALIDATE'
+
+// 动态路由
+export const ADD_ROUTE = 'ADD_ROUTE'
+export const SET_MENUPERMISSION = 'SET_MENUPERMISSION'

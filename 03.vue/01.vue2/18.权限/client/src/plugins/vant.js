@@ -10,7 +10,10 @@ import {
   Notify,
   Button,
   Form,
-  Field
+  Field,
+  Tab,
+  Tabs,
+  Loading
 } from 'vant';
 
 Vue.use(Tabbar);
@@ -24,3 +27,6 @@ Vue.use(Notify);
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(Field);
+Vue.use(Tab);
+Vue.use(Tabs);
+Vue.use(Loading);

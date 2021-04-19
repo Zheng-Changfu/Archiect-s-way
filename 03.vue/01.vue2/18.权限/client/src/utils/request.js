@@ -15,6 +15,10 @@ class HttpRequest {
       if (Object.keys(this.queue).length === 0) {
         // 开启loading，保证多个请求只有一个loading
       }
+      const token = localStorage.getItem('token')
+      if (token) {
+        config.headers.authorization = token
+      }
       // 当我切换路由，取消上一个页面的所有请求
       let CancelToken = axios.CancelToken
       config.cancelToken = new CancelToken((c) => {

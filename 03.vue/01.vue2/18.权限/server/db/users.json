@@ -8,7 +8,7 @@
     ],
     "router": [
       {
-        "path": "/zcf1",
+        "path": "zcf1",
         "children": [
           {
             "path": "zcf2"
@@ -16,7 +16,7 @@
         ]
       },
       {
-        "path": "/zcf11",
+        "path": "zcf11",
         "children": [
           {
             "path": "zcf22"
@@ -34,7 +34,7 @@
     ],
     "router": [
       {
-        "path": "/cxh1",
+        "path": "cxh1",
         "children": [
           {
             "path": "cxh2"
@@ -42,7 +42,7 @@
         ]
       },
       {
-        "path": "/cxh11",
+        "path": "cxh11",
         "children": [
           {
             "path": "cxh22"

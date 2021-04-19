@@ -9,9 +9,15 @@ router.post('/validate', async (req, res) => {
   if (token) {
     try {
       await verify(token)
+      let user = await loginModel.findOne({ token })
       res.json({
         code: 200,
-        message: 'ok'
+        data: {
+          token,
+          username: user.username,
+          menulist: user.menuPermission,
+          router: user.router,
+        }
       })
     } catch (error) {
       res.json({

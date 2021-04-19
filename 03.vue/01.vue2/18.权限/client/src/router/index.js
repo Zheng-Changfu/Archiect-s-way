@@ -1,24 +1,29 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import hooks from './hooks'
+import loadable from '@/utils/loadable'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/home',
-    component: () => import('@/views/home')
+    component: loadable(() => import('@/views/home'))
   },
   {
     path: '/detail',
-    component: () => import('@/views/detail')
+    component: loadable(() => import('@/views/detail')),
+    meta: {
+      // 只有登录过才能访问
+      need_login: true
+    }
   },
   {
     path: '/user',
-    component: () => import('@/views/user')
+    component: loadable(() => import('@/views/user')),
   },
   {
     path: '/login',
-    component: () => import('@/views/login'),
+    component: loadable(() => import('@/views/login')),
     meta: {
       hidden_navbar: true
     }
@@ -26,6 +31,14 @@ const routes = [
   {
     path: '/',
     redirect: '/home'
+  },
+  {
+    path: '*',
+    component: {
+      render () {
+        return <h1>404</h1>
+      }
+    }
   }
 ]
 
