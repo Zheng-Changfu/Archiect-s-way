@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Reflect:
+        Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
+        这些方法与proxy handlers的方法相同。Reflect不是一个函数对象，因此它是不可构造的。
+        Reflect的所有属性和方法都是静态的
+
+        优点:
+          能准备的描述出对一个对象进行了任何操作，并且给与正确的返回值通知你
+          比如删除一个对象上的属性，我们一般用delete obj.xxxx
+          我们这个时候不知道对象上的这个属性有没有删除成功的
+          而我们通过Reflect.deleteProperty API来删除的话，会给与我们一个删除是否成功的返回值
+    */
+    const obj = {
+      a: 1,
+      b: 2
+    }
+
+    // 检测一个对象是否存在特定属性
+    console.log(Reflect.has(obj, 'a')) // true
+    console.log(Reflect.has(obj, 'c')) // false
+
+    // 返回这个对象自身的属性
+    console.log(Reflect.ownKeys(obj)) // ["a", "b"]
+
+    // 为这个对象添加一个新的属性
+    console.log(Reflect.set(obj, 'a', 11111)) // 返回true表示添加成功 true
+    console.log(Reflect.set(obj, 'd', obj.a)) // true
+    console.log(obj) // {a: 11111, b: 2, d: 11111}
+
+    // 读取对象的某个属性
+    console.log(Reflect.get(obj, 'a')) // 11111
+    console.log(Reflect.get(obj, 'c')) // undefined
+
+    // ...
+
+
+  </script>
+</body>
+
+</html>

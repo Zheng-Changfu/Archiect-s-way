@@ -20,6 +20,7 @@ export default class Store {
         get: () => this._vm[key]
       })
     })
+    // 基于vue的响应式系统
     this._vm = new _Vue({
       data: {
         $$state: state

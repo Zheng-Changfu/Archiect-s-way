@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /*
+      WakeMap:
+        WeakMap 对象是一组键/值对的集合，其中的键是弱引用的。其键必须是对象，而值可以是任意的
+        原生的 WeakMap 持有的是每个键对象的“弱引用”，这意味着在没有其他引用存在时垃圾回收能正确进行。
+        原生 WeakMap 的结构是特殊且有效的，其用于映射的 key 只有在其没有被回收时才是有效的
+        WeakMap 的 key 是不可枚举的 (没有方法能给出所有的 key)。
+        如果key 是可枚举的话，其列表将会受垃圾回收机制的影响，从而得到不确定的结果
+
+        优点:
+          及时的垃圾回收
+        场景:
+          如果你要往对象上添加数据，又不想干扰垃圾回收机制，就可以使用 WeakMap。
+    */
+    const w1 = new WeakMap()
+
+    const o1 = {}, o2 = function () { }, o3 = []
+
+    w1.set(o1, 5555)
+    console.log(w1.get(o1)) // 5555
+    console.log(w1.get(o2)) // undefined
+    // w1.set(1, 2) // Invalid value used as weak map key 
+    w1.set(o3, 55)
+    console.log(w1.get(o3)) // 55
+    w1.set(o2, 66)
+    console.log(w1.get(o2)) // 66
+    w1.set(o2, undefined)
+    console.log(w1.get(o2)) // undefined
+    console.log(w1.has(o2)) // true,值为undefined也是true
+    console.log(w1.delete(o2)) // true，删除成功
+    console.log(w1.get(o2)) // undefined
+    console.log(w1.has(o2)) // false
+
+
+  </script>
+</body>
+
+</html>

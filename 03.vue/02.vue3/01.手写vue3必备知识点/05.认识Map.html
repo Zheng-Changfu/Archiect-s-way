@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Map:
+        Map 对象保存键值对，并且能够记住键的原始插入顺序。任何值(对象或者原始值) 都可以作为一个键或一个值
+    */
+    const map = new Map()
+    const obj = { a: 1, b: 2 }
+    map.set(obj, [1, 2, 3])
+    console.log(map, map.size)
+    console.log(map.get(obj))
+    map.forEach((value, key) => {
+      console.log(value, key, 'item')
+    })
+  </script>
+</body>
+
+</html>

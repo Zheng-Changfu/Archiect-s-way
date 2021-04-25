@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>请输入要搜索的数据</h1>
+  <input type="text" id="input">
+  <ul id="ul">
+
+  </ul>
+  <script>
+    // let results = []
+    // 字典树 + 节流 + 虚拟列表
+    function fetch(url, method = 'get') {
+      return new Promise((resolve) => {
+        const xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status >= 200 && xhr.status <= 299) {
+            resolve(JSON.parse(xhr.response))
+          }
+        }
+        xhr.open(method, url)
+        xhr.send()
+      })
+    }
+    fetch('http://localhost:3000/getUsers').then(results => {
+      // results = []十万条数据
+      class Leaf {
+        constructor(id = '', value = '') {
+          this.ids = id ? [id] : []
+          this.value = value
+          this.children = {}
+        }
+        share(id) {
+          this.ids.push(id)
+        }
+        // key = zc
+        getChildIds(keys) {
+          let children = this.children
+          let res = []
+          for (let i = 0; i < keys.length; i++) {
+            const key = keys[i] // z , c
+            if (children[key]) {
+              res = children[key].ids
+                ? [...children[key].ids, ...children[key].childrenIds]
+                : children[key].childrenIds
+              children = children[key].children
+            } else {
+              res = []
+              break
+            }
+          }
+          return res
+        }
+      }
+      // 模拟请求返回了100000条数据，根据关键字查询
+      const root = new Leaf();
+      // 构建字典树
+      for (let i = 0; i < results.length; i++) {
+        const userinfo = results[i]
+        const name = userinfo.name
+        let templateRoot = root
+        for (let j = 0; j < name.length; j++) {
+          const charStr = name[j]
+          const reachEnd = j === name.length - 1
+          if (!templateRoot.children[charStr]) {
+            // 说明树中没有，在树中添加
+            templateRoot.children[charStr] = new Leaf(reachEnd ? userinfo.id : '', charStr)
+          } else {
+            if (reachEnd) {
+              // 如果值相同，就追加id标识
+              templateRoot.children[charStr].share(userinfo.id)
+            }
+          }
+          templateRoot = templateRoot.children[charStr]
+        }
+      }
+      console.log(root, 'root')
+      // 优化
+      budget(root)
+      function childrenCollectionIds(root) {
+        let ids = []
+        Object.keys(root).forEach(key => {
+          const value = root[key]
+          ids = value.ids ? [...ids, ...value.ids] : ids
+          if (Object.keys(value.children).length) {
+            ids = ids.concat(childrenCollectionIds(value.children))
+          }
+        })
+        return ids
+      }
+      // 预计算
+      function budget(root) {
+        const { children } = root
+        root.childrenIds = childrenCollectionIds(root.children)
+        Object.keys(children).forEach(key => {
+          const leaf = children[key]
+          leaf.childrenIds = childrenCollectionIds(leaf.children)
+          budget(leaf)
+        })
+      }
+      input.oninput = function (e) {
+        const keyword = e.target.value
+        const ids = root.getChildIds(keyword)
+        const res = ids.reduce((p, c) => {
+          let count = 0
+          while (true) {
+            if (results[count].id === c) {
+              p.push(results[count])
+              break
+            }
+            count++
+            if (count >= results.length) break
+          }
+          return p
+        }, [])
+        // console.log(res)
+        innerHtml(ul, res)
+      }
+      function innerHtml(el, data = []) {
+        let str = ''
+        data.map(item => {
+          str += `<li>${item.name}</li>`
+        })
+        console.log(str, 'str')
+        el.innerHTML = str
+      }
+    })
+      // 模糊搜索
+      // 收集叶子节点下的所有子节点id
+      // function searchBlur(root, keyword) {
+      //   let results = []
+      //   let templateRoot = root
+      //   for (let i = 0; i < keyword.length; i++) {
+      //     // 拿到每一个关键字
+      //     const charStr = keyword[i]
+      //     // 判断是否在树中，不过首字母就已经不再树中了，那么直接跳出循环，因为我们是按首字母构建树的
+      //     if (!templateRoot.children[charStr]) break
+      //     else {
+      //       templateRoot = templateRoot.children[charStr]
+      //     }
+      //     if (i === keyword.length - 1) {
+      //       results = templateRoot.ids
+      //       // results = [
+      //       //   ...templateRoot.ids,
+      //       //   // 收集该叶子节点下的所有子节点id集合,要优化
+      //       //   ...childrenCollectionIds(templateRoot.children)
+      //       // ]
+      //       // 优化，预计算，因为树一旦生成，不会发生变化，提前计算好所有叶子节点的子节点id集合
+      //     }
+      //   }
+      //   // console.log(results, 'results')
+      //   return results
+      // }
+  </script>
+</body>
+
+</html>

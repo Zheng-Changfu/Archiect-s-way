@@ -143,6 +143,10 @@ export function mergeOptions (parent, child) {
   return obj
 }
 
+/**
+ * 判断是否为原生标签
+ * @param {*} tag 标签
+ */
 export function isReverseTag (tag) {
   // 这里我们意思一下就行
   const str = 'a,b,i,img,p,ul,li,div,button'
