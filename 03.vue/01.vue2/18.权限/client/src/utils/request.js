@@ -1,6 +1,8 @@
 import axios from 'axios'
+import Vue from 'vue';
 import * as Types from '@/store/constants'
 import store from '../store'
+const _v = Vue.prototype
 // 请求封装
 class HttpRequest {
   constructor() {
@@ -14,6 +16,11 @@ class HttpRequest {
     instance.interceptors.request.use(config => {
       if (Object.keys(this.queue).length === 0) {
         // 开启loading，保证多个请求只有一个loading
+        _v.$toast.setDefaultOptions({ duration: 0 });
+        _v.$toast.loading({
+          message: '加载中...',
+          // forbidClick: true,
+        });
       }
       // 当我切换路由，取消上一个页面的所有请求
       let CancelToken = axios.CancelToken
@@ -32,6 +39,7 @@ class HttpRequest {
       delete this.queue[url]
       if (Object.keys(this.queue).length === 0) {
         // 取消loading
+        _v.$toast.clear()
       }
       if (res.data.code === 200) {
         return res.data.data
@@ -43,6 +51,7 @@ class HttpRequest {
       delete this.queue[url]
       if (Object.keys(this.queue).length === 0) {
         // 取消loading
+        _v.$toast.clear()
       }
       // 集中错误处理
 
@@ -58,7 +67,6 @@ class HttpRequest {
     }
     // 拦截器设置
     this.setInterceptors(options.url, instance)
-    console.log(config, 'config')
     return instance(config) // 返回的是一个promise
   }
   get (url, data = {}) {

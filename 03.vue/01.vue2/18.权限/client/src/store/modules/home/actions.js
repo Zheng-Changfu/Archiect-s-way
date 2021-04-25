@@ -6,7 +6,7 @@ export default {
       const data = await fetchSlides()
       commit(Types.GET_SWIPER, data)
     } catch (e) {
-      console.log(error, 'error')
+      console.log(e, 'e')
     }
   },
   async [Types.GET_SELECT] ({ commit }) {

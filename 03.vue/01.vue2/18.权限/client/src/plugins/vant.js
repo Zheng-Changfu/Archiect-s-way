@@ -10,7 +10,8 @@ import {
   Notify,
   Button,
   Form,
-  Field
+  Field,
+  Toast
 } from 'vant';
 
 Vue.use(Tabbar);
@@ -24,3 +25,4 @@ Vue.use(Notify);
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(Field);
+Vue.use(Toast);
