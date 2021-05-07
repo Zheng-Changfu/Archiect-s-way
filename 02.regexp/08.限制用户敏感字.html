@@ -34,7 +34,7 @@
     const validatorSpan = document.querySelector('span')
     input.addEventListener('keyup', e => {
       const value = e.target.value
-      const isExits = sensitiveWords.some(word => value.match(new RegExp(word, 'g')))
+      const isExits = sensitiveWords.some(word => value.match(new RegExp(word, 'g'))) 
       isExits ? validatorSpan.classList.add('show') : validatorSpan.classList.remove('show')
     })
   </script>

@@ -5,6 +5,7 @@ import filterRoute from '@/utils/filterRoute'
 import createMatcher from '@/utils/createMatcher'
 import { fetchLogin, fetchValidate } from '@/api/user'
 export default {
+<<<<<<< HEAD
   async [Types.SET_USER] ({ commit }, { userinfo, has }) {
     commit(Types.SET_USERINFO, userinfo)
     commit(Types.SET_PERMISSION, has)
@@ -27,6 +28,23 @@ export default {
       dispatch(Types.SET_USER, { userinfo: {}, has: false })
       return false
     }
+=======
+  async [Types.SET_USERINFO] ({ commit }, payload) {
+    const _v = this._vm
+    try {
+      const userinfo = await fetchLogin(payload)
+      commit(Types.SET_USERINFO, userinfo)
+      _v.$toast.fail('登录成功')
+      console.log(22222)
+      // 成功跳转个人中心页 ,动态添加路由，动态设置按钮权限
+      // _v.$router.push('/user')
+    } catch (error) {
+      _v.$toast.fail('登录失败')
+    } finally {
+      _v.$toast.clear()
+    }
+
+>>>>>>> 3dd732ed07879ec04d035d81c0b614cb37303250
   },
   async [Types.ADD_ROUTE] ({ commit, state }) {
     // 后台返回的菜单权限

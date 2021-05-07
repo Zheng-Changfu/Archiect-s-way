@@ -7,6 +7,7 @@ export default {
     store.commit(Types.CLEAR_CANCELTOKEN)
     next()
   },
+<<<<<<< HEAD
   // 路由权限控制
   'has_permission': async (to, from, next) => {
     // 需要登录才能访问的路由
@@ -62,5 +63,14 @@ export default {
     } else {
       next()
     }
+=======
+  'has-permission': (to, from, next) => {
+    // 校验权限
+    /**
+     * 检查是否登录过
+     * 如果登录过，
+     */
+    next()
+>>>>>>> 3dd732ed07879ec04d035d81c0b614cb37303250
   }
 }

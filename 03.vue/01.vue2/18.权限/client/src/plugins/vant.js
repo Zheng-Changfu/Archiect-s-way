@@ -11,9 +11,13 @@ import {
   Button,
   Form,
   Field,
+<<<<<<< HEAD
   Tab,
   Tabs,
   Loading
+=======
+  Toast
+>>>>>>> 3dd732ed07879ec04d035d81c0b614cb37303250
 } from 'vant';
 
 Vue.use(Tabbar);
@@ -27,6 +31,10 @@ Vue.use(Notify);
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(Field);
+<<<<<<< HEAD
 Vue.use(Tab);
 Vue.use(Tabs);
 Vue.use(Loading);
+=======
+Vue.use(Toast);
+>>>>>>> 3dd732ed07879ec04d035d81c0b614cb37303250
