@@ -11,7 +11,7 @@ export default function install (Vue) {
         this._router = router
         this._routerRoot = this
         this._router.init(this)
-        // 响应式属性current
+        // 响应式属性current 
         Vue.util.defineReactive(this, '_route', this._router.history.current)
       } else {
         // 子孙组件

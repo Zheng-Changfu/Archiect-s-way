@@ -66,11 +66,11 @@
         }
       }
       // 模拟请求返回了100000条数据，根据关键字查询
-      const root = new Leaf();
+      const root = new Leaf(); 
       // 构建字典树
       for (let i = 0; i < results.length; i++) {
         const userinfo = results[i]
-        const name = userinfo.name
+        const name = userinfo.name // denbw
         let templateRoot = root
         for (let j = 0; j < name.length; j++) {
           const charStr = name[j]
@@ -114,9 +114,11 @@
       input.oninput = function (e) {
         const keyword = e.target.value
         const ids = root.getChildIds(keyword)
+        // [1,2,3]
         const res = ids.reduce((p, c) => {
           let count = 0
           while (true) {
+            // 10万条数据
             if (results[count].id === c) {
               p.push(results[count])
               break
@@ -164,6 +166,23 @@
       //   // console.log(results, 'results')
       //   return results
       // }
+ // 智慧 zhihui 总办 zongban
+        // {
+        //   'z:[智,总]':{
+        //     ids:[],
+        //     childrenIds:[],
+        //     children:{
+        //       'h:[慧]':{
+
+        //       },
+        //       'b:[办]':{
+
+        //       }
+        //     }
+        //   }
+        // }
+
+
   </script>
 </body>
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      color: #156626;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="ctx" width="300" height="200"></canvas>
+  <script>
+    const canvas = document.getElementById('ctx')
+    const ctx = canvas.getContext('2d')
+    // 设置颜色，不设置默认黑色#000
+    ctx.fillStyle = '#156626'
+    ctx.beginPath()
+    ctx.moveTo(50, 50)
+    ctx.lineTo(250, 50)
+    ctx.lineTo(250, 150)
+    // 自动填充闭合区域并且会自动闭合路径
+    ctx.fill()
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <canvas id="ctx" width="600" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById('ctx')
+    const ctx = canvas.getContext('2d')
+    function randomInt(from, to) {
+      return parseInt(Math.random() * (to - from + 1) + from);
+    }
+    function Rect(options = {}) {
+      let x = 0, y = 0
+      const { width, height, grap } = options
+      const cWidth = canvas.offsetWidth
+      const cHeight = canvas.offsetHeight
+      const maxRow = Math.floor(cWidth / (width + grap))
+      // 循环列,看外面传入的个数计算出一个最大列数
+      const maxLine = Math.floor(cHeight / (height + grap))
+      for (let i = 0; i < maxLine; i++) {
+        for (let j = 0; j < maxRow; j++) {
+          ctx.fillRect(x, y, width, height)
+          ctx.fillStyle = `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`
+          x += width + grap
+        }
+        x = 0
+        y += height + grap
+        console.log(y)
+      }
+    }
+    // 根据画图大小画出最多的长方形，50*50,每个间隔为10px
+    Rect({
+      width: 50,
+      height: 50,
+      grap: 10
+    })
+    setInterval(() => {
+      Rect({
+        width: 50,
+        height: 50,
+        grap: 10
+      })
+    }, 300)
+
+  </script>
+</body>
+
+</html>
