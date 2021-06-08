@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .box {
+      width: 3.75rem;
+      height: 200px;
+      background-color: pink;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+  <script>
+    fn()
+    function fn() {
+      const cWidth = document.documentElement.clientWidth || window.innerWidth
+      const desW = 375
+      console.log(document.documentElement.fontSize)
+      document.documentElement.style.fontSize = `${cWidth / desW * 100}px`
+    }
+    window.addEventListener('DomContentLoaded', fn)
+    window.addEventListener('resize', fn)
+  </script>
+</body>
+
+</html>
