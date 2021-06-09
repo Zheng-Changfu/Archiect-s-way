@@ -1,7 +1,7 @@
-import { extend, stringify, isObject } from "@vue/shared"
+import { extend, stringify, isObject, isArray, IntegerKey, hasOwn, hasChanged } from "@vue/shared"
 import { readonly, reactive } from "./reactive"
-import { OpeaTypes } from "packages/shared/src/opeartors"
-import { track } from "./effect"
+import { OpeaTypes, TriggerTypes } from "packages/shared/src/opeartors"
+import { track, trigger } from "./effect"
 
 /**
  * 
@@ -43,7 +43,21 @@ const createSetter = function (shallow = false) {
    * @param receiver 代理对象
    */
   return function set(target, property, value, receiver) {
-    return Reflect.set(target, property, value, receiver)
+    // 拿到老值,后面实现watch的时候会用到
+    let oldValue = target[property]
+    // 判断是新增还是修改,可能是数组，可能是对象,因为reactive包裹的是一个对象
+    const hadKey = isArray(target) && IntegerKey(property)
+      ? Number(property) < target.length
+      : hasOwn(target, property)
+    const res = Reflect.set(target, property, value, receiver)
+    if (!hadKey) {
+      // 新增，可能是数组或者是对象
+      trigger(target, TriggerTypes.ADD, property, value)
+    } else if (hasChanged(oldValue, value)) {
+      // 修改, 可能是数组或者是对象
+      trigger(target, TriggerTypes.SET, property, value, oldValue)
+    }
+    return res
   }
 }
 const readonlyObj = {

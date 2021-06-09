@@ -1,5 +1,8 @@
+import { isArray } from "@vue/shared/src"
+import { TriggerTypes } from "packages/shared/src/opeartors"
+
 // effect(() =>{},{flush:'sync'}) 立即执行一次
-export const effect = function (fn, options: any) {
+export const effect = function (fn, options: any = {}) {
   // 高阶函数返回新的effect函数
   const effect = createReactiveEffect(fn, options)
   if (!options.lazy) {
@@ -67,12 +70,12 @@ export function track(target, type, key) {
     let depsMap = targetMap.get(target)
     // 第一次WeakMap中肯定没有target目标对象
     if (!depsMap) {
-      depsMap.set(target, (depsMap = new Map))
+      targetMap.set(target, (depsMap = new Map))
     }
     let deps = depsMap.get(key)
     // 第一次Map中肯定没有key
     if (!deps) {
-      deps.set(key, (deps = new Set))
+      depsMap.set(key, (deps = new Set))
     }
     // 第一次Set中肯定没有effect
     if (!deps.has(key)) {
@@ -80,5 +83,56 @@ export function track(target, type, key) {
     }
     // 这样我们的关系就建立了,等到用户修改数据时，我们通知对应的effect重新执行即可
   }
+}
+/**
+ * 
+ * @param target 目标对象
+ * @param type 标识是新增还是修改,0新增,1修改
+ * @param key 要对哪个key进行操作
+ * @param value 操作后的结果值
+ * @param oldValue 操作前的结果值
+ */
+export function trigger(target, type, key, value, oldValue?) {
+  // 如果没有收集过对应的依赖，那么是不需要进行更新的
+  const depsMap = targetMap.get(target)
+  if (!depsMap) return
+  // 用于存放要执行的effect函数集合
+  const effects = new Set
+  const add = (deps) => {
+    if (deps) {
+      deps.forEach(effect => effects.add(effect))
+    }
+  }
+  // 说明改的是数组的length
+  if (key === 'length' && isArray(target)) {
+    // 我们需要循环depsMap,将要执行的effect全部添加到容器中
+    depsMap.forEach((dep, key) => {
+      // key > value 是这种情况
+      /**
+       * const state = reactive({arr:[1,2,3]})
+      *  effect(() => console.log(state.arr[2]))
+      *  setTimeout(() =>{ state.arr.length = 1 },1000)
+      * 此时的key为2, value是1 ,也要进行更新
+       */
+      if (typeof key !== 'symbol') {
+        if (key === 'length' || key > value) {
+          add(dep)
+        }
+      }
+    })
+  } else {
+    // 对象
+    if (key !== undefined) {
+      add(depsMap.get(key))
+    }
+    // 如果修改数组中的某一个索引，也要更新
+    switch (type) {
+      case TriggerTypes.ADD:
+        // 表示是新增，通知length的effect去更新
+        add(depsMap.get('length'))
+    }
+  }
+  // 让effect更新
+  effects.forEach((effect: any) => effect())
 }
 

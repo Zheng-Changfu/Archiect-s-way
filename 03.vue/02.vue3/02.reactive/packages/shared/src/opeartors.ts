@@ -1,3 +1,7 @@
 export const enum OpeaTypes {
-  GET
+  GET,
+}
+export const enum TriggerTypes {
+  ADD,
+  SET
 }

@@ -9,6 +9,7 @@
 </head>
 
 <body>
+  <div id="app"></div>
   <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script>
   <script>
     /*
@@ -21,7 +22,14 @@
       shallowReadonly:
           对目标对象进行浅层代理(只代理第一层),修改第一层会报警告,修改无效,修改没有被代理的对象，可以修改
     */
-    const { reactive, shallowReactive, readonly, shallowReadonly } = VueReactivity
+    const { reactive, shallowReactive, readonly, shallowReadonly, effect } = VueReactivity
+    const state = reactive({ name: 'zcf', age: 19, arr: [1, 2, 3] })
+    effect(() => {
+      app.innerHTML = state.arr
+    })
+    setTimeout(() => {
+      state.arr[100] = 100
+    }, 1000)
     // let obj = {
     //   a: 1,
     //   b: {
