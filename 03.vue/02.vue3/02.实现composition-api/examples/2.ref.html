@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  <script>
+    const { ref, shallowRef, toRef, toRefs, effect, reactive } = VueReactivity
+    const state = reactive({ name: 'zcf', age: { x: 18 } })
+    const r1 = ref('')
+    const r2 = shallowRef(state)
+    const r3 = toRef(state, 'name')
+    const r4 = toRefs(state)
+    console.log(r1, 'r1')
+    console.log(r2, 'r2')
+    console.log(r3, 'r3')
+    console.log(r4, 'r4')
+    effect(() => {
+      app.innerHTML = r1.value
+    })
+    setTimeout(() => {
+      r1.value = 2
+    }, 1000)
+  </script>
+</body>
+
+</html>
