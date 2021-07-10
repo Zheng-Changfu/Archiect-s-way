@@ -1,0 +1,1 @@
+{"version":3,"file":"canvas.js","sources":["../lib/index.js"],"sourcesContent":["console.log('zanvas')\r\nexport const a = 1"],"names":["console","log","a"],"mappings":";;;;;;CAAAA,OAAO,CAACC,GAAR,CAAY,QAAZ;OACaC,CAAC,GAAG;;;;;;;;;;"}

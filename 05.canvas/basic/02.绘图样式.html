@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      margin: 100px auto;
+      display: block;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    /*  draw1()
+     function draw1() {
+       const canvas = document.getElementById('c1')
+       const ctx = canvas.getContext('2d')
+ 
+       ctx.moveTo(100, 100)
+       ctx.lineTo(300, 200)
+       ctx.lineTo(100, 300)
+ 
+       // 支持css所支持的格式
+       // 样式操作要在真实绘制前面
+       ctx.fillStyle = 'skyblue'
+       ctx.fill()
+     } */
+
+    /*  draw2()
+     function draw2() {
+       const canvas = document.getElementById('c1')
+       const ctx = canvas.getContext('2d')
+ 
+       ctx.moveTo(100, 100)
+       ctx.lineTo(300, 200)
+       ctx.lineTo(100, 300)
+       ctx.closePath()
+ 
+       ctx.strokeStyle = '#ccc'
+       ctx.stroke()
+     } */
+
+    /*   draw3()
+      function draw3() {
+        const canvas = document.getElementById('c1')
+        const ctx = canvas.getContext('2d')
+  
+        ctx.moveTo(100, 100)
+        ctx.lineTo(300, 200)
+        ctx.lineTo(100, 300)
+        ctx.closePath()
+        // 边框宽度
+        ctx.lineWidth = 10
+        ctx.strokeStyle = 'pink'
+        ctx.stroke()
+      } */
+
+
+    draw4()
+    function draw4() {
+      const canvas = document.getElementById('c1')
+      const ctx = canvas.getContext('2d')
+
+      ctx.moveTo(100, 100)
+      ctx.lineTo(300, 200)
+      ctx.lineTo(100, 300)
+      ctx.closePath()
+
+      // 创建渐变对象(线性渐变)
+      const gradient = ctx.createLinearGradient(
+        100, 100, // 起点
+        300, 200 // 终点
+      )
+
+      // 添加渐变点,位置是从0 - 1
+      gradient.addColorStop(0, 'pink')
+      gradient.addColorStop(0.5, 'skyblue')
+      gradient.addColorStop(1, '#ccc')
+
+      ctx.lineWidth = 5
+      ctx.strokeStyle = gradient
+      ctx.stroke()
+
+
+      // ctx.fillStyle = gradient
+      // ctx.fill()
+    }
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      display: block;
+      margin: 100px auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    /*  draw1()
+     function draw1() {
+       const canvas = document.getElementById('c1')
+       const ctx = canvas.getContext('2d')
+       ctx.font = '20px 宋体'
+       // 文字整体居中 以canvas为相对单位
+       ctx.textAlign = 'center'
+       // 设置文字的基线
+       ctx.textBaseline = 'top'
+       ctx.fillText('你好', canvas.width / 2, 0)
+       // ctx.strokeText('你好', canvas.width / 2, 0)
+     } */
+
+    draw2()
+
+    function draw2() {
+      const canvas = document.getElementById('c1')
+      const ctx = canvas.getContext('2d')
+      const lineHeight = 30
+      const maxWidth = canvas.width
+      const str = '哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄哈撒给啊阿嗄'
+      ctx.font = '20px 宋体'
+      ctx.textAlign = 'left'
+      ctx.textBaseline = 'top'
+      const { lines, text } = str.split('').reduce((p, c) => {
+        const text = p.text
+        // 测量当前文字宽度
+        const currentWidth = ctx.measureText(text).width
+        if (currentWidth <= maxWidth) {
+          p.text += c
+        } else {
+          p.lines.push(text)
+          p.text = ''
+          p.text += c
+        }
+        return p
+      }, { lines: [], text: '' })
+      lines.push(text)
+      // 太长会超出，我们需要进行计算然后截取
+      lines.forEach((text, index) => {
+        ctx.fillText(text, 0, lineHeight * index)
+      })
+
+    }
+  </script>
+</body>
+
+</html>

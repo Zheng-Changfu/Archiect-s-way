@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      display: block;
+      margin: 100px auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    /*  draw1()
+     function draw1() {
+       const canvas = document.getElementById('c1')
+       const ctx = canvas.getContext('2d')
+       // beginPath会清除上一次的路径重新开始
+       ctx.beginPath()
+       ctx.moveTo(100, 100)
+       ctx.lineTo(300, 100)
+       ctx.strokeStyle = 'red'
+       ctx.stroke()
+ 
+       ctx.beginPath()
+       ctx.moveTo(100, 300)
+       ctx.lineTo(300, 300)
+       ctx.strokeStyle = 'green'
+       ctx.stroke()
+     } */
+
+    draw2()
+    function draw2() {
+      const canvas = document.getElementById('c1')
+      const ctx = canvas.getContext('2d')
+      ctx.beginPath()
+      ctx.moveTo(100, 300)
+      ctx.lineTo(300, 300)
+      ctx.lineTo(300, 100)
+
+      ctx.lineWidth = 10
+      // 设置线条端点形状
+      ctx.lineCap = 'round' // butt默认值 round圆角 square方块
+      // 设置线条连接点形状
+      ctx.lineJoin = 'round' // miter默认值 round圆角
+      ctx.strokeStyle = 'skyblue'
+      ctx.stroke()
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      margin: 100px auto;
+      display: block;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    /* function draw1() {
+      const canvas = document.getElementById('c1')
+      const ctx = canvas.getContext('2d')
+
+      // 路径操作不会真实绘制，只是记录路径信息
+      ctx.moveTo(100, 100) // 起点
+      ctx.lineTo(300, 200) // 目标
+
+      ctx.stroke() // 边框、描边
+      // ctx.fill() // 无效,以为fill需要填充一块区域，一条线组成不了
+    }
+    draw1() */
+
+    function draw2() {
+      const canvas = document.getElementById('c1')
+      const ctx = canvas.getContext('2d')
+
+      ctx.moveTo(100, 100)
+      ctx.lineTo(300, 200)
+      ctx.lineTo(300, 100)
+      ctx.lineTo(100, 200)
+      // ctx.closePath() // 手动闭合区域
+
+      // ctx.stroke()
+      ctx.fill() // 填充区域并且自动闭合区域
+
+    }
+    draw2()
+
+
+  </script>
+</body>
+
+</html>
