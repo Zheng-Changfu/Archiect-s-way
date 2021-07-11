@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      display: block;
+      margin: 100px auto;
+      border: 1px solid #cccccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    // #ccc #cccccc56 #cccccc00
+    const canvas = document.getElementById('c1')
+    const ctx = canvas.getContext('2d')
+    function deg2Arc(deg) {
+      return deg * (Math.PI / 180)
+    }
+    tick()
+    setInterval(tick, 1000);
+    function tick() {
+      // 清空画布
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      // 表盘
+      drawDial()
+      function drawDial() {
+        let x1 = 400, y1 = 300, r1 = 200,
+          x2 = 400, y2 = 300, r2 = 250,
+          lineWidth = 50;
+        // 里层表盘
+        ctx.beginPath()
+        // 里外层表盘渐变
+        const gradient = ctx.createRadialGradient(
+          x1, y1, r1,
+          x2, y2, r2 + lineWidth
+        )
+        gradient.addColorStop(0, '#d9f7be')
+        gradient.addColorStop(0.5, '#b5f5ec')
+        gradient.addColorStop(1, '#bae7ff')
+
+        ctx.arc(x1, y1, r1 + lineWidth / 2, 0, deg2Arc(360))
+        ctx.lineWidth = lineWidth // lineWidth是在线的中间一边一半
+        ctx.strokeStyle = gradient
+        ctx.stroke()
+
+        // 外层表盘
+        ctx.beginPath()
+        ctx.arc(x2, y2, r2 - lineWidth / 2, 0, deg2Arc(360))
+        ctx.stroke()
+
+        // 里层线框
+        ctx.beginPath()
+        ctx.arc(x2, y2, r1, 0, deg2Arc(360))
+        ctx.strokeStyle = '#000'
+        ctx.lineWidth = 1
+        ctx.stroke()
+      }
+      // 刻度
+      drawCali()
+      function drawCali() {
+        /*
+          let x = 400, y = 300, r = 200
+          以左上角为原点
+            ctx.translate(x + 0,y + 0)
+            ctx.rotate(deg2Arc(30))
+            ctx.fillRect(0,0,100,100)
+  
+          以右上角为原点
+            ctx.translate(x + w,y + 0)
+            ctx.rotate(deg2Arc(30))
+            ctx.fillRect(-w,0,100,100)
+  
+          以中心点为原点
+            ctx.translate(x + w / 2, y + h / 2)
+            ctx.rotate(deg2Arc(30))
+            ctx.fillRect(-w / 2, -h / 2,100,100)
+  
+          以任意点为原点
+            ctx.translate(x + ox,y + oy)
+            ctx.rotate(deg2Arc(30))
+            ctx.fillRect(-ox,-oy,100,100)
+  
+          说明:
+            以任意点进行旋转
+            其实就是物体位置基于目标位置的距离
+            例子:
+              想以物体左上角旋转
+              物体的左上角为(-0,-0)
+              
+              想以物体的中心点旋转
+              物体的中心点为(-w / 2, - h / 2)
+  
+              想以物体的右下角旋转
+              物体的右下角为(-w,-h)
+  
+              物体想以圆的中心点旋转
+              圆的中心点(-w / 2,r)
+        */
+
+        let x = 400, y = 300, r = 200;
+        for (let i = 0; i < 60; i++) {
+          let w = i % 5 === 0 ? 6 : 2
+          let h = i % 5 === 0 ? 20 : 10
+          let ox = w / 2, oy = r
+          ctx.save()
+          ctx.beginPath()
+          ctx.translate(x - w / 2 + ox, y - r + oy)
+          ctx.rotate(deg2Arc(i * 6))
+          // ctx.fillRect(x, y - r, w, h)
+          ctx.fillRect(-ox, -oy, w, h)
+          ctx.restore()
+        }
+      }
+      // 文字
+      // 指针
+      drawPoint()
+      function drawPoint() {
+        let x = 400, y = 300, r = 200
+        const date = new Date()
+        const second = date.getSeconds()
+        const minutes = date.getMinutes() + second / 60
+        const hour = date.getHours() + minutes / 60
+
+        const hourDeg = 360 / 12 * hour
+        const minuteDeg = 360 / 60 * minutes
+        const secondDeg = 360 / 60 * second
+        console.log(hourDeg, minuteDeg, secondDeg)
+        // 时针
+        draw(hourDeg, 'hour')
+        // 分针
+        draw(minuteDeg, 'minute')
+        // 秒针
+        draw(secondDeg, 'second')
+        function draw(deg = 0, type = 'hour') {
+          const info = {
+            hour: { color: '#ccc', offset: 10, h: 50 },
+            minute: { color: 'skyblue', offset: 7, h: 40 },
+            second: { color: 'red', offset: 5, h: 30 }
+          }
+          const { color, offset, h } = info[type]
+          ctx.save()
+          ctx.beginPath()
+          // 以中心点进行旋转
+          // ctx.moveTo(x - offset, y)
+          // ctx.lineTo(x, y + offset)
+          // ctx.lineTo(x + offset, y)
+          // ctx.lineTo(x, y - r + h)
+          ctx.translate(x, y)
+          ctx.rotate(deg2Arc(deg))
+          ctx.moveTo(-offset, 0)
+          ctx.lineTo(0, offset)
+          ctx.lineTo(offset, 0)
+          ctx.lineTo(0, -r + h)
+          ctx.fillStyle = color
+          ctx.fill()
+          ctx.restore()
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
