@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      display: block;
+      border: 1px solid #ccc;
+      margin: 100px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    /* draw1()
+
+    function draw1() {
+      const canvas = document.getElementById('c1')
+      const ctx = canvas.getContext('2d')
+      ctx.fillStyle = 'skyblue'
+      ctx.fillRect(100, 100, 300, 200)
+    } */
+
+    /*  draw2()
+     function draw2() {
+       const canvas = document.getElementById('c1')
+       const ctx = canvas.getContext('2d')
+       ctx.beginPath()
+       ctx.strokeStyle = 'skyblue'
+       ctx.strokeRect(100, 100, 300, 200)
+     } */
+
+    /* draw3()
+    function draw3() {
+      const canvas = document.getElementById('c1')
+      const ctx = canvas.getContext('2d')
+
+      ctx.beginPath()
+      ctx.rect(100, 100, 300, 200)
+      ctx.moveTo(400, 400)
+      ctx.lineTo(0, 200)
+
+      ctx.strokeStyle = 'pink'
+      ctx.stroke()
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    } */
+
+
+    draw4()
+    function draw4() {
+      const canvas = document.getElementById('c1')
+      const ctx = canvas.getContext('2d')
+      let x = 100
+
+      setInterval(() => {
+        // 清空画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        // 只是清除路径信息，并没有清空画布状态
+        ctx.beginPath()
+        ctx.moveTo(x++, 100)
+        ctx.lineTo(300, 300)
+        ctx.stroke()
+      }, 16)
+    }
+
+  </script>
+</body>
+
+</html>

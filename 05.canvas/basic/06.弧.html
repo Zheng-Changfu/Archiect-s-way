@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      display: block;
+      margin: 100px auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById('c1')
+    const ctx = canvas.getContext('2d')
+
+    draw1()
+    function draw1() {
+      ctx.beginPath()
+      ctx.moveTo(400, 300)
+      ctx.arc(400, 300, 300, 0, deg2Arc(90))
+      ctx.closePath()
+      ctx.stroke()
+    }
+    /*
+      角度 : 0 ~ 360
+      弧度 : 0 ~ 2π
+      角度 --> 弧度 换算 : 360° = 2π  180° = π  1° = π / 180  n° = n * (π / 180)
+      弧度 --> 角度 换算 : 2π = 360° π = 180° 1弧度 = 180 / π  n弧度 = n * (180 / π)
+      */
+    // 角度 --> 弧度
+    function deg2Arc(deg) {
+      return deg * (Math.PI / 180)
+    }
+
+    // 弧度 --> 角度
+    function arc2Deg(arc) {
+      return arc * (180 / Math.PI)
+    }
+  </script>
+</body>
+
+</html>

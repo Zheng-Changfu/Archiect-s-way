@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      display: block;
+      margin: 100px auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById('c1')
+    const ctx = canvas.getContext('2d')
+    const values = [
+      { value: 300, color: 'green' },
+      { value: 200, color: 'pink' },
+      { value: 500, color: 'skyblue' },
+      { value: 500, color: 'yellow' },
+      { value: 100, color: '#ccc' },
+    ]
+
+    draw1()
+    function draw1() {
+      const total = values.reduce((p, c) => p + c.value, 0)
+      let x = canvas.width / 2, y = canvas.height / 2, r = y
+      // 处理信息
+      const { list } = values.reduce((p, c) => {
+        const ang = 360 * (c.value / total)
+        p.list.push({
+          ...c,
+          startAng: p.ang,
+          endAng: ang + p.ang
+        })
+        p.ang += ang
+        return p
+      }, { list: [], ang: 0 })
+
+
+      // 渲染饼图
+      list.forEach(item => {
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.arc(x, y, r, deg2Arc(item.startAng), deg2Arc(item.endAng))
+        ctx.fillStyle = item.color
+        ctx.fill()
+      })
+    }
+
+    function deg2Arc(deg) {
+      return deg * (Math.PI / 180)
+    }
+  </script>
+</body>
+
+</html>

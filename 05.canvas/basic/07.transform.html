@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #c1 {
+      display: block;
+      margin: 100px auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c1" width="800" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById('c1')
+    const ctx = canvas.getContext('2d')
+
+
+    /*
+      canvas中所有的transform操作，中心点都在canvas的左上角
+      canvas中所有的transform操作，都是反的
+      canvas中rotate是会进行叠加的
+      可以使用save和restore来清除
+      比如:
+        ctx.scale(2,2)
+        ctx.translate(100,100)
+      其实内部是先进行translate，然后进行scale的
+
+
+      解决方案:
+        将要绘制的图案中心点画到canvas的左上角
+        然后进行旋转、缩放等操作
+        最后进行translate到原来位置
+    */
+
+
+    /*  let x = 400,
+       y = 300,
+       w = 200,
+       h = 100 */
+
+
+    /* draw1()
+    function draw1() {
+      // 按照画布的左上角进行旋转的
+      // ctx.rotate(30 * (Math.PI / 180))
+      ctx.fillRect(x, y, w, h)
+      ctx.restore()
+    } */
+
+    /*  draw2()
+     function draw2() {
+       ctx.translate(w / 2 + x, h / 2 + y)
+       ctx.rotate(30 * (Math.PI / 180))
+       ctx.fillRect(-w / 2, -h / 2, w, h)
+     } */
+
+
+    /* draw3()
+    function draw3() {
+      ctx.fillStyle = 'skyblue'
+      ctx.save()
+      ctx.translate(w / 2 + x, h / 2 + y)
+      ctx.rotate(30 * (Math.PI / 180))
+      ctx.fillRect(-w / 2, -h / 2, w, h)
+      ctx.restore()
+      ctx.fillStyle = 'red'
+      ctx.fillRect(200, 200, w, h)
+    } */
+
+    draw4()
+    function draw4() {
+      ctx.save()
+      ctx.beginPath()
+      ctx.moveTo(100, 100)
+      ctx.lineTo(300, 300)
+      ctx.lineTo(100, 300)
+      ctx.closePath()
+      ctx.strokeStyle = 'skyblue'
+      ctx.stroke()
+      ctx.restore()
+    }
+
+  </script>
+</body>
+
+</html>
