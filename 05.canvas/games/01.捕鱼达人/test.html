@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <canvas id="c1" width="1024px" height="768px"></canvas>
+  <script>
+    const canvas = document.getElementById('c1')
+    const ctx = canvas.getContext('2d')
+
+
+    canvas.addEventListener('mousemove', e => {
+      const x = e.clientX
+      const y = e.clientY
+      rect(x, y, 300, 200)
+    })
+    rect(100, 100, 300, 200)
+
+    function rect(x, y, w, h) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.fillRect(x, y, w, h)
+    }
+  </script>
+</body>
+
+</html>

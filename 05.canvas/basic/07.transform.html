@@ -28,32 +28,32 @@
       canvas中rotate是会进行叠加的
       可以使用save和restore来清除
       比如:
-        ctx.scale(2,2)
+         ctx.scale(2,2)
         ctx.translate(100,100)
       其实内部是先进行translate，然后进行scale的
 
 
       解决方案:
         将要绘制的图案中心点画到canvas的左上角
-        然后进行旋转、缩放等操作
-        最后进行translate到原来位置
+         然后进行旋转、缩放等操作
+        最后进行t  ranslate到原来位置
     */
 
 
     /*  let x = 400,
        y = 300,
        w = 200,
-       h = 100 */
-
-
+       h = 100 */  
+ 
+ 
     /* draw1()
     function draw1() {
       // 按照画布的左上角进行旋转的
       // ctx.rotate(30 * (Math.PI / 180))
       ctx.fillRect(x, y, w, h)
-      ctx.restore()
+      ctx.resto re()
     } */
-
+ 
     /*  draw2()
      function draw2() {
        ctx.translate(w / 2 + x, h / 2 + y)
