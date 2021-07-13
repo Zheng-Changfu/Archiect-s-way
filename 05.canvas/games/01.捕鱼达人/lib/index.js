@@ -34,14 +34,15 @@ function initCanvas (id) {
 // 注册事件
 function registerListener (el) {
   let handles = {
-    mousemove: {
-      x: 0,
-      y: 0
-    }
+    mousemove: {},
+    click: {}
   }
   el.addEventListener('mousemove', (e) => {
     handles.mousemove.x = e.clientX
     handles.mousemove.y = e.clientY
+  })
+  el.addEventListener('click', e => {
+
   })
   return handles
 }

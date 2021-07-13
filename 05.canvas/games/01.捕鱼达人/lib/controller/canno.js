@@ -9,8 +9,6 @@ class Cannocontroller {
     this.cannoNameEndFix = 'png'
     // 图片详情
     this.imgInfo = {}
-    // 弧度
-    this.arc = 0
   }
   // 安装炮台底座
   installCannoBase = (data, options) => {
@@ -43,16 +41,20 @@ class Cannocontroller {
           4. 弧度 === tan(对边 / 临边)
     */
     const { w, h, img, W, H, handlesInfo: { mousemove } } = info
+    const canvas = ctx.canvas
+    const offsetLeft = canvas.offsetLeft
+    const offsetTop = canvas.offsetTop
     const x = (W - w) / 2 + 43, y = H - h / 4 + 20
-    const a = x - mousemove.x
-    const b = y - mousemove.y
-    const arc = Math.atan2(b, a) - Math.PI / 2 // 旋转的弧度值,canvas默认在3点钟位置为起点，视觉是在12点位置为起点
+    const a = x + offsetLeft - mousemove.x + w / 2
+    const b = y + offsetTop - mousemove.y
+    const arc = Math.atan2(b, a) - Math.PI / 2
+    ctx.save()
     ctx.translate(x + w / 2, y + h / 10)
     ctx.rotate(arc)
     ctx.drawImage(
       img,
-      0, 0, w, h / 5,
-      -w / 2, -h / 10, w, h / 5
+      0, h / 5 * 0, w, h / 5,
+      -w / 2, -(h / 10), w, h / 5
     )
     ctx.restore()
   }

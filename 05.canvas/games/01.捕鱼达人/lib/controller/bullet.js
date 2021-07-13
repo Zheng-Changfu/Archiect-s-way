@@ -17,5 +17,6 @@ class Bulltecontroller {
     // 要将炮弹绘制到炮台上
     ctx.drawImage(img, x, y, w, h)
   }
+
 }
 export default new Bulltecontroller

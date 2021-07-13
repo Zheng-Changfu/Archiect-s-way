@@ -547,9 +547,7 @@
 
       this.cannoNameEndFix = 'png'; // 图片详情
 
-      this.imgInfo = {}; // 弧度
-
-      this.arc = 0;
+      this.imgInfo = {};
     } // 安装炮台底座
 
 
@@ -598,15 +596,18 @@
           mousemove
         }
       } = info;
+      const canvas = exports.ctx.canvas;
+      const offsetLeft = canvas.offsetLeft;
+      const offsetTop = canvas.offsetTop;
       const x = (W - w) / 2 + 43,
             y = H - h / 4 + 20;
-      const a = x - mousemove.x;
-      const b = y - mousemove.y;
-      const arc = Math.atan2(b, a) - Math.PI / 2; // 旋转的弧度值,canvas默认在3点钟位置为起点，视觉是在12点位置为起点
-
+      const a = x + offsetLeft - mousemove.x + w / 2;
+      const b = y + offsetTop - mousemove.y;
+      const arc = Math.atan2(b, a) - Math.PI / 2;
+      exports.ctx.save();
       exports.ctx.translate(x + w / 2, y + h / 10);
       exports.ctx.rotate(arc);
-      exports.ctx.drawImage(img, 0, 0, w, h / 5, -w / 2, -h / 10, w, h / 5);
+      exports.ctx.drawImage(img, 0, h / 5 * 0, w, h / 5, -w / 2, -(h / 10), w, h / 5);
       exports.ctx.restore();
     };
   }
@@ -670,8 +671,9 @@
 
       this.type = options.type || 1; // 安装
 
-      this.installCannoBase();
-      this.installCanno(); // 安装炮弹
+      this.install(); // this.installCannoBase()
+      // this.installCanno()
+      // 安装炮弹
       // this.installBullte()
     } // 安装炮台底座
 
@@ -684,12 +686,17 @@
       cannoInstance.installCanno(this.data, this.type);
     }; // 安装炮弹
 
-    installBullte = () => {
-      const bullteInstance = this.bullteInstance ? this.bullteInstance : createInstance(Bullet, this.data, {
-        type: this.type
-      });
-      bullteInstance.installBullte();
-      this.bullteInstance = bullteInstance;
+    installBullte = () => {};
+    install = () => {
+      window.requestAnimationFrame(this.draw); // setInterval(() => {
+      // }, 16)
+    };
+    draw = () => {
+      const canvas = exports.ctx.canvas;
+      exports.ctx.clearRect(0, 0, canvas.width, canvas.height);
+      this.installCannoBase();
+      this.installCanno();
+      window.requestAnimationFrame(this.install);
     };
   }
 
@@ -747,15 +754,14 @@
 
   function registerListener(el) {
     let handles = {
-      mousemove: {
-        x: 0,
-        y: 0
-      }
+      mousemove: {},
+      click: {}
     };
     el.addEventListener('mousemove', e => {
       handles.mousemove.x = e.clientX;
       handles.mousemove.y = e.clientY;
     });
+    el.addEventListener('click', e => {});
     return handles;
   }
 

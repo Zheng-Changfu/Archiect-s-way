@@ -1,6 +1,7 @@
 import { cannoInstance } from '../controller/index'
 import { createInstance } from '../utils'
 import Bullet from './bullet'
+import { ctx } from '../index'
 
 // 炮台类
 class Canno {
@@ -9,8 +10,9 @@ class Canno {
     // 炮台有分颜色 1-7
     this.type = options.type || 1
     // 安装
-    this.installCannoBase()
-    this.installCanno()
+    this.install()
+    // this.installCannoBase()
+    // this.installCanno()
     // 安装炮弹
     // this.installBullte()
   }
@@ -24,11 +26,20 @@ class Canno {
   }
   // 安装炮弹
   installBullte = () => {
-    const bullteInstance = this.bullteInstance
-      ? this.bullteInstance
-      : createInstance(Bullet, this.data, { type: this.type })
-    bullteInstance.installBullte()
-    this.bullteInstance = bullteInstance
+
+  }
+  install = () => {
+    window.requestAnimationFrame(this.draw)
+    // setInterval(() => {
+
+    // }, 16)
+  }
+  draw = () => {
+    const canvas = ctx.canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    this.installCannoBase()
+    this.installCanno()
+    window.requestAnimationFrame(this.install)
   }
 }
 export default Canno
