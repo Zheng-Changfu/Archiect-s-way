@@ -1,4 +1,6 @@
 import { ctx } from '../index'
+import Bullte from './bullet'
+import bullet from './bullet'
 class Cannocontroller {
   constructor() {
     // 底座名称
@@ -9,6 +11,10 @@ class Cannocontroller {
     this.cannoNameEndFix = 'png'
     // 图片详情
     this.imgInfo = {}
+    // 
+    this.frame = 0
+    this.bulltes = [] // {type:?,x:?,y:?,arc:?}
+    this.positionInfo = {}
   }
   // 安装炮台底座
   installCannoBase = (data, options) => {
@@ -30,6 +36,7 @@ class Cannocontroller {
     const info = data[key]
     this.drawCanno(info)
     this.imgInfo[key] = info
+    this.positionInfo.type = type
   }
   // 绘制炮台
   drawCanno = (info) => {
@@ -53,10 +60,42 @@ class Cannocontroller {
     ctx.rotate(arc)
     ctx.drawImage(
       img,
-      0, h / 5 * 0, w, h / 5,
+      0, h / 5 * this.frame, w, h / 5,
       -w / 2, -(h / 10), w, h / 5
     )
     ctx.restore()
+    this.positionInfo = {
+      ...this.positionInfo,
+      x: x + w / 2,
+      y: y + h / 10,
+      arc
+    }
+  }
+
+  // 安装炮弹/发射炮弹
+  installBullte = (data, type) => {
+    // 安装炮弹
+    Bullte.installBullte(data, type, this.bulltes)
+    // 发射炮弹
+    Bullte.launchBullte(this.bulltes)
+  }
+
+  // 添加炮弹
+  addBullte = () => {
+    this.bulltes.push(this.positionInfo)
+  }
+
+  // 控制炮台发送炮弹动画
+  setFrame = () => {
+    window.requestAnimationFrame(this.transition)
+  }
+  transition = () => {
+    this.frame++
+    if (this.frame >= 5) {
+      this.frame = 0
+      return
+    }
+    window.requestAnimationFrame(this.setFrame)
   }
 }
 export default new Cannocontroller

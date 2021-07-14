@@ -538,6 +538,58 @@
     });
   };
 
+  class Bulltecontroller {
+    constructor() {
+      this.baseName = 'bullet';
+      this.endType = 'png';
+      this.speed = 5;
+    } // 安装炮弹
+
+
+    installBullte = (data, type, bulltes) => {
+      const key = `${this.baseName}${type}.${this.endType}`;
+      const info = data[key];
+      bulltes.forEach(bullte => {
+        this.drawBullte(info, bullte);
+      });
+    }; // 绘制炮弹
+
+    drawBullte = (info, bullte) => {
+      const {
+        w,
+        h,
+        img,
+        W,
+        H
+      } = info;
+      const {
+        x,
+        y,
+        type,
+        arc
+      } = bullte;
+      exports.ctx.save();
+      exports.ctx.translate(x, y);
+      exports.ctx.rotate(arc); // 要将炮弹绘制到炮台上
+
+      exports.ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      exports.ctx.restore();
+    }; // 发射炮弹
+
+    launchBullte(bulltes) {
+      bulltes.forEach(bullet => {
+        // 已知角度，自定义速度(斜边)，求对边和临边
+        const x = Math.sin(bullet.arc) * this.speed;
+        const y = Math.cos(bullet.arc) * this.speed;
+        bullet.x += x;
+        bullet.y -= y;
+      });
+    }
+
+  }
+
+  var Bullte = new Bulltecontroller();
+
   class Cannocontroller {
     constructor() {
       // 底座名称
@@ -547,7 +599,12 @@
 
       this.cannoNameEndFix = 'png'; // 图片详情
 
-      this.imgInfo = {};
+      this.imgInfo = {}; // 
+
+      this.frame = 0;
+      this.bulltes = []; // {type:?,x:?,y:?,arc:?}
+
+      this.positionInfo = {};
     } // 安装炮台底座
 
 
@@ -576,6 +633,7 @@
       const info = data[key];
       this.drawCanno(info);
       this.imgInfo[key] = info;
+      this.positionInfo.type = type;
     }; // 绘制炮台
 
     drawCanno = info => {
@@ -607,44 +665,42 @@
       exports.ctx.save();
       exports.ctx.translate(x + w / 2, y + h / 10);
       exports.ctx.rotate(arc);
-      exports.ctx.drawImage(img, 0, h / 5 * 0, w, h / 5, -w / 2, -(h / 10), w, h / 5);
+      exports.ctx.drawImage(img, 0, h / 5 * this.frame, w, h / 5, -w / 2, -(h / 10), w, h / 5);
       exports.ctx.restore();
+      this.positionInfo = { ...this.positionInfo,
+        x: x + w / 2,
+        y: y + h / 10,
+        arc
+      };
+    }; // 安装炮弹/发射炮弹
+
+    installBullte = (data, type) => {
+      // 安装炮弹
+      Bullte.installBullte(data, type, this.bulltes); // 发射炮弹
+
+      Bullte.launchBullte(this.bulltes);
+    }; // 添加炮弹
+
+    addBullte = () => {
+      this.bulltes.push(this.positionInfo);
+    }; // 控制炮台发送炮弹动画
+
+    setFrame = () => {
+      window.requestAnimationFrame(this.transition);
+    };
+    transition = () => {
+      this.frame++;
+
+      if (this.frame >= 5) {
+        this.frame = 0;
+        return;
+      }
+
+      window.requestAnimationFrame(this.setFrame);
     };
   }
 
   var cannoInstance = new Cannocontroller();
-
-  class Bulltecontroller {
-    constructor() {
-      this.baseName = 'bullet';
-      this.endType = 'png';
-    } // 安装炮弹
-
-
-    installBullte(data, type) {
-      const key = `${this.baseName}${type}.${this.endType}`;
-      const info = data[key];
-      this.drawBullte(info);
-    } // 绘制炮弹
-
-
-    drawBullte(info) {
-      const {
-        w,
-        h,
-        img,
-        W,
-        H
-      } = info;
-      const x = (W - w) / 2 + 40,
-            y = H - h; // 要将炮弹绘制到炮台上
-
-      exports.ctx.drawImage(img, x, y, w, h);
-    }
-
-  }
-
-  var bulletInstance = new Bulltecontroller();
 
   /**
    * 工具函数
@@ -652,29 +708,29 @@
   const createInstance = (instance, options = {}) => {
     return new instance(options);
   };
-
-  class Bullet {
-    constructor(data, options = {}) {
-      this.data = data;
-      this.type = options.type || 1;
-    } // 安装炮弹
-
-
-    installBullte = () => {
-      bulletInstance.installBullte(this.data, this.type);
+  function registerListener(eventName, el, cb) {
+    let handles = {
+      mousemove: {},
+      click: {}
     };
+    el.addEventListener(eventName, e => {
+      handles[eventName] = {
+        x: e.clientX,
+        y: e.clientY
+      };
+      cb && cb(e);
+    });
+    return handles;
   }
 
   class Canno {
     constructor(data, options = {}) {
       this.data = data; // 炮台有分颜色 1-7
 
-      this.type = options.type || 1; // 安装
+      this.type = options.type || 1;
+      this.addBullte(); // 安装
 
-      this.install(); // this.installCannoBase()
-      // this.installCanno()
-      // 安装炮弹
-      // this.installBullte()
+      this.install();
     } // 安装炮台底座
 
 
@@ -686,15 +742,25 @@
       cannoInstance.installCanno(this.data, this.type);
     }; // 安装炮弹
 
-    installBullte = () => {};
+    installBullte = () => {
+      cannoInstance.installBullte(this.data, this.type);
+    }; // 添加炮弹
+
+    addBullte = () => {
+      registerListener('click', exports.ctx.canvas, () => {
+        cannoInstance.addBullte();
+        cannoInstance.setFrame();
+      });
+    };
     install = () => {
-      window.requestAnimationFrame(this.draw); // setInterval(() => {
-      // }, 16)
+      window.requestAnimationFrame(this.draw);
     };
     draw = () => {
       const canvas = exports.ctx.canvas;
-      exports.ctx.clearRect(0, 0, canvas.width, canvas.height);
+      exports.ctx.clearRect(0, 0, canvas.width, canvas.height); // 绘制顺序，后面会覆盖前面
+
       this.installCannoBase();
+      this.installBullte();
       this.installCanno();
       window.requestAnimationFrame(this.install);
     };
@@ -702,8 +768,7 @@
 
   function initAllInstance() {
     return {
-      Canno,
-      Bullet
+      Canno
     };
   }
 
@@ -742,27 +807,13 @@
     const canvas = document.getElementById(id);
     const ctx = canvas.getContext('2d'); // 注册事件
 
-    const handlesInfo = registerListener(canvas);
+    const handlesInfo = registerListener('mousemove', canvas);
     return {
       ctx,
       W: canvas.width,
       H: canvas.height,
       handlesInfo
     };
-  } // 注册事件
-
-
-  function registerListener(el) {
-    let handles = {
-      mousemove: {},
-      click: {}
-    };
-    el.addEventListener('mousemove', e => {
-      handles.mousemove.x = e.clientX;
-      handles.mousemove.y = e.clientY;
-    });
-    el.addEventListener('click', e => {});
-    return handles;
   }
 
   Object.defineProperty(exports, '__esModule', { value: true });

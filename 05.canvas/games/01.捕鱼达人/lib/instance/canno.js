@@ -1,7 +1,7 @@
 import { cannoInstance } from '../controller/index'
-import { createInstance } from '../utils'
-import Bullet from './bullet'
+import { createInstance, registerListener } from '../utils'
 import { ctx } from '../index'
+import bullet from '../controller/bullet'
 
 // 炮台类
 class Canno {
@@ -9,12 +9,9 @@ class Canno {
     this.data = data
     // 炮台有分颜色 1-7
     this.type = options.type || 1
+    this.addBullte()
     // 安装
     this.install()
-    // this.installCannoBase()
-    // this.installCanno()
-    // 安装炮弹
-    // this.installBullte()
   }
   // 安装炮台底座
   installCannoBase = () => {
@@ -26,18 +23,24 @@ class Canno {
   }
   // 安装炮弹
   installBullte = () => {
-
+    cannoInstance.installBullte(this.data, this.type)
+  }
+  // 添加炮弹
+  addBullte = () => {
+    registerListener('click', ctx.canvas, () => {
+      cannoInstance.addBullte()
+      cannoInstance.setFrame()
+    })
   }
   install = () => {
     window.requestAnimationFrame(this.draw)
-    // setInterval(() => {
-
-    // }, 16)
   }
   draw = () => {
     const canvas = ctx.canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+    // 绘制顺序，后面会覆盖前面
     this.installCannoBase()
+    this.installBullte()
     this.installCanno()
     window.requestAnimationFrame(this.install)
   }
