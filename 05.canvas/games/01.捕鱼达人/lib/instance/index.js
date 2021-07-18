@@ -4,3 +4,8 @@ export function initAllInstance () {
     Canno,
   }
 }
+function fn () {
+  return new Promise((resolve, reject) => {
+    
+  })
+}

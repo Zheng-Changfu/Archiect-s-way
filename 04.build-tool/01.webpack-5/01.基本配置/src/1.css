@@ -1,0 +1,7 @@
+@import './2.css';
+.box {
+  width: 100px;
+  height: 100px;
+  background-image: url('../raw-loader.png');
+  background-size: contain;
+}
