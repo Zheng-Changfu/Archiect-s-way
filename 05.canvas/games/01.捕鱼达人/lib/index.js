@@ -31,4 +31,9 @@ function initCanvas (id) {
   }
 }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
 

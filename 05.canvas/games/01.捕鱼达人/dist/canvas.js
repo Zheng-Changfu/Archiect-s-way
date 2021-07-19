@@ -538,6 +538,58 @@
     });
   };
 
+  class Bulltecontroller {
+    constructor() {
+      this.baseName = 'bullet';
+      this.endType = 'png';
+      this.speed = 5;
+    } // 安装炮弹
+
+
+    installBullte = (data, type, bulltes) => {
+      const key = `${this.baseName}${type}.${this.endType}`;
+      const info = data[key];
+      bulltes.forEach(bullte => {
+        this.drawBullte(info, bullte);
+      });
+    }; // 绘制炮弹
+
+    drawBullte = (info, bullte) => {
+      const {
+        w,
+        h,
+        img,
+        W,
+        H
+      } = info;
+      const {
+        x,
+        y,
+        type,
+        arc
+      } = bullte;
+      exports.ctx.save();
+      exports.ctx.translate(x, y);
+      exports.ctx.rotate(arc); // 要将炮弹绘制到炮台上
+
+      exports.ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      exports.ctx.restore();
+    }; // 发射炮弹
+
+    launchBullte(bulltes) {
+      bulltes.forEach(bullet => {
+        // 已知角度，自定义速度(斜边)，求对边和临边
+        const x = Math.sin(bullet.arc) * this.speed;
+        const y = Math.cos(bullet.arc) * this.speed;
+        bullet.x += x;
+        bullet.y -= y;
+      });
+    }
+
+  }
+
+  var Bullte = new Bulltecontroller();
+
   class Cannocontroller {
     constructor() {
       // 底座名称
@@ -547,9 +599,18 @@
 
       this.cannoNameEndFix = 'png'; // 图片详情
 
+<<<<<<< HEAD
       this.imgInfo = {}; // 炮台动画帧
 
       this.frame = 0;
+=======
+      this.imgInfo = {}; // 
+
+      this.frame = 0;
+      this.bulltes = []; // {type:?,x:?,y:?,arc:?}
+
+      this.positionInfo = {};
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
     } // 安装炮台底座
 
 
@@ -578,6 +639,7 @@
       const info = data[key];
       this.drawCanno(info, this.frame);
       this.imgInfo[key] = info;
+      this.positionInfo.type = type;
     }; // 绘制炮台
 
     drawCanno = (info, frame) => {
@@ -609,44 +671,46 @@
       exports.ctx.save();
       exports.ctx.translate(x + w / 2, y + h / 10);
       exports.ctx.rotate(arc);
+<<<<<<< HEAD
       exports.ctx.drawImage(img, 0, h / 5 * frame, w, h / 5, -w / 2, -(h / 10), w, h / 5);
+=======
+      exports.ctx.drawImage(img, 0, h / 5 * this.frame, w, h / 5, -w / 2, -(h / 10), w, h / 5);
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
       exports.ctx.restore();
+      this.positionInfo = { ...this.positionInfo,
+        x: x + w / 2,
+        y: y + h / 10,
+        arc
+      };
+    }; // 安装炮弹/发射炮弹
+
+    installBullte = (data, type) => {
+      // 安装炮弹
+      Bullte.installBullte(data, type, this.bulltes); // 发射炮弹
+
+      Bullte.launchBullte(this.bulltes);
+    }; // 添加炮弹
+
+    addBullte = () => {
+      this.bulltes.push(this.positionInfo);
+    }; // 控制炮台发送炮弹动画
+
+    setFrame = () => {
+      window.requestAnimationFrame(this.transition);
+    };
+    transition = () => {
+      this.frame++;
+
+      if (this.frame >= 5) {
+        this.frame = 0;
+        return;
+      }
+
+      window.requestAnimationFrame(this.setFrame);
     };
   }
 
   var cannoInstance = new Cannocontroller();
-
-  class Bulltecontroller {
-    constructor() {
-      this.baseName = 'bullet';
-      this.endType = 'png';
-    } // 安装炮弹
-
-
-    installBullte(data, type) {
-      const key = `${this.baseName}${type}.${this.endType}`;
-      const info = data[key];
-      this.drawBullte(info);
-    } // 绘制炮弹
-
-
-    drawBullte(info) {
-      const {
-        w,
-        h,
-        img,
-        W,
-        H
-      } = info;
-      const x = (W - w) / 2 + 40,
-            y = H - h; // 要将炮弹绘制到炮台上
-
-      exports.ctx.drawImage(img, x, y, w, h);
-    }
-
-  }
-
-  var bulletInstance = new Bulltecontroller();
 
   /**
    * 工具函数
@@ -654,6 +718,7 @@
   const createInstance = (instance, options = {}) => {
     return new instance(options);
   };
+<<<<<<< HEAD
   function registerListener(eventName, el) {
     let handles = {};
     handles[eventName] = {};
@@ -684,13 +749,29 @@
 
     removeBullte(bullte) {}
 
+=======
+  function registerListener(eventName, el, cb) {
+    let handles = {
+      mousemove: {},
+      click: {}
+    };
+    el.addEventListener(eventName, e => {
+      handles[eventName] = {
+        x: e.clientX,
+        y: e.clientY
+      };
+      cb && cb(e);
+    });
+    return handles;
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
   }
 
   class Canno {
     constructor(data, options = {}) {
       this.data = data; // 炮台有分颜色 1-7
 
-      this.type = options.type || 1; // 安装
+      this.type = options.type || 1;
+      this.addBullte(); // 安装
 
       this.install();
     } // 安装炮台底座
@@ -705,20 +786,33 @@
     }; // 安装炮弹
 
     installBullte = () => {
+<<<<<<< HEAD
       const bulletInstance = this.bulletInstance ? this.bulletInstance : createInstance(Bullet, {
         data: this.data,
         type: this.type
       });
       this.bulletInstance = bulletInstance;
       bulletInstance.installBullte(); // {type:?,arc:?,speed:?,x:?,y:?}
+=======
+      cannoInstance.installBullte(this.data, this.type);
+    }; // 添加炮弹
+
+    addBullte = () => {
+      registerListener('click', exports.ctx.canvas, () => {
+        cannoInstance.addBullte();
+        cannoInstance.setFrame();
+      });
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
     };
     install = () => {
       window.requestAnimationFrame(this.draw);
     };
     draw = () => {
       const canvas = exports.ctx.canvas;
-      exports.ctx.clearRect(0, 0, canvas.width, canvas.height);
+      exports.ctx.clearRect(0, 0, canvas.width, canvas.height); // 绘制顺序，后面会覆盖前面
+
       this.installCannoBase();
+      this.installBullte();
       this.installCanno();
       window.requestAnimationFrame(this.install);
     };
@@ -726,8 +820,7 @@
 
   function initAllInstance() {
     return {
-      Canno,
-      Bullet
+      Canno
     };
   }
 

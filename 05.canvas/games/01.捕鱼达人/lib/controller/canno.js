@@ -1,4 +1,6 @@
 import { ctx } from '../index'
+import Bullte from './bullet'
+import bullet from './bullet'
 class Cannocontroller {
   constructor() {
     // 底座名称
@@ -9,6 +11,7 @@ class Cannocontroller {
     this.cannoNameEndFix = 'png'
     // 图片详情
     this.imgInfo = {}
+<<<<<<< HEAD
     // 炮台动画帧
     this.frame = 0
     // 炮弹集合
@@ -17,6 +20,12 @@ class Cannocontroller {
     this.bullteNamePrefix = 'bullet'
     // 炮弹名称后缀
     this.bullteNameEndfix = 'png'
+=======
+    // 
+    this.frame = 0
+    this.bulltes = [] // {type:?,x:?,y:?,arc:?}
+    this.positionInfo = {}
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
   }
   // 安装炮台底座
   installCannoBase = (data, options) => {
@@ -38,6 +47,7 @@ class Cannocontroller {
     const info = data[key]
     this.drawCanno(info, this.frame)
     this.imgInfo[key] = info
+    this.positionInfo.type = type
   }
   // 绘制炮台
   drawCanno = (info, frame) => {
@@ -61,10 +71,46 @@ class Cannocontroller {
     ctx.rotate(arc)
     ctx.drawImage(
       img,
+<<<<<<< HEAD
       0, h / 5 * frame, w, h / 5,
+=======
+      0, h / 5 * this.frame, w, h / 5,
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
       -w / 2, -(h / 10), w, h / 5
     )
     ctx.restore()
+    this.positionInfo = {
+      ...this.positionInfo,
+      x: x + w / 2,
+      y: y + h / 10,
+      arc
+    }
+  }
+
+  // 安装炮弹/发射炮弹
+  installBullte = (data, type) => {
+    // 安装炮弹
+    Bullte.installBullte(data, type, this.bulltes)
+    // 发射炮弹
+    Bullte.launchBullte(this.bulltes)
+  }
+
+  // 添加炮弹
+  addBullte = () => {
+    this.bulltes.push(this.positionInfo)
+  }
+
+  // 控制炮台发送炮弹动画
+  setFrame = () => {
+    window.requestAnimationFrame(this.transition)
+  }
+  transition = () => {
+    this.frame++
+    if (this.frame >= 5) {
+      this.frame = 0
+      return
+    }
+    window.requestAnimationFrame(this.setFrame)
   }
 
   // 安装炮弹
