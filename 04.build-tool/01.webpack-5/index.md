@@ -46,8 +46,133 @@
 
 ### 6. css兼容性处理
 
+#### 6.1 安装
+
+```bash
+npm install postcss-loader autoprefixer -D
+```
+
+#### 6.2 配置
+
+![](\assets\postcss-loader.png) 
 
 
 
+![](\assets\postcss.config.js.png) 
+
+#### 6.3 结果
+
+![](\assets\postcss-loader-result.png) 
+
+### 7. js兼容性处理
+
+#### 7.1 安装
+
+```bash
+npm i babel-loader @babel/core @babel/preset-env -D
+```
+
+#### 7.2 包说明
+
+> babel-loader : 不知道如何处理和转换 js 代码，内部会调用 @babel/core
+>
+> @babel/core : 认识 js 代码，但是不知道怎么转换，内部会调用 @babel/preset-env
+>
+> @babel/preset-env : 插件的集合被打成了一个包，这个包就叫预设，可以将高级语法转换成低级语法
+
+	### 8. sourcemap(源映射)
+
+#### 8.1 基本认识
+
+| 关键字     | 含义                                        |
+| ---------- | ------------------------------------------- |
+| source-map | 产生.map的映射文件                          |
+| eval       | 使用eval函数包裹模块代码                    |
+| cheap      | 不包含列信息，也不包含loader的sourcemap     |
+| module     | 包含loader的sourcemap，否则无法映射到源文件 |
+| inline     | 将.map作为DataURL嵌入，不单独生成.map文件   |
+
+- 以上模式可以进行任意组合
+
+#### 8.2 开启source-map模式
+
+##### 8.2.1 源代码
+
+![](\assets\source-map.png) 
+
+##### 8.2.2 编译后目录
+
+![](\assets\source-map-dist.png) 
+
+##### 8.2.3 bundle.js
+
+![](\assets\source-map-bundle-code.png) 
+
+##### 8.2.4 bundle.js.map
+
+![](\assets\source-map-bundle-map-code.png) 
+
+##### 8.2.5 增加错误代码
+
+![](\assets\source-map-error-code.png) 
+
+##### 8.2.6 浏览器控制台定位到的错误信息
+
+![](\assets\source-map-error-code-result1.png) 
+
+![](\assets\source-map-error-code-result2.png) 
+
+#### 8.3 开启eval模式
+
+- eval 模式 和 source-map差不多，eval可以用来做缓存，生成的.map映射文件内容都是一样的
+
+##### 8.3.1 bundle.js
+
+![](\assets\eval.png) 
+
+#### 8.4 开启cheap-source-map模式
+
+##### 8.4.1 bundle.js
+
+![](\assets\source-map-bundle-code.png) 
+
+##### 8.4.2 bundle.js.map
+
+![](\assets\cheap-bundle-map-code.png) 
+
+##### 8.4.3 浏览器控制台定位到的错误信息
+
+![](\assets\cheap-error-code-result.png) 
+
+#### 8.5 开启inline-source-map模式
+
+##### 8.5.1 bundle.js(无.map文件)
+
+![](\assets\inline.png) 
+
+#### 8.6 source-map图解
+
+![](\assets\source-map-process.png) 
+
+#### 8.7 cheap-source-map图解
+
+![](\assets\cheap-source-map-process.png) 
+
+#### 8.8 cheap-module-source-map图解
+
+![](\assets\cheap-module-source-map-process.png) 
+
+#### 8.9 sourcemap最佳实践
+
+### 9. 打包第三方类库
+
+### 10. webpack-dev-server
+
+### 11. 提取css
+
+### 12. 三种hash值的区别
+
+### 13. px2rem-loader
 
 ## 2. 深入
+
