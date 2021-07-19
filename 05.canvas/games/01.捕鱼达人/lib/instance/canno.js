@@ -1,6 +1,4 @@
 import { cannoInstance } from '../controller/index'
-import { createInstance } from '../utils'
-import Bullet from './bullet'
 import { ctx } from '../index'
 
 // 炮台类
@@ -11,10 +9,6 @@ class Canno {
     this.type = options.type || 1
     // 安装
     this.install()
-    // this.installCannoBase()
-    // this.installCanno()
-    // 安装炮弹
-    // this.installBullte()
   }
   // 安装炮台底座
   installCannoBase = () => {
@@ -26,18 +20,17 @@ class Canno {
   }
   // 安装炮弹
   installBullte = () => {
-
+    cannoInstance.installBullte(this.data, this.type)
   }
   install = () => {
     window.requestAnimationFrame(this.draw)
-    // setInterval(() => {
-
-    // }, 16)
   }
   draw = () => {
     const canvas = ctx.canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+    // 绘制顺序层级关系 : 后面覆盖前面
     this.installCannoBase()
+    this.installBullte()
     this.installCanno()
     window.requestAnimationFrame(this.install)
   }
