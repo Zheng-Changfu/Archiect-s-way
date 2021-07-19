@@ -599,12 +599,18 @@
 
       this.cannoNameEndFix = 'png'; // 图片详情
 
+<<<<<<< HEAD
+      this.imgInfo = {}; // 炮台动画帧
+
+      this.frame = 0;
+=======
       this.imgInfo = {}; // 
 
       this.frame = 0;
       this.bulltes = []; // {type:?,x:?,y:?,arc:?}
 
       this.positionInfo = {};
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
     } // 安装炮台底座
 
 
@@ -631,12 +637,12 @@
     installCanno = (data, type) => {
       const key = `${this.cannoNamePrefix}${type}.${this.cannoNameEndFix}`;
       const info = data[key];
-      this.drawCanno(info);
+      this.drawCanno(info, this.frame);
       this.imgInfo[key] = info;
       this.positionInfo.type = type;
     }; // 绘制炮台
 
-    drawCanno = info => {
+    drawCanno = (info, frame) => {
       /*
           计算弧度:
             1. 我们知道炮台中心点位置 a
@@ -665,7 +671,11 @@
       exports.ctx.save();
       exports.ctx.translate(x + w / 2, y + h / 10);
       exports.ctx.rotate(arc);
+<<<<<<< HEAD
+      exports.ctx.drawImage(img, 0, h / 5 * frame, w, h / 5, -w / 2, -(h / 10), w, h / 5);
+=======
       exports.ctx.drawImage(img, 0, h / 5 * this.frame, w, h / 5, -w / 2, -(h / 10), w, h / 5);
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
       exports.ctx.restore();
       this.positionInfo = { ...this.positionInfo,
         x: x + w / 2,
@@ -708,6 +718,38 @@
   const createInstance = (instance, options = {}) => {
     return new instance(options);
   };
+<<<<<<< HEAD
+  function registerListener(eventName, el) {
+    let handles = {};
+    handles[eventName] = {};
+    el.addEventListener('mousemove', e => {
+      handles[eventName].x = e.clientX;
+      handles[eventName].y = e.clientY;
+    });
+    return handles;
+  }
+
+  class Bullet {
+    constructor(data, options = {}) {
+      this.data = data;
+      this.type = options.type || 1; // 装载炮弹的集合
+
+      this.bullets = [];
+    } // 安装炮弹
+
+
+    installBullte = () => {
+      bulletInstance.installBullte(this.data, this.type, this.bullets);
+    }; // 添加炮弹
+
+    addBullte(bullte) {
+      this.bullets.push(bullte);
+    } // 移除炮弹
+
+
+    removeBullte(bullte) {}
+
+=======
   function registerListener(eventName, el, cb) {
     let handles = {
       mousemove: {},
@@ -721,6 +763,7 @@
       cb && cb(e);
     });
     return handles;
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
   }
 
   class Canno {
@@ -743,6 +786,14 @@
     }; // 安装炮弹
 
     installBullte = () => {
+<<<<<<< HEAD
+      const bulletInstance = this.bulletInstance ? this.bulletInstance : createInstance(Bullet, {
+        data: this.data,
+        type: this.type
+      });
+      this.bulletInstance = bulletInstance;
+      bulletInstance.installBullte(); // {type:?,arc:?,speed:?,x:?,y:?}
+=======
       cannoInstance.installBullte(this.data, this.type);
     }; // 添加炮弹
 
@@ -751,6 +802,7 @@
         cannoInstance.addBullte();
         cannoInstance.setFrame();
       });
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
     };
     install = () => {
       window.requestAnimationFrame(this.draw);

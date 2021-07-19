@@ -11,10 +11,21 @@ class Cannocontroller {
     this.cannoNameEndFix = 'png'
     // 图片详情
     this.imgInfo = {}
+<<<<<<< HEAD
+    // 炮台动画帧
+    this.frame = 0
+    // 炮弹集合
+    this.bulltes = []
+    // 炮弹名称前缀
+    this.bullteNamePrefix = 'bullet'
+    // 炮弹名称后缀
+    this.bullteNameEndfix = 'png'
+=======
     // 
     this.frame = 0
     this.bulltes = [] // {type:?,x:?,y:?,arc:?}
     this.positionInfo = {}
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
   }
   // 安装炮台底座
   installCannoBase = (data, options) => {
@@ -34,12 +45,12 @@ class Cannocontroller {
   installCanno = (data, type) => {
     const key = `${this.cannoNamePrefix}${type}.${this.cannoNameEndFix}`
     const info = data[key]
-    this.drawCanno(info)
+    this.drawCanno(info, this.frame)
     this.imgInfo[key] = info
     this.positionInfo.type = type
   }
   // 绘制炮台
-  drawCanno = (info) => {
+  drawCanno = (info, frame) => {
     /*
         计算弧度:
           1. 我们知道炮台中心点位置 a
@@ -60,7 +71,11 @@ class Cannocontroller {
     ctx.rotate(arc)
     ctx.drawImage(
       img,
+<<<<<<< HEAD
+      0, h / 5 * frame, w, h / 5,
+=======
       0, h / 5 * this.frame, w, h / 5,
+>>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
       -w / 2, -(h / 10), w, h / 5
     )
     ctx.restore()
@@ -96,6 +111,14 @@ class Cannocontroller {
       return
     }
     window.requestAnimationFrame(this.setFrame)
+  }
+
+  // 安装炮弹
+  installBullte = (data, type) => {
+  }
+  // 绘制炮弹
+  drawBullte = () => {
+
   }
 }
 export default new Cannocontroller
