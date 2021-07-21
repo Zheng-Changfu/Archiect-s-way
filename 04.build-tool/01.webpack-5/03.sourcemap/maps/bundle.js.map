@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./03.sourcemap/src/index.js"],"names":["a","b","c","console","log"],"mappings":";;;;;AAAA,IAAIA,CAAC,GAAG,CAAR;AACA,IAAIC,CAAC,GAAG,CAAR;AACA,IAAIC,CAAC,GAAG,CAAR;AACAC,OAAO,CAACC,GAAR,CAAYJ,CAAZ,EAAeC,CAAf,EAAkBC,CAAlB,E","file":"bundle.js","sourcesContent":["let a = 1;\r\nlet b = 2;\r\nlet c = 3;\r\nconsole.log(a, b, c)"],"sourceRoot":""}

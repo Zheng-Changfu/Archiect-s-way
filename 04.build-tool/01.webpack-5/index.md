@@ -80,7 +80,7 @@ npm i babel-loader @babel/core @babel/preset-env -D
 >
 > @babel/preset-env : 插件的集合被打成了一个包，这个包就叫预设，可以将高级语法转换成低级语法
 
-	### 8. sourcemap(源映射)
+### 8. sourcemap(源映射)
 
 #### 8.1 基本认识
 
@@ -124,7 +124,7 @@ npm i babel-loader @babel/core @babel/preset-env -D
 
 #### 8.3 开启eval模式
 
-- eval 模式 和 source-map差不多，eval可以用来做缓存，生成的.map映射文件内容都是一样的
+- eval 模式 和 source-map差不多，eval可以用来做缓存，后续构建速度更快，生成的.map映射文件内容都是一样的
 
 ##### 8.3.1 bundle.js
 
@@ -163,6 +163,138 @@ npm i babel-loader @babel/core @babel/preset-env -D
 ![](\assets\cheap-module-source-map-process.png) 
 
 #### 8.9 sourcemap最佳实践
+
+##### 8.9.1 组合规则
+
+| 组合(规则)                                                   | 解释                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| \[inline-\|hidden-\|eval-][nosources-]\[cheap-[module-]]source-map | 组合规则强制要求顺序                                         |
+| source-map                                                   | 会在外部生成单独的sourcemap文件，会与源代码文件进行关联，能提示代码的准确原始位置 |
+| inline-source-map                                            | 以base64格式内联在打包后的文件中，内联构建速度快、也能提示错误代码的准确原始位置 |
+| hidden-source-map                                            | 会在外部生成单独的sourcemap文件，但是不和源代码文件进行关联，不能提示错误代码的准确原始位置 |
+| eval-source-map                                              | 会给每一个模块生成单独的sourcemap文件进行内联，并使用eval执行 |
+| nosources-source-map                                         | 会在外部生成sourcemap文件，能找到源代码位置，但是源代码内容为空 |
+| cheap-source-map                                             | 会在外部生成sourcemap文件，不包含列和loader的map信息         |
+| cheap-module-source-map                                      | 会在外部生成sourcemap文件，不包含列的信息                    |
+
+##### 8.9.2 开发环境
+
+1. 速度快：`eval-cheap-source-map`
+2. 调试友好：`eval-cheap-module-source-map`
+3. 推荐：`eval-source-map`
+
+##### 8.9.3 生产环境
+
+1. 速度快：`cheap`
+2. 调试友好：`[source-map]>[cheap-source-map | cheap-module-source-map]>[hideen-source-map | nosources-source-map]`
+3. 推荐：`hidden-source-map`,会生成`sourcemap`文件，但是不进行关联、不会上传关联信息
+
+##### 8.9.4 开发环境调试
+
+1. 本地代码编辑器内调试
+
+2. 通过source控制器调试
+
+   - 右键打开控制台
+   
+- 选择sources
+   
+     ![](\assets\debugger-source-map-dev.png) 
+   
+   - 右键`top`，选择`Search in all files`
+   
+     ![](\assets\debugger-source-map-dev-search-files.png) 
+   
+   - 搜索你想搜的代码
+   
+     ![](\assets\debugger-source-map-search-code.png) 
+   
+     
+   
+      ![](\assets\debugger-source-map-search-result.png)
+   
+
+##### 8.9.5 测试环境调试
+
+>  通过`source-map-dev-tool-plugin`进行细粒度的控制
+
+- 步骤一：设置`devtool:false`关闭 
+
+  ![](\assets\set-devtool-false.png) 
+
+- 步骤二：通过`webpack.source-map-dev-tool-plugin`来生成sourcemap文件，并进行相关设置
+
+  ![](\assets\source-map-dev-tool-plugin.png) 
+
+- 步骤三：通过`filemanager-plugin插件`来拷贝源映射文件到其他目录，并删除原来的源映射文件，因为测试时我们的代码需要打包，打包生成的目录发给测试，其他的不需要发给测试，打包目录中没有源映射文件等敏感信息的
+
+  ![](\assets\file-manager-plugin.png) 
+
+- 步骤四：本地启动一个服务，如: `http-server`，保证通过端口号能访问到拷贝后的源映射文件即可，这样就可以进行调试了
+
+  ![](\assets\http-server.png) 
+
+- 步骤五：查看源代码
+
+  ![](\assets\source-mapping-url.png) 
+
+- 步骤六：增加断点调试，大功告成
+
+  ![](\assets\debugger-source-map.png) 
+
+> 总结：
+>
+> ​	优点：安全，只能你一个人调试，别人是调试不了的，除非你共享了拷贝后的源映射文件
+>
+> ​	缺点：有点点小麻烦
+
+##### 8.9.6 生产环境调试
+
+`说明: 生产环境是没有map文件的，为了隐私安全`
+
+- 步骤一：修改环境为生产环境,真实项目可通过环境变量来区分
+
+  ![](\assets\set-mode-production.png) 
+
+- 步骤二：修改`devtool:hidden-source-map`，会生成sourcemap文件，我们`步骤三`会进行删除
+
+  ![](\assets\set-devtool-hidden-source-map.png) 
+
+- 步骤三：拷贝sourcemap文件至另外目录，删除打包目录中的sourcemap文件
+
+  ![](\assets\copy-source-map-delete-dist-source-map.png) 
+
+- 步骤四：开启本地服务，如：http-server，只要保证能访问到sourcemap文件即可
+
+  ![](\assets\http-server.png) 
+
+- 步骤五：sources开启调试
+
+  - 打开sources
+
+  ![](\assets\debugger-source-map-dev.png)
+
+  - 设置-勾选`Enabled Javascript source maps`选项
+
+    ![](\assets\debugger-source-map-prod-settings.png) 
+
+    ![](\assets\debugger-source-map-settings-enabled.png) 
+
+  - 手动添加`source-map`文件地址进行关联
+
+    ![](\assets\choose-source-map-address.png) 
+
+    ![](\assets\add-source-map-address.png)
+
+    ![](\assets\add-source-map-address-result.png) 
+
+    ![](\assets\add-source-map-address-result-code.png) 
+
+> 总结：
+>
+> ​	优点：安全性高、可以把sourcemap文件放在本地或者安全的服务器上，保证不会泄露就行，调试方便
+>
+> ​	缺点：调试前的准备工作稍多
 
 ### 9. 打包第三方类库
 
