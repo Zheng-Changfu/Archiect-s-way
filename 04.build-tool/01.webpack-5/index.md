@@ -1,8 +1,6 @@
-# Webpack-5
+# Webpack-5（基础）
 
-## 1. 基础
-
-### 1. 核心概念
+## 1. 核心概念
 
 - entry(入口) : 指示 webpack 应该使用哪个模块，来作为构建其内部 依赖图 的开始
 - output(出口) : 告诉 webpack 在哪里输出它所创建的 bundle，以及如何命名这些文件
@@ -10,16 +8,16 @@
 - plugin : loader 用于转换某些类型的模块，而插件则可以用于执行范围更广的任务。包括：打包优化，资源管理，注入环境变量
 - mode : 通过选择 development, production 或 none 之中的一个，来设置 mode 参数，你可以启用 webpack 内置在相应环境下的优化。其默认值为 production
 
-### 2. 环境变量
+## 2. 环境变量
 
 1. --mode 用来设置模块内的 `process.env.NODE_ENV`
 2. --env 用来设置 webpack 配置文件的函数参数，配置文件要写成函数形式
 3. DefinePlugin 用来设置模块内的全局变量,是 webpack 的一个插件
 4. cross-env 用来设置 node 环境的 `process.env.NODE_ENV`,也是比较常用的
 
-### 3. 开发服务器
+## 3. 开发服务器
 
-#### 3.1 理解以下 path 的作用及区别
+### 3.1 理解以下 path 的作用及区别
 
 | 类别      | 配置名称    | 描述                                          | 配置                                                      | 打包后                                                       |
 | --------- | ----------- | --------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------ |
@@ -28,31 +26,31 @@
 | devServer | publicPath  | 同 output.publicPath 一样，只不过优先级比它高 | 同 output.publicPath                                      | 同 output.publicPath                                         |
 | devServer | contentBase | 用于配置额外静态文件内容目录的路径            | <img src="\assets\content-base.png" style="zoom:200%;" /> | <img src="\assets\content-base-result.png" style="zoom:200%;" /> |
 
-### 4. use 的三种格式
+## 4. use 的三种格式
 
 1. 字符串格式: 一个 loader 的时候可以
 2. 数组格式: 多个 loader 的时候可以, (从下往上|从右往左)依次执行
 3. 对象格式: 给 loader 传参的时候可以用，一般写 options，options 里面的配置会传递给 loader
 
-### 5. loader
+## 5. loader
 
-| loader       | 意义                                                                                            | js-code                            | 配置                         | 打包后                                                           |
-| ------------ | ----------------------------------------------------------------------------------------------- | ---------------------------------- | ---------------------------- | ---------------------------------------------------------------- |
-| raw-loader   | 解析原始文件                                                                                    | ![](\assets\raw-loader-code.png)   | ![](\assets\raw-loader.png)  | ![](\assets\raw-loader-result.png)                               |
-| css-loader   | 解析@import 和 url                                                                              | ![](\assets\css-loader-result.png) | ![](\assets\css-loader.png)  |                                                                  |
-| style-loader | 将 css 插入到 DOM 中                                                                            |                                    | ![](\assets\css-loader.png)  | <img src="\assets\style-loader-result.png" style="zoom:200%;" /> |
-| file-loader  | 拷贝图片至打包目录下                                                                            |                                    | ![](\assets\file-loader.png) | ![](\assets\file-loader-result.png)                              |
-| url-loader   | 当图片小于`limit`的时候会把图片`BASE64`编码，大于`limit`参数的时候还是使用`file-loader`进行拷贝 |                                    | ![](\assets\url-loader.png)  |                                                                  |
+| loader       | 意义                                                         | js-code                                                      | 配置                                                     | 打包后                                                       |
+| ------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------ |
+| raw-loader   | 解析原始文件                                                 | <img src="\assets\raw-loader-code.png" style="zoom:200%;" /> | <img src="\assets\raw-loader.png" style="zoom:200%;" />  | ![](\assets\raw-loader-result.png)                           |
+| css-loader   | 解析@import 和 url                                           | <img src="\assets\css-loader-result.png" style="zoom:200%;" /> | <img src="\assets\css-loader.png" style="zoom:200%;" />  |                                                              |
+| style-loader | 将 css 插入到 DOM 中                                         |                                                              | <img src="\assets\css-loader.png" style="zoom:200%;" />  | <img src="\assets\style-loader-result.png" style="zoom:200%;" /> |
+| file-loader  | 拷贝图片至打包目录下                                         |                                                              | <img src="\assets\file-loader.png" style="zoom:200%;" /> | ![](\assets\file-loader-result.png)                          |
+| url-loader   | 当图片小于`limit`的时候会把图片`BASE64`编码，大于`limit`参数的时候还是使用`file-loader`进行拷贝 |                                                              | <img src="\assets\url-loader.png" style="zoom:200%;" />  |                                                              |
 
-### 6. css兼容性处理
+## 6. css兼容性处理
 
-#### 6.1 安装
+### 6.1 安装
 
 ```bash
 npm install postcss-loader autoprefixer -D
 ```
 
-#### 6.2 配置
+### 6.2 配置
 
 ![](\assets\postcss-loader.png) 
 
@@ -60,19 +58,19 @@ npm install postcss-loader autoprefixer -D
 
 ![](\assets\postcss.config.js.png) 
 
-#### 6.3 结果
+### 6.3 结果
 
 ![](\assets\postcss-loader-result.png) 
 
-### 7. js兼容性处理
+## 7. js兼容性处理
 
-#### 7.1 安装
+### 7.1 安装
 
 ```bash
 npm i babel-loader @babel/core @babel/preset-env -D
 ```
 
-#### 7.2 包说明
+### 7.2 包说明
 
 > babel-loader : 不知道如何处理和转换 js 代码，内部会调用 @babel/core
 >
@@ -80,9 +78,9 @@ npm i babel-loader @babel/core @babel/preset-env -D
 >
 > @babel/preset-env : 插件的集合被打成了一个包，这个包就叫预设，可以将高级语法转换成低级语法
 
-### 8. sourcemap(源映射)
+## 8. sourcemap(源映射)
 
-#### 8.1 基本认识
+### 8.1 基本认识
 
 | 关键字     | 含义                                        |
 | ---------- | ------------------------------------------- |
@@ -94,77 +92,77 @@ npm i babel-loader @babel/core @babel/preset-env -D
 
 - 以上模式可以进行任意组合
 
-#### 8.2 开启source-map模式
+### 8.2 开启source-map模式
 
-##### 8.2.1 源代码
+#### 8.2.1 源代码
 
 ![](\assets\source-map.png) 
 
-##### 8.2.2 编译后目录
+#### 8.2.2 编译后目录
 
 ![](\assets\source-map-dist.png) 
 
-##### 8.2.3 bundle.js
+#### 8.2.3 bundle.js
 
 ![](\assets\source-map-bundle-code.png) 
 
-##### 8.2.4 bundle.js.map
+#### 8.2.4 bundle.js.map
 
 ![](\assets\source-map-bundle-map-code.png) 
 
-##### 8.2.5 增加错误代码
+#### 8.2.5 增加错误代码
 
 ![](\assets\source-map-error-code.png) 
 
-##### 8.2.6 浏览器控制台定位到的错误信息
+#### 8.2.6 浏览器控制台定位到的错误信息
 
 ![](\assets\source-map-error-code-result1.png) 
 
 ![](\assets\source-map-error-code-result2.png) 
 
-#### 8.3 开启eval模式
+### 8.3 开启eval模式
 
 - eval 模式 和 source-map差不多，eval可以用来做缓存，后续构建速度更快，生成的.map映射文件内容都是一样的
 
-##### 8.3.1 bundle.js
+#### 8.3.1 bundle.js
 
 ![](\assets\eval.png) 
 
-#### 8.4 开启cheap-source-map模式
+### 8.4 开启cheap-source-map模式
 
-##### 8.4.1 bundle.js
+#### 8.4.1 bundle.js
 
 ![](\assets\source-map-bundle-code.png) 
 
-##### 8.4.2 bundle.js.map
+#### 8.4.2 bundle.js.map
 
 ![](\assets\cheap-bundle-map-code.png) 
 
-##### 8.4.3 浏览器控制台定位到的错误信息
+#### 8.4.3 浏览器控制台定位到的错误信息
 
 ![](\assets\cheap-error-code-result.png) 
 
-#### 8.5 开启inline-source-map模式
+### 8.5 开启inline-source-map模式
 
-##### 8.5.1 bundle.js(无.map文件)
+#### 8.5.1 bundle.js(无.map文件)
 
 ![](\assets\inline.png) 
 
-#### 8.6 source-map图解
+### 8.6 source-map图解
 
 ![](\assets\source-map-process.png) 
 
-#### 8.7 cheap-source-map图解
+### 8.7 cheap-source-map图解
 
 ![](\assets\cheap-source-map-process.png) 
 
-#### 8.8 cheap-module-source-map图解
+### 8.8 cheap-module-source-map图解
 
 ![](\assets\cheap-module-source-map-process.png) 
 
-#### 8.9 sourcemap最佳实践
+### 8.9 sourcemap最佳实践
 
-##### 8.9.1 组合规则
+#### 8.9.1 组合规则
 
 | 组合(规则)                                                   | 解释                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -177,19 +175,19 @@ npm i babel-loader @babel/core @babel/preset-env -D
 | cheap-source-map                                             | 会在外部生成sourcemap文件，不包含列和loader的map信息         |
 | cheap-module-source-map                                      | 会在外部生成sourcemap文件，不包含列的信息                    |
 
-##### 8.9.2 开发环境
+#### 8.9.2 开发环境
 
 1. 速度快：`eval-cheap-source-map`
 2. 调试友好：`eval-cheap-module-source-map`
 3. 推荐：`eval-source-map`
 
-##### 8.9.3 生产环境
+#### 8.9.3 生产环境
 
 1. 速度快：`cheap`
 2. 调试友好：`[source-map]>[cheap-source-map | cheap-module-source-map]>[hideen-source-map | nosources-source-map]`
 3. 推荐：`hidden-source-map`,会生成`sourcemap`文件，但是不进行关联、不会上传关联信息
 
-##### 8.9.4 开发环境调试
+#### 8.9.4 开发环境调试
 
 1. 本地代码编辑器内调试
 
@@ -198,7 +196,7 @@ npm i babel-loader @babel/core @babel/preset-env -D
    - 右键打开控制台
    
 - 选择sources
-   
+  
      ![](\assets\debugger-source-map-dev.png) 
    
    - 右键`top`，选择`Search in all files`
@@ -214,7 +212,7 @@ npm i babel-loader @babel/core @babel/preset-env -D
       ![](\assets\debugger-source-map-search-result.png)
    
 
-##### 8.9.5 测试环境调试
+#### 8.9.5 测试环境调试
 
 >  通过`source-map-dev-tool-plugin`进行细粒度的控制
 
@@ -248,7 +246,7 @@ npm i babel-loader @babel/core @babel/preset-env -D
 >
 > ​	缺点：有点点小麻烦
 
-##### 8.9.6 生产环境调试
+#### 8.9.6 生产环境调试
 
 `说明: 生产环境是没有map文件的，为了隐私安全`
 
@@ -296,15 +294,74 @@ npm i babel-loader @babel/core @babel/preset-env -D
 >
 > ​	缺点：调试前的准备工作稍多
 
-### 9. 打包第三方类库
+## 9. 打包第三方类库
 
-### 10. webpack-dev-server
+> 我们在项目中可能经常会用到一些第三方库，而有些库我们基本上写一些组件都需要用到，比如`lodash`,而我们不想每一个组件都需要单独引入,这时候我们就需要进行相应的配置了
 
-### 11. 提取css
+### 9.1 ProvidePlugin
 
-### 12. 三种hash值的区别
+> 会自动的将函数添加到每个模块的上下文中，不需要显示声明
 
-### 13. px2rem-loader
+![](\assets\provide-plugin.png) 
 
-## 2. 深入
+![](\assets\provide-plugin-code.png) 
 
+![](\assets\provide-plugin-result.png) 
+
+> 优点：方便，不需要每次引入
+>
+> 缺点：并不会挂载到`全局上`,所以导入`依赖全局变量的插件`会失败
+
+### 9.2 expose-loader
+
+> 挂载全局变量
+
+```bash
+npm install expose-loader -D
+```
+
+![](\assets\expose-loader.png) 
+
+![](\assets\expose-loader-code.png) 
+
+![](\assets\expose-loader-result.png) 
+
+### 9.3 externals
+
+> 我们不想进行打包，但是又想在每个模块中使用，并且还想在全局上用，就可以用到`externals`
+
+![](\assets\externals.png) 
+
+![](\assets\externals-code.png) 
+
+![](assets\externals-code-html.png)  
+
+![](assets\externals-result.png)  
+
+## 10. some-plugin-desc
+
+| plugin               | 描述             | 配置                                                         | 输出                                        |
+| -------------------- | ---------------- | ------------------------------------------------------------ | ------------------------------------------- |
+| webpack.BannerPlugin | 添加商标         | new webpack.BannerPlugin('郑常富')                           | ![](\assets\banner-plugin.png)              |
+| copy-webpack-plugin  | 拷贝文件         | ![](\assets\copy-webpack-plugin.png)                         | ![](\assets\copy-webpack-plugin-result.png) |
+| clean-webpack-plugin | 打包前先清除目录 | const {CleanWebpackPlugin} = require('clean-webpack-plugin')<br />new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: ['**/*'],}) |                                             |
+
+## 11. 提取css
+
+> 我们一般在生产环境时，加载css都用link标签，因为不会阻塞html的执行，这时候我们需要将我们写的css`单独提取成一个文件`
+
+```bash
+npm install mini-css-extract-plugin -D
+```
+
+![](\assets\mini-css-extract-plugin.png) 
+
+![](\assets\mini-css-extract-plugin-code.png) 
+
+![](\assets\mini-css-extract-plugin-result1.png) 
+
+![](\assets\mini-css-extract-plugin-result2.png) 
+
+## 12. 三种hash值的区别
+
+## 13. px2rem-loader

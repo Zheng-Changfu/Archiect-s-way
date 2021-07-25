@@ -33,15 +33,17 @@ module.exports = {
       { test: /\.css$/, use: [/* 将css插入到DOM中 */'style-loader', /* 用来处理 @import和url() */ 'css-loader'] },
       { test: /\.s(css|ass)/, use: ['style-loader', 'css-loader',/* 将scss|sass文件编译成css文件 */ 'sass-loader'] },
       { test: /\.less$/, use: ['style-loader', 'css-loader', /* 将less文件编译成css文件 */'less-loader'] },
-      // {
-      //   test: /\.(jpg|png|jpeg|gif|svg|bmp)$/, use: {
-      //     loader: 'file-loader',
-      //     options: {
-      //       esModule: false, // 默认会被编译成一个Module对象，需要.default才能拿到，设置为false则默认输出，不需要.default
-      //       name: '[hash:10].[ext]' // 图片名字取hash值前10位，后缀不变
-      //     }
-      //   }
-      // },
+      {
+        test: /\.(jpg|png|jpeg|gif|svg|bmp)$/, use: {
+          loader: 'file-loader',
+          options: {
+            // 默认会被编译成一个Module对象，需要.default才能拿到，设置为false则默认输出，不需要.default
+            esModule: false,
+            // 图片名字取hash值前10位，后缀不变
+            name: '[hash:10].[ext]'
+          }
+        }
+      },
       {
         test: /\.(jpg|png|jpeg|gif|svg|bmp)$/, use: {
           loader: 'url-loader',
