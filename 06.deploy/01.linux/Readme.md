@@ -47,7 +47,7 @@
 	    <th>Code</th>  
 	</tr>
 	<tr >
-	    <td rowspan="6">ls</td>
+	    <td rowspan="7">ls</td>
 	    <td></td>
 	    <td>[目录/文件名]</td>
 	    <td>查询目录中的内容</td>
@@ -65,6 +65,18 @@
 	    <td>显示详情信息，等同于  ll</td>
 	    <td></td>
 	</tr>
+  <tr>
+    <td colspan="5">
+        drwxr-xr-x --> 文件类型和权限 <br>
+        . --> ACL 权限<br>
+        2 --> 硬链接引用计数<br>
+        root --> 所有者<br>
+        root --> 所属组<br>
+        4096 --> 文件大小<br>
+        Apr 11 2018 --> 最后修改时间<br>
+        home --> 文件名<br>
+      </td>
+  </tr>
 	<tr>
 	    <td>-d</td>
 	    <td>[目录/文件名]</td>
@@ -246,7 +258,7 @@
 	    <td>echo $PATH</td>
 	</tr>
   <tr >
-      <td rowspan="10">find</td>
+      <td rowspan="7">find</td>
       <td>[搜索范围/搜索条件]</td>
 	    <td>[名称]</td>
 	    <td>查找文件</td>
@@ -288,16 +300,215 @@
 	    <td>按所属者用户进行搜索</td>
 	    <td>find /root -user root</td>
 	</tr>
+  <tr >
+      <td rowspan="3">grep</td>
+      <td>[匹配条件]</td>
+	    <td>[名称]</td>
+	    <td>在文件当中匹配符合条件的字符串</td>
+	    <td>grep helloworld 1.txt</td>
+	</tr>
+  <tr >
+      <td>-i</td>
+	    <td></td>
+	    <td>忽略大小写进行查找</td>
+	    <td>grep Helloworld -i 1.txt</td>
+	</tr>
+   <tr >
+      <td>-v</td>
+	    <td></td>
+	    <td>排除指定字符串</td>
+	    <td></td>
+	</tr>
+  <tr >
+      <td >zip</td>
+      <td>-r</td>
+	    <td>[压缩后名称][压缩目录]</td>
+	    <td>压缩目录</td>
+	    <td>  
+        压缩: zip -r a.zip a<br>
+        解压: unzip a.zip
+      </td>
+	</tr>
+  <tr >
+      <td rowspan="3">gzip</td>
+      <td></td>
+	    <td>文件名称</td>
+	    <td>压缩为.gz格式的压缩文件,源文件会消失</td>
+	    <td>gzip 1.txt</td>
+	</tr>
+  <tr >
+      <td>-c</td>
+	    <td>源文件 > 压缩文件</td>
+	    <td>压缩为.gz格式的压缩文件,源文件不会消失</td>
+	    <td>gzip -c 1.txt > 1.txt.gz</td>
+	</tr>
+  <tr >
+      <td>-r</td>
+	    <td>目录</td>
+	    <td>压缩目录下的所有子文件，但是不压缩目录</td>
+	    <td>gzip -r xx</td>
+	</tr>
+  <tr >
+      <td>gunzip</td>
+      <td></td>
+	    <td>压缩文件</td>
+	    <td>解压缩文件，不保留压缩包</td>
+	    <td>gunzip 1.txt.gz</td>
+	</tr>
+  <tr >
+      <td rowspan="7">tar</td>
+      <td>-c</td>
+	    <td>打包</td>
+	    <td>打包命令</td>
+	    <td></td>
+	</tr>
+  <tr >
+      <td>-v</td>
+	    <td>显示打包过程</td>
+	    <td>打包命令</td>
+	    <td></td>
+	</tr>
+  <tr >
+      <td>-f</td>
+	    <td>指定打包后的文件名</td>
+	    <td>打包命令</td>
+	    <td></td>
+	</tr>
+  <tr >
+      <td>-cvf</td>
+	    <td>打包文件名 源文件</td>
+	    <td>打包命令</td>
+	    <td>tar -cvf 1.tar 1.txt</td>
+	</tr>
+   <tr >
+      <td>-xvf</td>
+	    <td>打包文件名</td>
+	    <td>解包命令</td>
+	    <td>tar -xvf 1.tar</td>
+	</tr>
+  <tr >
+      <td>-zcvf</td>
+	    <td>打包文件名 目录名/文件名</td>
+	    <td>压缩为.tar.gz格式</td>
+	    <td>tar -zcvf book.tar.gz book</td>
+	</tr>
+  <tr >
+      <td>-zxvf</td>
+	    <td>包名.tar.gz</td>
+	    <td>解压.tar.gz格式包</td>
+	    <td>tar -zxvf book.tar.gz</td>
+	</tr>
+  <tr >
+      <td rowspan="3">shutdown</td>
+      <td>-c</td>
+	    <td></td>
+	    <td>取消前一个关机命令</td>
+	    <td>shutdown -c</td>
+	</tr>
+  <tr >
+      <td>-r</td>
+	    <td>时间</td>
+	    <td>重启</td>
+	    <td>shutdown -r 06:00</td>
+	</tr>
+  <tr >
+      <td>-h</td>
+	    <td></td>
+	    <td>关机</td>
+	    <td>shutdown -h</td>
+	</tr>
+  <tr >
+      <td rowspan="2">init</td>
+      <td>0</td>
+	    <td></td>
+	    <td>关机</td>
+	    <td>init 0</td>
+	</tr>
+  <tr >
+      <td>6</td>
+	    <td></td>
+	    <td>重启</td>
+	    <td>init 6</td>
+	</tr>
+  <tr >
+      <td>logout</td>
+      <td></td>
+	    <td></td>
+	    <td>退出登录</td>
+	    <td>logout</td>
+	</tr>
+  <tr >
+      <td>w</td>
+      <td></td>
+	    <td></td>
+	    <td>查看登录用户信息</td>
+	    <td>w</td>
+	</tr>
+  <tr>
+    <td colspan="5">
+        USER --> 登录的用户名<br />
+        TTY --> 登录的终端 tty1 本地终端 pts/0远程终端<br />
+        FROM --> 登录的IP<br>
+        LOGIN --> 登录时间<br>
+        IDLE --> 用户闲置时间<br>
+        JCPU --> 该终端所有进程占用的时间<br>
+        PCPU --> 当前进程所占用的时间<br>
+        WHAT --> 正在执行的命令<br>
+      </td>
+  </tr>
+  <tr >
+      <td>who</td>
+      <td></td>
+	    <td></td>
+	    <td>查看登录用户信息</td>
+	    <td>who</td>
+	</tr>
+  <tr>
+    <td colspan="5">
+        USER --> 登录的用户名<br>
+        TTY --> 登录的终端 tty1 本地终端 pts/0远程终端<br>
+        LOGIN --> 登录时间和登录的IP<br>
+      </td>
+  </tr>
+  <tr >
+      <td>last</td>
+      <td></td>
+	    <td></td>
+	    <td>查看当前登录和过去登录的用户信息 默认读取 /var/log/wtmp 文件</td>
+	    <td>last</td>
+	</tr>
+  <tr>
+    <td colspan="5">
+        用户名<br>
+        登录终端<br>
+        登录IP<br>
+        登录时间<br>
+        退出时间(在线时间)<br>
+      </td>
+  </tr>
+  <tr >
+      <td>lastlog</td>
+      <td></td>
+	    <td></td>
+	    <td>查看所有用户的最后一次登录时间</td>
+	    <td>lastlog</td>
+	</tr>
+  <tr>
+    <td colspan="5">
+        用户名<br>
+        登录终端<br>
+        登录IP<br>
+        最后一次登录时间<br>
+      </td>
+  </tr>
 </table>
-## 2. ls -l 说明
 
-显示详情信息
-
-```js
-drwxr-xr-x.  2 root root  4096 Apr 11  2018 home
-```
-
-| drwxr-xr-x     | .        | 2              | root   | root   | 4096     | Apr 11 2018  | home   |
-| -------------- | -------- | -------------- | ------ | ------ | -------- | ------------ | ------ |
-| 文件类型和权限 | ACL 权限 | 硬链接引用计数 | 所有者 | 所属组 | 文件大小 | 最后修改时间 | 文件名 |
-
+<table>
+  <tr>
+    <th>命令</th>
+    <th>选项</th>
+    <th>参数</th>  
+    <th>描述</th>  
+    <th>Code</th>  
+	</tr>
+</table>
