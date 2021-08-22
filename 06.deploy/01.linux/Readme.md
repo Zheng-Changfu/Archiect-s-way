@@ -36,7 +36,7 @@
 
 ## Linux 常用命令
 
-## 1. 命令说明列表
+## 1. 基本命令说明列表
 
 <table>
 	<tr>
@@ -503,12 +503,106 @@
   </tr>
 </table>
 
+## 2. Vi 常用命令列表
+
 <table>
   <tr>
-    <th>命令</th>
-    <th>选项</th>
-    <th>参数</th>  
+    <th>模式</th>
+    <th>参数</th>
     <th>描述</th>  
     <th>Code</th>  
 	</tr>
+  <tr>
+    <td>打开文件</td>
+    <td>文件名</td>
+    <td>编辑文件</td>
+    <td>vi 1.txt</td>
+  </tr>
+  <tr>
+    <td rowspan="3">底行模式</td>
+    <td>:w</td>
+    <td>把内容写入保存到硬盘中</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>:q</td>
+    <td>退出当前Vi编辑器打开的文件</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>:wq!</td>
+    <td>强制保存并退出</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="4">插入模式</td>
+    <td>i</td>
+    <td>在当前位置插入</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>a</td>
+    <td>在当前光标的右边插入</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>A</td>
+    <td>在当前光标的右行末插入</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>s</td>
+    <td>删除当前光标位置并插入</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="2">删除</td>
+    <td>x</td>
+    <td>删除当前字符</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>dd</td>
+    <td>删除光标所在行</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>撤销</td>
+    <td>u</td>
+    <td>撤销最后执行的一次命令</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>复制</td>
+    <td>yy</td>
+    <td>复制光标所在的行</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="2">粘贴</td>
+    <td>p</td>
+    <td>光标所在行的下方粘贴</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>P</td>
+    <td>光标所在行的上方粘贴</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="3">搜索</td>
+    <td>/</td>
+    <td>输入/可以在当前文件中查找该字符串</td>
+    <td>/const</td>
+  </tr>
+  <tr>
+    <td>n</td>
+    <td>查找下一个</td>
+    <td></td>
+  </tr>
+   <tr>
+    <td>Shift+N</td>
+    <td>查找上一个</td>
+    <td></td>
+  </tr>
 </table>
