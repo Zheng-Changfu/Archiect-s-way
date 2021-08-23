@@ -46,6 +46,19 @@
 	    <th>描述</th>  
 	    <th>Code</th>  
 	</tr>
+  <tr>
+    <td rowspan="2">history</td>
+    <td></td>
+    <td></td>
+    <td>查看历史命令记录</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>-c</td>
+    <td></td>
+    <td>清空历史命令记录</td>
+    <td></td>
+  </tr>
 	<tr >
 	    <td rowspan="7">ls</td>
 	    <td></td>
@@ -674,4 +687,162 @@ userdel -r zhangsan
 
 ```
 
-## 8. Sheel 编程
+## 8. Shell 编程 - 变量
+
+### 8.1 解释说明
+
+- Shell 是一个命令行解释器，它为用户提供了一个向 Linux 内核发送请求以便于运行程序的界面系统级程序
+- 用户可以用 Shell 来启动、挂起、停止或者编写一些程序
+- Shell 还是一个功能相当强大的编程语言，易编写、易调试、灵活性较强
+- Shell 是解释型语言，在 Shell 中可以直接调用 Linux 系统命令
+
+### 8.2 变量
+
+- 变量默认类型都是字符串
+- 可以变化的量
+- 必须以字母或者下划线开头，名字中间只能由字母、数字和下划线组成
+- 变量名的长度不得超过 255 个字符
+- 变量名在有效范围内必须是唯一的
+
+### 8.3 变量的分类
+
+- 字符串
+- 整型
+- 浮点型
+- 日期型
+
+### 8.4 用户自定义变量
+
+- 变量的值是自己定义的
+- 变量名不能为数字开头
+- 等号左右两边不能有空格
+
+```bash
+# 定义变量
+name=zcf
+age=18
+
+# 输出变量值
+echo $变量名
+
+# 值默认都是字符串
+x=1
+y=2
+z=$x+$y
+echo $z # 1+2
+
+# 赋值的时候引用变量
+m="$x"2
+echo $m # 12
+```
+
+### 8.5 查看变量
+
+```bash
+# 查询系统中默认所有已经生效的变量，包括系统变量，也包括自定义变量
+set | grep zcf
+```
+
+### 8.6 删除变量
+
+```bash
+unset xx
+```
+
+### 8.7 环境变量
+
+- 环境变量是全局变量，而自定义变量是局部变量
+- 自定义变量会在当前的 shell 中生效，而环境变量会在当前 shell 以及子 shell 中生效
+- 环境变量主要保存的是和系统操作环境相关的数据
+- 变量可以自定义，但是对系统生效的环境变量名和变量作用是固定的
+
+```bash
+# 自定义环境变量
+export 变量名=变量值
+export envName=prod
+
+# 仅仅用来查看环境变量，而不看到本地变量
+env | grep envName
+
+# 系统系统变量
+HOSTNAME -> 主机名 -> HOSTNAME=localhost
+SHELL -> 当前的shell -> SHELL=/bin/bash
+HISTSIZE -> 历史命令条数 -> HISTSIZE=1000
+SSH_CLIENT -> 客户端IP -> SSH_CLIENT=192.168.1.1
+USER -> 当前登录的用户 -> USER=root
+
+echo $HOSTNAME
+echo $SHELL
+echo $HISTSIZE
+echo $SSH_CLIENT
+echo $USER
+```
+
+### 8.8 位置参数变量
+
+```bash
+# 写一个求和的shell脚本
+#!/bin/bash
+vi sum.sh
+
+num1=$1
+num2=$2
+sum=$((num1+num2))
+echo $sum
+
+sh sum.sh 1 2
+
+# 写一个循环输出的shell脚本
+vi for.sh
+
+#!/bin/bash
+# "$@" 代表命令行中的所有参数
+# "$#" 代表命令行中所有参数的个数
+for i in "$@"
+  do
+    echo i=$i
+  done
+
+sh for.sh 1 2 3 4
+```
+
+### 8.9 预定义变量
+
+- 是脚本中已经定义好的变量，变量名不能自定义，变量作用也是固定的
+
+> $? : 最后一次执行命令的返回状态，0 代表正确执行，非 0 代表不正确执行
+>
+> $$ : 当前进程的进程号(PID)
+
+```bash
+echo $?
+echo $$
+```
+
+## 9. Shell 编程 - read
+
+| 选项 | 含义                                          |
+| ---- | --------------------------------------------- |
+| -p   | 提示信息，在等待 read 输入时，输出提示信息    |
+| -t   | 等待用户输入的秒数                            |
+| -n   | 字符数，read 命令只接受指定的字符数，就会执行 |
+| -s   | 隐藏输入的数据，适用于机密信息的输入          |
+
+```bash
+# 写一个让用户输入名字、性别、密码并打印出来的Shell脚本
+
+vi read.sh
+
+#!/bin/bash
+read -p '请输入你的名字:' -t 5 name
+echo -e "\n"
+read -p '请输入你的性别:' -n 1 gender
+echo -e "\n"
+read -p '请输入你的密码' -s password
+echo -e "\n"
+echo $name,$gender,$password
+
+sh read.sh
+```
+
+## 10. Shell 编程 - 流程控制
