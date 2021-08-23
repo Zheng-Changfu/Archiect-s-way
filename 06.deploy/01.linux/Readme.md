@@ -1,6 +1,6 @@
 # Linux
 
-## Linux 常用目录
+## 1. Linux 常用目录
 
 | 目录      | 说明                                |
 | --------- | ----------------------------------- |
@@ -23,20 +23,20 @@
 | /usr/bin  | 系统软件资源目录,普通用户的系统命令 |
 | /usr/sbin | 系统软件资源目录,超级用户的系统命令 |
 
-## Linux 常用目录截图
+## 2. Linux 常用目录截图
 
 ![](\assets\dir-list.png)
 
-## Linux 命令格式
+## 3. Linux 命令格式
 
 - 严格区分大小写
 - 命令 [选项] [参数]
 - 当有多个选项时，可以写在一起
 - 一般参数有简写有完整写法,如 --a 和--all 等效
 
-## Linux 常用命令
+## 4. Linux 常用命令
 
-## 1. 基本命令说明列表
+## 5. 基本命令说明列表
 
 <table>
 	<tr>
@@ -503,7 +503,7 @@
   </tr>
 </table>
 
-## 2. Vi 常用命令列表
+## 6. Vi 常用命令列表
 
 <table>
   <tr>
@@ -606,3 +606,72 @@
     <td></td>
   </tr>
 </table>
+
+## 7. 用户和用户组
+
+### 7.1 解释说明
+
+> 用户: 使用操作系统的人都是用户
+> 用户组: 具有相同系统权限的一组用户
+
+### 7.2 用户组操作
+
+```bash
+# 1. 创建用户组
+groupadd student
+
+# 2. 查看用户组
+cat /etc/group
+cat /ect/group | grep student
+
+# 3. 修改用户组名称
+groupmod student -n stu
+
+# 4. 修改用户组编号
+groupmod -g 666 stu
+
+# 5. 创建用户组并且指定编号
+groupmod -g 888 teacher
+
+# 6. 删除用户组
+groupdel teacher
+```
+
+### 7.3 用户操作
+
+```bash
+# 1. 如果创建用户的时候没有指定用户组，系统会为他创建一个和用户名相同的用户组
+
+# 2. 添加用户组
+groupadd huihuizi
+
+# 3. 创建用户
+useradd -g huihuizi zhangsan
+useradd -g huihuizi lisi
+
+# 4. 查看用户
+id zhangsan
+
+# 5. 创建用户并指定家目录
+useradd -d /home/huihuizi wangwu
+
+# 6. 设置用户密码
+passwd zhangsan
+passwd lisi
+passwd wangwu
+
+# 7. 修改个人家目录
+usermod -d /home/wangyu wangwu
+
+# 8. 修改用户组
+usermod -g changfu wangwu
+
+# 9. 删除用户
+userdel wangwu
+
+# 10. 删除用户并删除对应的目录
+userdel -r zhangsan
+
+```
+
+## 8. Sheel 编程
