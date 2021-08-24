@@ -1065,14 +1065,162 @@ sh while.sh
 
 ### 11.1 软件包的分类
 
+- 源码包(需要经过编译，把源代码编译成机器语言才能运行)
+  - 优点
+    - 开源免费
+    - 可以自由配置功能
+    - 编译安装更适合自己系统，更稳定
+    - 卸载稳定
+  - 缺点
+    - 安装过程比较复杂
+    - 编译过程比较长
+    - 安装过程一旦报错，非常难以排查
+- 二进制包
+  - 优点
+    - 包管理系统比较简单，只要通过简单的命令就可以实现包的安装、升级、查询和卸载
+    - 安装速度比源码包快很多
+  - 缺点
+    - 经过编译则不能看到源代码
+    - 功能选择不灵活
+    - 依赖性比较麻烦
+- 脚本安装包(把复杂的安装过程写成了脚本,可以一键安装,本质上安装的还是源码包或二进制包)
+  - 优点
+    - 安装简单
+  - 缺点
+    - 失去了自定义性
+
 ### 11.2 YUM 在线管理
 
-### 11.3 YUM 命令
+> RPM(RedHat Package Manager),类似Windows中的`添加/删除程序`
+>
+> yum(Yellow dog Updater),Modified主要功能是更方便的添加/删除/更新RPM包，它能自动解决包的依赖性问题
+>
+> RPM包的在线管理命令
+
+### 11.3 使用阿里云镜像
+
+```bash
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+yum makecache
+```
+
+### 11.5 YUM 命令
+
+| 命令                | 描述                                                      |
+| ------------------- | --------------------------------------------------------- |
+| yum list            | 查询所有可用软件包列表                                    |
+| yum search          | 搜索服务器上所有和关键字相关的包                          |
+| yum -y install 包名 | -y 自动回答 yes install安装                               |
+| yum  -y update 包名 | -y 自动回答yes update升级                                 |
+| yum -y remove 包名  | -y 自动回答yes remove 卸载,卸载有依赖性，所以尽量不要卸载 |
 
 ### 11.4 安装 Nginx
 
+```bash
+# 安装
+yum install nginx -y
+
+# 查看安装位置
+whereis nginx
+
+# 启动服务
+systemctl start nginx.service
+
+# 测试
+curl http://1.15.51.4/
+
+# 停止服务
+systemctl stop nginx.service
+```
+
 ### 11.5 安装 Mongodb
+
+```bash
+# 1. 添加安装源
+vim /etc/yum.repos.d/mongodb-org-3.4.repo
+
+# 2. 添加以下内容
+[mongodb-org-3.4]  
+name=MongoDB Repository  
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/  
+gpgcheck=1  
+enabled=1  
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+
+# 3. 更新缓存
+yum makecache
+
+# 4. 安装
+yum -y install mongodb-org
+
+# 5. 修改配置文件
+vi /etc/mongod.conf
+
+# 6. 注释掉bindIp内容
+net:
+  port: 27017
+#  bindIp: 127.0.0.1 
+
+# 7. 启动服务
+systemctl start mongod.service
+
+# 8. 停止服务
+systemctl stop mongod.service
+
+# 9. 查看状态
+systemctl status mongod.service
+
+# 10. 重启服务
+systemctl restart mongod.service
+```
 
 ### 11.6 安装 Redis
 
+```bash
+# 安装
+yum install redis -y
+
+# 启动服务
+systemctl start redis.service
+
+# 停止服务
+systemctl stop redis.service
+
+# 查看状态
+systemctl status redis.service
+
+# 重启服务
+systemctl restart redis.service
+```
+
 ### 11.7 安装 Mysql
+
+```bash
+# 下载MySQL源安装包
+wget http://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+
+# 安装源
+yum -y install mysql57-community-release-el7-11.noarch.rpm
+yum repolist enabled | grep mysql.*
+
+# 安装Mysql服务器
+yum install mysql-community-server -y
+
+# 启动服务
+systemctl start mysqld.service
+
+# 停止服务
+systemctl stop mysqld.service
+
+# 查看状态
+systemctl status mysqld.service
+
+# 重启服务
+systemctl restart mysqld.service
+
+# 开机自动访问
+systemctl enable mysqld
+systemctl daemon-reload
+```
+
