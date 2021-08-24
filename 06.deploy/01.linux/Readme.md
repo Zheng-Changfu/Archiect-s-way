@@ -846,3 +846,233 @@ sh read.sh
 ```
 
 ## 10. Shell 编程 - 流程控制
+
+### 10.1 按照文件类型进行判断
+
+| 选项 | 描述                       |
+| ---- | -------------------------- |
+| -d   | 文件是否存在并且是目录     |
+| -e   | 文件是否存在               |
+| -f   | 文件是否存在并且是普通文件 |
+
+```bash
+# 编写一个判断文件是否存在的shell脚本
+vi exist.sh
+
+#!bin/bash
+read -p "请输入文件路径" file
+[ -e $file ] && echo 'yes' || echo 'no'
+
+sh exist.sh
+
+# 编写一个判断路径是文件还是目录的shell脚本
+vi fileOrDir.sh
+
+```
+
+### 10.2 按照文件权限进行判断
+
+| 选项 | 描述                               |
+| ---- | ---------------------------------- |
+| -r   | 文件是否存在，并且是否拥有读权限   |
+| -w   | 文件是否存在，并且是否拥有写权限   |
+| x    | 文件是否存在，并且是否拥有执行权限 |
+
+```bash
+echo read >> read.txt
+echo write >> write.txt
+echo execute >> execute.txt
+
+chmod u+w wirte.txt
+chmod u+x execute.txt
+
+[ -r read.txt ] && echo "read yes" || echo "read no"
+
+[ -w write.txt ] && echo "write yes" || echo "write no"
+
+[ -x execute.txt ] && echo "execute yes" || echo "execute no"
+```
+
+### 10.3 两个整数间的比较
+
+| 选项              | 描述                           |
+| ----------------- | ------------------------------ |
+| 整数 1 -eq 整数 2 | 判断整数 1 是否和整数 2 相等   |
+| 整数 1 -ne 整数 2 | 判断整数 1 是否和整数 2 不相等 |
+| 整数 1 -gt 整数 2 | 判断整数 1 是否大于整数 2      |
+| 整数 1 -lt 整数 2 | 判断整数 1 是否小于整数 2      |
+| 整数 1 -ge 整数 2 | 判断整数 1 是否大于等于整数 2  |
+| 整数 1 -le 整数 2 | 判断整数 1 是否小于等于整数 2  |
+
+```bash
+[ 2 -eq 2 ] && echo "相等" || echo "不相等"
+[ 1 -ne 2 ] && echo "不相等" || echo "相等"
+[ 3 -gt 2 ] && echo "3大于2" || echo "no"
+[ 2 -lt 3 ] && echo "2小于3" || echo "no"
+[ 2 -ge 2 ] && echo "2大于等于2" || echo "no"
+[ 2 -le 2 ] && echo "2小于等于2" || echo "no"
+```
+
+### 10.4 多重条件判断
+
+| 选项             | 描述                |
+| ---------------- | ------------------- |
+| 判断 1 -a 判断 2 | 逻辑与(js 中&&)     |
+| 判断 1 -o 判断 2 | 逻辑或(js 中\| \| ) |
+| !判断            | 逻辑非(js 中!)      |
+
+```bash
+[ 2 -gt 1 -a 1 -lt 2 ] && echo "yes" || echo "no"
+[ 2 -lt 1 -o 2 -gt 1 ] && echo "yes" || echo "no"
+[ ! 3 -gt 2 ] && echo "yes" || echo "no"
+```
+
+### 10.5 单分支 if 语句
+
+- if 语句使用`fi`结尾
+- [条件判断式]就是使用`test`命令进行判断，所以中括号和条件判断式之间必须有空格
+- then 后面跟符合条件之后执行的程序,可以放在[]之后，用`;`分隔,也可以换行不用`;`
+
+```bash
+# 基本语法
+if [条件判断];then
+  代码体
+fi
+
+if [条件判断]
+then
+  代码体
+fi
+
+# 实例
+if [ 2 -gt 1 ];then echo bigger;fi
+
+if [ 2 -gt 1 ]
+then
+  echo bigger
+fi
+
+# 判断当前用户是否为root用户
+vi isRoot.sh
+
+#!/bin/bash
+user=`whoami`
+if [ $user == root ]
+then
+  echo "我是root用户"
+fi
+```
+
+### 10.6 双分支 if 语句
+
+```bash
+# 基本语法
+if [条件判断]
+then
+ 代码体1
+else
+  代码体2
+fi
+
+# 编写一个判断路径是否为目录的shell脚本
+vi isDir.sh
+
+#!/bin/bash
+read -p "请输入一个路径" dir
+if [ -d $dir ]
+then
+   echo "$dir是目录"
+else
+   echo "$dir不是目录"
+fi
+
+sh isDir.sh
+```
+
+### 10.7 多分支 if 语句
+
+```bash
+# 基本语法
+if [条件判断1]
+then
+  代码体1
+elif [条件判断2]
+then
+  代码体2
+else
+  代码体3
+fi
+
+# 实例
+vi manyif.sh
+
+#!/bin/bash
+read -p "请输入一个分数" score
+if [ $score -gt 90 ]
+then
+   echo "优秀"
+elif [ $score -gt 80 -a $score -le 90 ]
+then
+   echo "良好"
+else
+  echo "继续努力"
+fi
+
+sh manyif.sh
+```
+
+### 10.8 循环语句-for
+
+```bash
+# 语法
+for 变量 in 值1 值2 值3
+do
+  代码块
+done
+
+for((i=1;i<10;i++));
+do
+  echo $(($i))
+done
+```
+
+### 10.9 循环语句-while
+
+```bash
+# 语法
+while [条件判断式]
+do
+  代码块
+done
+
+# 编写一个从1加到100的shell脚本
+vi while.sh
+
+#!/bin/bash
+i=1
+result=0
+while [ $i -le 100 ]
+do
+  result=$(($result+$i))
+  i=$(($i+1))
+done
+echo $result
+
+sh while.sh
+```
+
+## 11. 软件包管理
+
+### 11.1 软件包的分类
+
+### 11.2 YUM 在线管理
+
+### 11.3 YUM 命令
+
+### 11.4 安装 Nginx
+
+### 11.5 安装 Mongodb
+
+### 11.6 安装 Redis
+
+### 11.7 安装 Mysql
