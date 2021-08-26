@@ -514,7 +514,18 @@
         最后一次登录时间<br>
       </td>
   </tr>
+   <tr>
+       <td>!</td>
+       <td>命令</td>
+       <td>查找并运行之前最符合条件的指令</td>
+       <td>
+        之前输入过 ls/systemctl start nginx.service<br>
+        现在还想运行systemctl start nginx.service指令<br>
+        直接输入: !s/!sy/!sys/...等就可以直接运行符合条件的完整指令<br>
+       </td>
+   </tr>
 </table>
+
 
 ## 6. Vi 常用命令列表
 
