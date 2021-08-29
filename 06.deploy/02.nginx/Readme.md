@@ -1,6 +1,6 @@
 # Nginx
 
-# 1. Nginx特点
+# 1. Nginx 特点
 
 - 高并发高性能
 - 可扩展性好
@@ -8,73 +8,73 @@
 - 热部署
 - 开源许可证
 
-# 2. Nginx应用场景
+# 2. Nginx 应用场景
 
 - 静态资源服务器
 - 反向代理服务
-- API接口服务
+- API 接口服务
 
-# 3. Nginx架构
+# 3. Nginx 架构
 
-## 3.1 Nginx工作流程
+## 3.1 Nginx 工作流程
 
-![](\assets\nginx架构图.png) 
+![](/assets/nginx架构图.png)
 
-1. Nginx在启动后，会有一个`master`进程和多个相互独立的`worker`进程
+1. Nginx 在启动后，会有一个`master`进程和多个相互独立的`worker`进程
 2. 接收来自外界的信号后，会向各个`worker`进程发送信号，每个进程都有可能来处理这个连接
 3. `master`进程能监控`worker`进程的运行状态,当`worker`进程退出后(异常情况下),会自动启动新的`worker`进程
 
-> worker进程数量：一般会设置成机器(服务器)`cpu`核数,因为更多的`worker`数量，只会导致`worker`之间相互竞争`cpu`,从而带来不必要的上下文切换
+> worker 进程数量：一般会设置成机器(服务器)`cpu`核数,因为更多的`worker`数量，只会导致`worker`之间相互竞争`cpu`,从而带来不必要的上下文切换
 >
 > 使用多进程模式,不仅能提供并发率，而且`worker`之间相互独立，一个`worker`进程挂了不会影响到其他的`worker`进程
 
-## 3.2 IO多路复用
+## 3.2 IO 多路复用
 
-## 3.3 CPU亲和
+## 3.3 CPU 亲和
 
-> 把CPU内核和Nginx的工作进程绑定在一起，让每个`worker`进程固定在一个CPU上执行，从而减少CPU的切换并提高缓存命中率，提供性能
+> 把 CPU 内核和 Nginx 的工作进程绑定在一起，让每个`worker`进程固定在一个 CPU 上执行，从而减少 CPU 的切换并提高缓存命中率，提供性能
 
-![](\assets\nginx-cpu亲和.png) 
+![](/assets/nginx-cpu亲和.png)
 
 ## 3.4 sendfile
 
 > sendfile:零拷贝传输模式
 
-- 非sendfile模式
+- 非 sendfile 模式
 
-  ![](\assets\nginx-no-sendfile.png)  
+  ![](/assets/nginx-no-sendfile.png)
 
   1. 客户端发送请求，请求资源
-  2. 网卡告诉nginx去处理资源
-  3. nginx告诉内核，去读取资源
+  2. 网卡告诉 nginx 去处理资源
+  3. nginx 告诉内核，去读取资源
   4. 内核会去读取硬盘中的资源
   5. 读取到的资源会放到内核的缓冲区中
-  6. 内核将缓冲区中的资源放到nginx的缓冲区中
-  7. nginx将资源放到网卡的缓冲区中
+  6. 内核将缓冲区中的资源放到 nginx 的缓冲区中
+  7. nginx 将资源放到网卡的缓冲区中
   8. 网卡将资源返回给客户端
 
-- sendfile模式
+- sendfile 模式
 
-  ![](\assets\nginx-sendfile.png) 
+  ![](/assets/nginx-sendfile.png)
 
   1. 客户端发送请求，请求资源
-  2. 网卡告诉nginx去处理资源
-  3. nginx告诉内核，去读取资源
+  2. 网卡告诉 nginx 去处理资源
+  3. nginx 告诉内核，去读取资源
   4. 内核会去读取硬盘中的资源
   5. 读取到的资源会放到内核的缓冲区中
   6. 内核将缓冲区中的资源直接放到网卡的缓冲区中
   7. 网卡将资源返回给客户端
 
-# 4. Nginx配置文件
+# 4. Nginx 配置文件
 
-| 路径                           | 用途                   |
-| ------------------------------ | ---------------------- |
-| /etc/nginx/nginx.conf          | 核心配置文件           |
-| /etc/nginx/conf.d/default.conf | 默认http服务器配置文件 |
+| 路径                           | 用途                     |
+| ------------------------------ | ------------------------ |
+| /etc/nginx/nginx.conf          | 核心配置文件             |
+| /etc/nginx/conf.d/default.conf | 默认 http 服务器配置文件 |
 
-> 一个main内部有一个http
-> 一个http下可以配置多个server
-> 一个server下可以配置多个location
+> 一个 main 内部有一个 http
+> 一个 http 下可以配置多个 server
+> 一个 server 下可以配置多个 location
 
 ```bash
 # /etc/nginx/nginx.conf文件
@@ -107,8 +107,8 @@ http {
     default_type        application/octet-stream; # 以上没有处理到的文件类型，默认为二进制类型
 
     include /etc/nginx/default.d/*.conf; # 包含/etc/nginx/default.d/目录下的所有子配置文件
-    
-    
+
+
 	# 服务
 	# 一个main内部有一个http
 	# 一个http下可以配置多个server
@@ -118,7 +118,7 @@ http {
        server_name  chengxiaohui.com; # 根据server_name来匹配地址，可以是域名,ip地址
        root         /usr/share/nginx/html; # nginx的静态文件根目录
        error_page 404 /404.html; # 当状态码为404时，返回404文件,/404.html === /usr/share/nginx/html/404.html
-       
+
        # 匹配地址：完全匹配
        location = /404.html {
        	 charset utf-8; # 配置字符集
@@ -132,25 +132,25 @@ http {
 }
 ```
 
-# 5. Nginx请求-Flow
+# 5. Nginx 请求-Flow
 
-![](/assets/nginx-request-flow.png) 
+![](/assets/nginx-request-flow.png)
 
 1. 客户端发送请求，请求资源
-2. nginx读取请求行、请求头、请求体
-3. 分析请求地址要使用哪个server配置块
-4. 分析请求地址命中某一个location，重写或读取配置
-5. 进行访问控制，限制每个IP的并发数
+2. nginx 读取请求行、请求头、请求体
+3. 分析请求地址要使用哪个 server 配置块
+4. 分析请求地址命中某一个 location，重写或读取配置
+5. 进行访问控制，限制每个 IP 的并发数
 6. 进行权限认证判断
 7. 生成内容，内容生成方式
    1. 直接返回的内容
    2. 读取硬盘文件的内容
    3. 反向代理拿到的内容
-8. 进行响应过滤(gzip压缩等)
+8. 进行响应过滤(gzip 压缩等)
 9. 生成访问、会话日志
 10. 返回内容给客户端
 
-# 6. Nginx的相关命令
+# 6. Nginx 的相关命令
 
 ```bash
 # 启动
@@ -172,16 +172,16 @@ nginx -t
 
 # 7. 三次握手四次挥手过程
 
-![](/assets/http-ss.png) 
+![](/assets/http-ss.png)
 
-# 8. Nginx访问日志
+# 8. Nginx 访问日志
 
 | 路径                      | 描述     |
 | ------------------------- | -------- |
 | /var/log/nginx/access.log | 访问日志 |
 | /var/log/nginx/error.log  | 错误日志 |
 
-## 8.1 log_format解释
+## 8.1 log_format 解释
 
 | 名称                  | 描述                     |
 | --------------------- | ------------------------ |
@@ -189,57 +189,54 @@ nginx -t
 | $remote_user          | 客户端用户名称           |
 | $time_local           | 访问时间和时区           |
 | $request              | 请求行                   |
-| $status               | http请求状态             |
+| $status               | http 请求状态            |
 | $body_bytes_sent      | 发送给客户端文件内容大小 |
 | $http_referer         | 从哪个地址（来源）过来的 |
 | $http_user_agent      | 用户发送请求时用的浏览器 |
 | $http_x_forwarded_for | 记录代理过程             |
 
-# 9. 实战Nginx
+# 9. 实战 Nginx
 
 ## 9.1 压缩
 
 | 名称              | 语法                      | 上下文               | 描述                               | code                              |
 | ----------------- | ------------------------- | -------------------- | ---------------------------------- | --------------------------------- |
 | gzip              | gizp on / off             | http,server,location | 压缩文件                           | gzip on;                          |
-| gzip_static       | gzip_static  on / off     | http,server,location | 先查找.gz文件,节省cpu计算          | gzip_static on;                   |
-| gzip_min_length   | gzip_min_length size      | http,server,location | 只压缩超过size大小的文件           | gzip_min_length 3k;               |
+| gzip_static       | gzip_static on / off      | http,server,location | 先查找.gz 文件,节省 cpu 计算       | gzip_static on;                   |
+| gzip_min_length   | gzip_min_length size      | http,server,location | 只压缩超过 size 大小的文件         | gzip_min_length 3k;               |
 | gzip_comp_level   | gzip_comp_level [1-10]    | http,server,location | 压缩比例越高，文件被压缩的体积越小 | gzip_min_length 7;                |
 | gzip_types        | gzip_types [content-type] | http,server,location | 要压缩的文件类型                   | gzip_types applicaton/javascript; |
-| gzip_http_version | gzip_types [http-version] | http,server,location | 启用gzip压缩所需的HTTP最低版本     | gzip_http_version 1.1;            |
+| gzip_http_version | gzip_types [http-version] | http,server,location | 启用 gzip 压缩所需的 HTTP 最低版本 | gzip_http_version 1.1;            |
 
-- nginx配置
+- nginx 配置
 
-  ![](/assets/nginx-gzip-code.png) 
+  ![](/assets/nginx-gzip-code.png)
 
 - 包的体积 -> 压缩前
 
-  ![](/assets/nginx-gzip-linux-off.png) 
+  ![](/assets/nginx-gzip-linux-off.png)
 
 - 包的体积 -> 压缩后
 
-  ![](/assets/nginx-gzip-linux-on.png) 
+  ![](/assets/nginx-gzip-linux-on.png)
 
 - 网站资源包大小 -> 压缩前
 
-  ![](/assets/nginx-gzip-off.png) 
+  ![](/assets/nginx-gzip-off.png)
 
 - 网站资源包大小 -> 压缩后
 
-  ![](/assets/nginx-gzip-on.png)  
-
+  ![](/assets/nginx-gzip-on.png)
 
 ## 9.2 内容替换
 
-- nginx配置
+- nginx 配置
 
-  ![](/assets/nginx-sub-filter-code.png) 
+  ![](/assets/nginx-sub-filter-code.png)
 
 - 配置后
 
-  ![](/assets/nginx-sub-filter-result.png) 
-
-  
+  ![](/assets/nginx-sub-filter-result.png)
 
 ## 9.3 连接限制(暂不填写)
 
@@ -249,19 +246,19 @@ nginx -t
 
 ## 9.6 跨域
 
-- nginx配置
+- nginx 配置
 
-  ![](/assets/nginx-request-cross-code.png) 
+  ![](/assets/nginx-request-cross-code.png)
 
-- nginx配置前
+- nginx 配置前
 
-  ![](/assets/nginx-html-request-code.png) 
+  ![](/assets/nginx-html-request-code.png)
 
-  ![](/assets/nginx-html-request-cross.png) 
+  ![](/assets/nginx-html-request-cross.png)
 
-- nginx配置后
+- nginx 配置后
 
-  ![](/assets/nginx-html-request-result.png) 
+  ![](/assets/nginx-html-request-result.png)
 
 ## 9.7 防盗链
 
@@ -305,38 +302,38 @@ nginx -t
     </tr>
 </table>
 
-- nginx配置
+- nginx 配置
 
-  ![](/assets/nginx-referer-off.png) 
+  ![](/assets/nginx-referer-off.png)
 
 - curl -v -e "1.15.51.4" tb-c.chengxiaohui.com/logo.jpg
 
 - curl -v -e "http://www.baidu.com" tb-c.chengxiaohui.com/logo.jpg
 
-  ![](/assets/nginx-referer-on.png) 
+  ![](/assets/nginx-referer-on.png)
 
 # 10. 正向代理
 
 > 代理客户端，服务端不知道实际发起请求的客户端
 
-![](/assets/nginx-positive-proxy.png) 
+![](/assets/nginx-positive-proxy.png)
 
-- 小明想访问google，直接访问访问不到
-- 通过一个代理服务器，代理服务器去访问google可以访问到
+- 小明想访问 google，直接访问访问不到
+- 通过一个代理服务器，代理服务器去访问 google 可以访问到
 - 访问到的资源在通过代理服务器转发给小明
-- 小明就可以看到google的内容了
+- 小明就可以看到 google 的内容了
 
 # 11. 反向代理
 
 > 代理服务端，客户端不知道实际提供服务的服务端
 
-![](/assets/nginx-reverse-proxy.png) 
+![](/assets/nginx-reverse-proxy.png)
 
 - 小明在写代码的过程中写了很多接口
-- 这些接口的前缀都是某一个域名或IP地址
-- 实际上这些接口里面一部分接口来自a服务器，一部分接口来自b服务器的，还有一部分接口来自c服务器的
-- 但是小明是不知道的，小明只需要把接口地址写成代理的服务器地址就可以访问到a、b、c三台服务器返回的接口内容了
-- 实际上是通过代理服务器去转发到不同的a、b、c三台服务器上，响应到的内容通过代理服务器转发给小明的
+- 这些接口的前缀都是某一个域名或 IP 地址
+- 实际上这些接口里面一部分接口来自 a 服务器，一部分接口来自 b 服务器的，还有一部分接口来自 c 服务器的
+- 但是小明是不知道的，小明只需要把接口地址写成代理的服务器地址就可以访问到 a、b、c 三台服务器返回的接口内容了
+- 实际上是通过代理服务器去转发到不同的 a、b、c 三台服务器上，响应到的内容通过代理服务器转发给小明的
 
 ## 11.1 相关变量
 
@@ -349,9 +346,9 @@ nginx -t
 | proxy_send_timeout    | 时间(秒)               | 发送超时时间                             |
 | proxy_read_timeout    | 时间(秒)               | 读取超时时间                             |
 |                       | $http_host             | 请求头信息                               |
-|                       | $remote_addr           | 真实IP信息                               |
+|                       | $remote_addr           | 真实 IP 信息                             |
 
-## 11.2 proxy_pass注意点
+## 11.2 proxy_pass 注意点
 
 ```bash
 # 1.`proxy_pass`后的url最后加上/就是绝对根路径，location中匹配的路径部分不走代理,也就是说会被替换掉
@@ -389,7 +386,7 @@ vi 3000.js
 # 4.文件内代码
 const http = require('http')
 const server = http.createServer((req, res) => {
- console.log(req.headers) 
+ console.log(req.headers)
  res.end('3000')
 })
 server.listen(3000)
@@ -447,4 +444,3 @@ curl tb-c.chengxiaohui.com/api
 # 13. location
 
 # 14. rewrite
-
