@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      height: 2000px;
+    }
+
+    div {
+      /* 
+        开启粘性定位,相对定位 + 固定定位的结合
+        当小于设置的阈值时,会变成固定定位
+        没有小于设置的阈值时,则是相对定位
+        
+        这里我们设置的阈值是top:0
+        当元素的top值小于0,就会变成固定定位
+        当元素的top值没有小于0,则是相对定位
+      */
+      position: sticky;
+      top: 0;
+      width: 500px;
+      height: 100px;
+      line-height: 100px;
+      background-color: skyblue;
+      text-align: center;
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <div>粘性定位</div>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+  <p>1111112312asdasdasdasdasdasd</p>
+</body>
+
+</html>
