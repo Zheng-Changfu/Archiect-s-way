@@ -8,12 +8,18 @@
   <title>Document</title>
   <style>
     .gird-container {
-      width: 500px;
-      height: 500px;
+      width: 320px;
+      height: 320px;
       background-color: skyblue;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
+      grid-template-rows: 80px 1fr 2fr;
+      grid-template-columns: 80px 1fr 2fr;
+      gap: 5px;
+      /* grid-template-rows: repeat(auto-fill, 100px);
+      grid-template-columns: repeat(auto-fill, 100px); */
+      /* grid-template-columns: 100px 100px 100px;
+      grid-template-rows: 100px 100px 100px;
+      gap: 5px; */
     }
 
     .gird-container div {
@@ -34,6 +40,7 @@
     <div>7</div>
     <div>8</div>
     <div>9</div>
+
   </div>
 </body>
 
