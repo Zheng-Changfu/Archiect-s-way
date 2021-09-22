@@ -12,10 +12,10 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts start",
+    "build": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts build",
+    "test": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts test",
+    "eject": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

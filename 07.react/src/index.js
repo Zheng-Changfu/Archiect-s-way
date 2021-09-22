@@ -1,15 +1,25 @@
 import React from './react'
 import ReactDOM from 'react-dom'
 
-const element1 = <h1 className="title">hello <span>world</span></h1>
-console.log(JSON.stringify(element1, null, 2))
-
+const element1 = <h1 className="title" style={{ color: "red" }}>hello <span>world</span></h1>
+// console.log(JSON.stringify(element1, null, 2))
+console.log(React.createElement(
+  "h1",
+  {
+    className: "title"
+  },
+  "hello ",
+  React.createElement(
+    "span",
+    null,
+    "world"
+  )))
 /**
  * React.createElement(
-  * "h1", 
+  * "h1",
   * {
           className: "title"
-    }, 
+    },
     "hello ",
     React.createElement(
       "span",
@@ -24,4 +34,4 @@ console.log(JSON.stringify(element1, null, 2))
    子元素同理
  */
 
-ReactDOM.render(element1, document.getElementById('app'))
+// ReactDOM.render(element1, document.getElementById('app'))
