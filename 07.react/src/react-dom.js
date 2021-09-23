@@ -12,7 +12,7 @@ function render (vDom, container) {
 function mount (vDom, parentDOM) {
   const dom = createDOM(vDom)
   if (dom) {
-    parentDOM.appendChild(dom)  
+    parentDOM.appendChild(dom)
   }
 }
 
@@ -27,9 +27,12 @@ function createDOM (vDom) {
   let dom
   if (type === REACT_TEXT) {
     dom = document.createTextNode(props.content)
+  } else if (typeof type === 'function') {
+    return mountFunctionComponent(vDom)
   } else {
     dom = document.createElement(type)
   }
+
   if (props) {
     updateProps(dom, {}, props)
     const child = props.children
@@ -44,6 +47,19 @@ function createDOM (vDom) {
     }
   }
   return dom
+}
+
+/**
+ * 
+ * @param {*} vDom 虚拟Dom
+ * @returns 真实dom
+ */
+function mountFunctionComponent (vDom) {
+  const { type: FunctionComponent, props } = vDom
+  const renderVdom = FunctionComponent(props)
+  // 添加旧的虚拟dom，方便后期去做diff
+  vDom.oldRenderVdom = renderVdom
+  return createDOM(renderVdom)
 }
 
 /**

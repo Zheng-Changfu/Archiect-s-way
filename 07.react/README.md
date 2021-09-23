@@ -18,12 +18,12 @@
 
 ![](./assets/jsx-babel-transform-code-explain.png) 
 
-### 3. React.createElement 返回值
+## 3. React.createElement 返回值
 
 > 返回值是一个 js 对象(虚拟 DOM)，描述了真实 DOM 的信息
 > ![](./assets/react.createment-returns.png)
 
-### 4. 实现 React.creatElement
+## 4. 实现 React.creatElement
 
 ```js
 const REACT_TEXT = Symbol("REACT_TEXT");
@@ -68,7 +68,7 @@ export default React;
 
 ![](/assets/React.createElement-code-process.png) 
 
-### 5. 实现 ReactDOM.render
+## 5. 实现 ReactDOM.render
 
 ```js
 # 将虚拟DOM转换成真实DOM并挂载到指定容器中
@@ -156,4 +156,20 @@ export default ReactDOM
 ```
 
 ![](/assets/React.render-code-process.png) 
+
+## 6. 实现函数式组件
+
+```js
+# 示例
+import React from './react'
+import ReactDOM from './react-dom'
+
+function FunctionComponent (props) {
+  return <h1>hello {props.title}</h1>
+}
+
+ReactDOM.render(<FunctionComponent title='world' />, document.getElementById('app'))
+
+# 实现
+```
 

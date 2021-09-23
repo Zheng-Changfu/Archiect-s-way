@@ -12,7 +12,7 @@ function render (vDom, container) {
 function mount (vDom, parentDOM) {
   const dom = createDOM(vDom)
   if (dom) {
-    parentDOM.appendChild(dom)  
+    parentDOM.appendChild(dom)
   }
 }
 
