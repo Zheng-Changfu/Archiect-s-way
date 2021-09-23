@@ -214,3 +214,85 @@ function mountFunctionComponent (vDom) {
 }
 ```
 
+## 7. 实现类组件
+
+```js
+# 示例
+import React from './react'
+import ReactDOM from './react-dom'
+
+class ClassComponent extends React.Component {
+  constructor(props) {
+    super(props) // 调用父类的constructor方法
+  }
+  render () {
+    console.log(this, 'this')
+    return <h1>hello {this.props.title}</h1>
+  }
+}
+ReactDOM.render(<ClassComponent title='world' />, document.getElementById('app'))
+
+# 实现
+class Component {
+  // 此标识用来区分为类组件还是函数式组件
+  static isReactComponent = true
+  constructor(props) {
+    this.props = props // 添加props属性
+  }
+}
+export default Component
+/**
+ * @description 根据虚拟dom创建真实dom
+ * @param {*} vDom 虚拟dom
+ * @returns 真实dom
+ */
+function createDOM (vDom) {
+  if (!vDom) return null
+  const { type, props } = vDom
+  let dom
+  if (type === REACT_TEXT) {
+    dom = document.createTextNode(props.content)
+  } else if (typeof type === 'function') {
+    if (type.isReactComponent) {
+      // 类组件
+      return mountClassComponent(vDom)
+    } else {
+      // 函数组件
+      return mountFunctionComponent(vDom)
+    }
+
+  } else {
+    dom = document.createElement(type)
+  }
+
+  if (props) {
+    updateProps(dom, {}, props)
+    const child = props.children
+    if (child) {
+      if (typeof child === 'object' && child.type) {
+        // 对象
+        mount(child, dom)
+      } else if (Array.isArray(child)) {
+        // 数组
+        reconcileChildren(child, dom)
+      }
+    }
+  }
+  return dom
+}
+/**
+ * 
+ * @param {*} vDom 虚拟Dom
+ * @returns 真实dom
+ */
+function mountClassComponent (vDom) {
+  const { type: ClassComponent, props } = vDom
+  const instance = new ClassComponent(props)
+  const render = instance.render
+  const renderVdom = render.call(instance)
+  // 添加旧的虚拟dom，方便后期去做diff
+  vDom.oldRenderVdom = renderVdom
+  return createDOM(renderVdom)
+}
+```
+
