@@ -1,5 +1,5 @@
 import { wrapToVdom } from "./utils"
-import Component from './Component'
+
 /**
  * @description 创建一个React元素
  * @param {*} type 元素标签
@@ -28,8 +28,7 @@ function createElement (type, config, children) {
 }
 
 const React = {
-  createElement,
-  Component
+  createElement
 }
 
 export default React

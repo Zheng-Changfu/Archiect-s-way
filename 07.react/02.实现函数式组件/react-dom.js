@@ -28,14 +28,7 @@ function createDOM (vDom) {
   if (type === REACT_TEXT) {
     dom = document.createTextNode(props.content)
   } else if (typeof type === 'function') {
-    if (type.isReactComponent) {
-      // 类组件
-      return mountClassComponent(vDom)
-    } else {
-      // 函数组件
-      return mountFunctionComponent(vDom)
-    }
-
+    return mountFunctionComponent(vDom)
   } else {
     dom = document.createElement(type)
   }
@@ -54,21 +47,6 @@ function createDOM (vDom) {
     }
   }
   return dom
-}
-
-/**
- * 
- * @param {*} vDom 虚拟Dom
- * @returns 真实dom
- */
-function mountClassComponent (vDom) {
-  const { type: ClassComponent, props } = vDom
-  const instance = new ClassComponent(props)
-  const render = instance.render
-  const renderVdom = render.call(instance)
-  // 添加旧的虚拟dom，方便后期去做diff
-  vDom.oldRenderVdom = renderVdom
-  return createDOM(renderVdom)
 }
 
 /**

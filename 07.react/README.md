@@ -171,5 +171,46 @@ function FunctionComponent (props) {
 ReactDOM.render(<FunctionComponent title='world' />, document.getElementById('app'))
 
 # 实现
+function createDOM (vDom) {
+  if (!vDom) return null
+  const { type, props } = vDom
+  let dom
+  if (type === REACT_TEXT) {
+    dom = document.createTextNode(props.content)
+  } else if (typeof type === 'function') {
+      // 挂载函数式组件
+    return mountFunctionComponent(vDom)
+  } else {
+    dom = document.createElement(type)
+  }
+
+  if (props) {
+    updateProps(dom, {}, props)
+    const child = props.children
+    if (child) {
+      if (typeof child === 'object' && child.type) {
+        // 对象
+        mount(child, dom)
+      } else if (Array.isArray(child)) {
+        // 数组
+        reconcileChildren(child, dom)
+      }
+    }
+  }
+  return dom
+}
+
+/**
+ * 
+ * @param {*} vDom 虚拟Dom
+ * @returns 真实dom
+ */
+function mountFunctionComponent (vDom) {
+  const { type: FunctionComponent, props } = vDom
+  const renderVdom = FunctionComponent(props)
+  // 添加旧的虚拟dom，方便后期去做diff
+  vDom.oldRenderVdom = renderVdom
+  return createDOM(renderVdom)
+}
 ```
 

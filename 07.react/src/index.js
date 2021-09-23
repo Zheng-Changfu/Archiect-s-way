@@ -1,8 +1,14 @@
 import React from './react'
 import ReactDOM from './react-dom'
 
-function FunctionComponent (props) {
-  return <h1>hello {props.title}</h1>
+class ClassComponent extends React.Component {
+  constructor(props) {
+    super(props) // 调用父类的constructor方法
+  }
+  render () {
+    console.log(this, 'this')
+    return <h1>hello {this.props.title}</h1>
+  }
 }
 
-ReactDOM.render(<FunctionComponent title='world' />, document.getElementById('app'))
+ReactDOM.render(<ClassComponent title='world' />, document.getElementById('app'))
