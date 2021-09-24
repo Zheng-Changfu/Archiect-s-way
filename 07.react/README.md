@@ -296,3 +296,121 @@ function mountClassComponent (vDom) {
 }
 ```
 
+## 8. 实现合成事件和批量更新状态
+
+> 在实现之前，我们先看看让刚入门react的童鞋们疑惑的代码
+
+### 8.1 代码1
+
+```js
+class ClassComponent extends React.Component {
+  constructor(props) {
+    super(props) // 调用父类的constructor方法
+    this.state = {
+      num: 0
+    }
+  }
+  handleClick = () => {
+    console.log(this.state.num, '0')
+    this.setState({
+      num: this.state.num + 1
+    })
+    console.log(this.state.num, '1')
+    this.setState({
+      num: this.state.num + 1
+    })
+    console.log(this.state.num, '2')
+  }
+  render () {
+    return <div>
+      <h1>{this.state.num}</h1>
+      <button onClick={this.handleClick}>+</button>
+    </div>
+  }
+}
+```
+
+![](/assets/React.setState-code-1.png) 
+
+### 8.2 代码2
+
+```react
+class ClassComponent extends React.Component {
+  constructor(props) {
+    super(props) // 调用父类的constructor方法
+    this.state = {
+      num: 0
+    }
+  }
+  handleClick = () => {
+    console.log(this.state.num, '0')
+    this.setState(state => ({ num: state.num + 1 }))
+    console.log(this.state.num, '1')
+    this.setState(state => ({ num: state.num + 1 }))
+    console.log(this.state.num, '2')
+  }
+  render () {
+    return <div>
+      <h1>{this.state.num}</h1>
+      <button onClick={this.handleClick}>+</button>
+    </div>
+  }
+}
+```
+
+![](/assets/React.setState-code-2.png) 
+
+### 8.3 代码3
+
+```react
+class ClassComponent extends React.Component {
+  constructor(props) {
+    super(props) // 调用父类的constructor方法
+    this.state = {
+      num: 0
+    }
+  }
+  handleClick = () => {
+    setTimeout(() => {
+      console.log(this.state.num, '0')
+      this.setState({
+        num: this.state.num + 1
+      })
+      console.log(this.state.num, '1')
+      this.setState({
+        num: this.state.num + 1
+      })
+      console.log(this.state.num, '2')
+    })
+  }
+  render () {
+    return <div>
+      <h1>{this.state.num}</h1>
+      <button onClick={this.handleClick}>+</button>
+    </div>
+  }
+}
+```
+
+![](/assets/React.setState-code-3.png) 
+
+> 是不是感到非常的奇怪，接下来让我们动动手一起去实现吧，实现之后相信大家的疑惑都会被解开的
+
+### 8.4 实现
+
+```react
+setState:
+
+updater.addState -> emitUpdate -> isBatchingUpdate ? queue.push : updateComponent -> getState -> shouldUpdate -> forceUpdate -> findDOM(oldDOM) -> render(newDOM) -> compareTwoVdom
+
+event:
+	addEvent -> 事件先触发dispatchEvent -> 开启批量更新 -> createSyntheticEvent(合成事件) -> 执行回调函数(向上冒泡) -> 关闭批量更新 -> queue.batchUpdate
+```
+
+### 8.5 总结
+
+### 8.6 面试题：setState什么时候是同步，什么时候是异步？
+
+- React能管辖到的地方就是异步的，比如合成事件中，生命周期中都是异步的
+- React管辖不到的地方都是同步的，比如异步代码，如：原生事件、Promise.then、setTimeout...等都是同步的
+

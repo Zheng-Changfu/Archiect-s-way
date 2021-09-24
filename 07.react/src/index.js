@@ -1,13 +1,48 @@
-import React from './react'
-import ReactDOM from './react-dom'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 class ClassComponent extends React.Component {
   constructor(props) {
     super(props) // 调用父类的constructor方法
+    this.state = {
+      num: 0
+    }
+  }
+  handleClick = () => {
+    // console.log(this.state.num, '0')
+    // this.setState({
+    //   num: this.state.num + 1
+    // })
+    // console.log(this.state.num, '1')
+    // this.setState({
+    //   num: this.state.num + 1
+    // })
+    // console.log(this.state.num, '2')
+
+
+    // console.log(this.state.num, '0')
+    // this.setState(state => ({ num: state.num + 1 }))
+    // console.log(this.state.num, '1')
+    // this.setState(state => ({ num: state.num + 1 }))
+    // console.log(this.state.num, '2')
+
+    // setTimeout(() => {
+    //   console.log(this.state.num, '0')
+    //   this.setState({
+    //     num: this.state.num + 1
+    //   })
+    //   console.log(this.state.num, '1')
+    //   this.setState({
+    //     num: this.state.num + 1
+    //   })
+    //   console.log(this.state.num, '2')
+    // })
   }
   render () {
-    console.log(this, 'this')
-    return <h1>hello {this.props.title}</h1>
+    return <div>
+      <h1>{this.state.num}</h1>
+      <button onClick={this.handleClick}>+</button>
+    </div>
   }
 }
 
