@@ -1,5 +1,5 @@
 import { REACT_TEXT } from "./constants"
-
+import { addEvent } from './events'
 function render (vDom, container) {
   mount(vDom, container)
 }
@@ -53,6 +53,8 @@ function createDOM (vDom) {
       }
     }
   }
+  // 在虚拟节点上挂一个dom属性，此属性用来标识虚拟节点对应的真实dom
+  vDom.dom = dom
   return dom
 }
 
@@ -67,7 +69,7 @@ function mountClassComponent (vDom) {
   const render = instance.render
   const renderVdom = render.call(instance)
   // 添加旧的虚拟dom，方便后期去做diff
-  vDom.oldRenderVdom = renderVdom
+  instance.oldRenderVdom = vDom.oldRenderVdom = renderVdom
   return createDOM(renderVdom)
 }
 
@@ -112,6 +114,9 @@ function updateProps (dom, oldProps, newProps) {
         // 添加样式
         dom.style[styleKey] = newProps[key][styleKey]
       }
+    } else if (key.startsWith('on')) {
+      // 事件
+      addEvent(dom, key.toLowerCase(), newProps[key])
     } else {
       // 其他属性
       dom[key] = newProps[key]

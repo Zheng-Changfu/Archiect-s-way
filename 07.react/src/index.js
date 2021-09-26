@@ -1,5 +1,5 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from './react'
+import ReactDOM from './react-dom'
 
 class ClassComponent extends React.Component {
   constructor(props) {
@@ -8,16 +8,18 @@ class ClassComponent extends React.Component {
       num: 0
     }
   }
-  handleClick = () => {
-    // console.log(this.state.num, '0')
-    // this.setState({
-    //   num: this.state.num + 1
-    // })
-    // console.log(this.state.num, '1')
-    // this.setState({
-    //   num: this.state.num + 1
-    // })
-    // console.log(this.state.num, '2')
+  handleClick = (e) => {
+    console.log(e, 'e')
+    console.log(this, 'this')
+    console.log(this.state.num, '0')
+    this.setState({
+      num: this.state.num + 1
+    })
+    console.log(this.state.num, '1')
+    this.setState({
+      num: this.state.num + 1
+    })
+    console.log(this.state.num, '2')
 
 
     // console.log(this.state.num, '0')
