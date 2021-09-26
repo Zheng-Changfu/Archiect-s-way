@@ -334,7 +334,7 @@ class ClassComponent extends React.Component {
 
 ### 8.2 代码2
 
-```react
+```js
 class ClassComponent extends React.Component {
   constructor(props) {
     super(props) // 调用父类的constructor方法
@@ -362,7 +362,7 @@ class ClassComponent extends React.Component {
 
 ### 8.3 代码3
 
-```react
+```js
 class ClassComponent extends React.Component {
   constructor(props) {
     super(props) // 调用父类的constructor方法
@@ -398,7 +398,7 @@ class ClassComponent extends React.Component {
 
 ### 8.4 实现setState
 
-```react
+```js
 # 实际上setState在React可以管辖到的地方只是将状态存起来了（并不会进行页面上的更新），等到后面触发生命周期/合成事件时在执行真正的更新
 const updateQueue = {
   // 是否为批量更新模式,此变量控制了更新模式
@@ -526,7 +526,7 @@ function findDOM (vDom) {
 
 ### 8.5 实现合成事件
 
-```react
+```js
 // dom上如果绑定了事件，就会先进入此方法
 function addEvent (dom, eventName, eventHandle) {
   let _store
@@ -602,7 +602,7 @@ function createSyntheticEvent (nativeEvent) {
 
 ### 9.1 实现react元素上的ref
 
-```react
+```js
 # 示例
 class ClassTestRef extends React.Component {
   constructor(props) {
@@ -650,7 +650,7 @@ export function createDOM (vDom) {
 
 ### 9.2 实现类组件上的ref
 
-```react
+```js
 # 示例
 class Instance extends React.Component {
   constructor() {
@@ -716,7 +716,7 @@ function mountClassComponent (vDom) {
 
 ### 9.3 实现函数组件上的ref
 
-```react
+```js
 # 示例
 function Func(props, ref) {
   return <input type="text" ref={ref} />;
