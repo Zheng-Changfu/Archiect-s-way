@@ -10,7 +10,7 @@
 
 ![](./assets/jsx-source-code.png) 
 
-### 2.2 编译时经过 babel 转换后的代码
+### 2.2 编译时 babel 转换后的代码
 
 ![](./assets/jsx-babel-transform-code.png) 
 
@@ -396,21 +396,386 @@ class ClassComponent extends React.Component {
 
 > 是不是感到非常的奇怪，接下来让我们动动手一起去实现吧，实现之后相信大家的疑惑都会被解开的
 
-### 8.4 实现
+### 8.4 实现setState
 
 ```react
-setState:
+# 实际上setState在React可以管辖到的地方只是将状态存起来了（并不会进行页面上的更新），等到后面触发生命周期/合成事件时在执行真正的更新
+const updateQueue = {
+  // 是否为批量更新模式,此变量控制了更新模式
+  isBatchingUpdate: false,
+  updaters: [],
+  batchUpdate () {
+    // 批量更新
+    for (let i = 0; i < updateQueue.updaters.length; i++) {
+      const update = updateQueue.updaters[i]
+      update.updateComponent()
+    }
+    // 重置
+    updateQueue.updaters.length = 0
+    updateQueue.isBatchingUpdate = false
+  }
+}
+class Updater {
+  constructor(classInstance) {
+    this.classInstance = classInstance
+    this.pendingStates = []
+  }
+  addState (partialState) {
+    this.pendingStates.push(partialState)
+    this.emitUpdate()
+  }
+  emitUpdate () {
+    const isBatchingUpdate = updateQueue.isBatchingUpdate
+    if (isBatchingUpdate) {
+      // 如果为批量更新模式，就将更新器都先存起来
+      updateQueue.updaters.push(this)
+    } else {
+      // 去更新
+      this.updateComponent()
+    }
+  }
+  updateComponent () {
+    const { classInstance, pendingStates } = this
+    if (pendingStates.length > 0) {
+      shouldUpdate(classInstance, this.getState())
+    }
+  }
+  getState () {
+    const { classInstance, pendingStates } = this
+    let state = classInstance.state
+    for (let i = 0; i < pendingStates.length; i++) {
+      let pendingState = pendingStates[i]
+      if (isFunc(pendingState)) {
+        // this.setState((state) => ({num:state.num + 1}))
+        pendingState = pendingState(state)
+      }
+      // 状态合并
+      state = { ...state, ...pendingState }
+    }
+    this.pendingStates.length = 0
+    return state
+  }
+}
 
-updater.addState -> emitUpdate -> isBatchingUpdate ? queue.push : updateComponent -> getState -> shouldUpdate -> forceUpdate -> findDOM(oldDOM) -> render(newDOM) -> compareTwoVdom
+function shouldUpdate (classInstance, nextState) {
+  // 更新外界状态
+  classInstance.state = nextState
+  // 更新
+  classInstance.forceUpdate()
+}
+class Component {
+  // 此标识用来区分为类组件还是函数式组件
+  static isReactComponent = true
+  constructor(props) {
+    /**
+     * 这里的this指向的继承者组件，因为外界是super()
+     */
+    this.props = props
+    this.state = {}
+    this.updater = new Updater(this)
+  }
+  setState (partialState) {
+    this.updater.addState(partialState)
+  }
+  forceUpdate () {
+    const oldRenderVdom = this.oldRenderVdom
+    const oldDom = findDOM(oldRenderVdom)
+    const newVdom = this.render() // 这里的this指向组件实例
+    compareTwoVDom(oldDom.parentNode, oldRenderVdom, newVdom)
+    this.oldRenderVdom = newVdom
+  }
+}
+/**
+ * @description diff比较，暂时没有写
+ * @param {*} parentNode 父节点
+ * @param {*} oldVDom 老的虚拟dom
+ * @param {*} newVDom 新的虚拟dom
+ */
+function compareTwoVDom (parentNode, oldVDom, newVDom) {
+  const oldDom = findDOM(oldVDom)
+  const newDom = createDOM(newVDom)
+  parentNode.replaceChild(newDom, oldDom)
+}
 
-event:
-	addEvent -> 事件先触发dispatchEvent -> 开启批量更新 -> createSyntheticEvent(合成事件) -> 执行回调函数(向上冒泡) -> 关闭批量更新 -> queue.batchUpdate
+/**
+ * 
+ * @param {*} vDom 虚拟dom
+ * @returns 根据虚拟dom找到对应的真实dom
+ */
+function findDOM (vDom) {
+  // 递归
+  // if (!vDom) return null
+  // if (vDom.dom) {
+  //   // 真实元素
+  //   return vDom.dom
+  // } else {
+  //   // 组件就继续找
+  //   return findDOM(vDom.oldRenderVdom)
+  // }
+
+  // 迭代
+  const stack = [vDom]
+  while (stack.length) {
+    const vdom = stack.pop()
+    if (!vdom) return null
+    if (vdom.dom) return vdom.dom
+    stack.push(vdom.oldRenderVdom)
+  }
+}
 ```
 
-### 8.5 总结
+### 8.5 实现合成事件
+
+```react
+// dom上如果绑定了事件，就会先进入此方法
+function addEvent (dom, eventName, eventHandle) {
+  let _store
+  // 给dom上添加自定义属性，方便dispatchEvent中去触发
+  if (dom._store) {
+    _store = dom._store
+  } else {
+    dom._store = {}
+    _store = dom._store
+  }
+  // _store.onclick = handleClick
+  _store[eventName] = eventHandle
+  // 将状态都统一存放在document上
+  if (!document[eventName]) {
+    // document.onclick = dispatchEvent
+    document[eventName] = dispatchEvent
+  }
+}
+
+/**
+ * @description 不管点什么按钮，触发什么事件，走的都是这个函数
+ * @description 本质其实就一个切片函数，在执行用户的回调前开启批量更新模式，执行用户回调函数，关闭批量更新模式
+ * @param {*} nativeEvent 原生event
+ */
+function dispatchEvent (nativeEvent) {
+  // event.target = 当前点击的元素 button
+  // event.type = 当前的事件名 click
+  // event.currentTarget = 向上冒泡时的目标
+  const { target, type } = nativeEvent
+  const eventName = 'on' + type
+  // 开启批量更新模式
+  updateQueue.isBatchingUpdate = true
+  // 创建合成event
+  const syntheticEvent = createSyntheticEvent(nativeEvent)
+  let currentTarget = target
+  // 模拟向上冒泡的过程
+  while (currentTarget) {
+    // 拿到当前dom上的_store属性，只要dom上绑定了react的事件，react就会在这个dom上挂一个_store属性
+    const _store = currentTarget._store
+    // 拿到在_store属性上绑定的函数(用户的函数)
+    const eventHandle = _store && _store[eventName]
+    if (isFunc(eventHandle)) {
+      syntheticEvent.target = target
+      syntheticEvent.currentTarget = currentTarget
+      // 调用用户的函数
+      eventHandle.call(target, syntheticEvent)
+    }
+    currentTarget = currentTarget.parentNode
+  }
+  // 关闭批量更新
+  updateQueue.isBatchingUpdate = false
+  // 执行真正的更新
+  updateQueue.batchUpdate()
+}
+// nativeEvent为原生的event，react在这里做了一些其他处理
+function createSyntheticEvent (nativeEvent) {
+  // 在这里可以做兼容性处理
+  let syntheticEvent = { nativeEvent }
+  for (let key in nativeEvent) {
+    syntheticEvent[key] = nativeEvent[key]
+  }
+  return syntheticEvent
+}
+```
 
 ### 8.6 面试题：setState什么时候是同步，什么时候是异步？
 
 - React能管辖到的地方就是异步的，比如合成事件中，生命周期中都是异步的
 - React管辖不到的地方都是同步的，比如异步代码，如：原生事件、Promise.then、setTimeout...等都是同步的
+- 内部通过一个`isBatchingUpdate`变量来控制是否为批量更新模式
+
+## 9. 实现Ref
+
+### 9.1 实现react元素上的ref
+
+```react
+# 示例
+class ClassTestRef extends React.Component {
+  constructor(props) {
+    super(props);
+    this.aRef = React.createRef();
+    this.bRef = React.createRef();
+    this.resultRef = React.createRef();
+  }
+  handleAdd = () => {
+    const aValue = this.aRef.current.value;
+    const bValue = this.bRef.current.value;
+    this.resultRef.current.value = aValue + bValue;
+  };
+  render() {
+    return (
+      <div>
+        <input type="text" ref={this.aRef} />+<br />
+        <input type="text" ref={this.bRef} />
+        <button onClick={this.handleAdd}>=</button>
+        <br />
+        <input type="text" ref={this.resultRef} />
+        <br />
+      </div>
+    );
+  }
+}
+ReactDOM.render(<ClassTestRef />, document.getElementById("app"));
+
+# 实现
+// react.js中
+function createRef () {
+  return { current: null }
+}
+// react-dom.js中
+export function createDOM (vDom) {
+  ...
+  vDom.dom = dom
+  if (ref) {
+    // 指向真实DOM
+    ref.current = dom
+  }
+  return dom
+}
+```
+
+### 9.2 实现类组件上的ref
+
+```react
+# 示例
+class Instance extends React.Component {
+  constructor() {
+    super();
+    this.aRef = React.createRef();
+    this.bRef = React.createRef();
+    this.resultRef = React.createRef();
+  }
+
+  handleAdd = () => {
+    const aValue = this.aRef.current.value;
+    const bValue = this.bRef.current.value;
+    this.resultRef.current.value = aValue + bValue;
+  };
+
+  render() {
+    return (
+      <div>
+        <input type="text" ref={this.aRef} />+<br />
+        <input type="text" ref={this.bRef} />
+        <br />
+        <input type="text" ref={this.resultRef} />
+        <br />
+      </div>
+    );
+  }
+}
+class ClassInstanceTestRef extends React.Component {
+  constructor(props) {
+    super(props);
+    this.instanceRef = React.createRef();
+  }
+  handleAdd = () => {
+    this.instanceRef.current.handleAdd();
+  };
+  render() {
+    return (
+      <div>
+        <Instance ref={this.instanceRef} />
+        <button onClick={this.handleAdd}>=</button>
+      </div>
+    );
+  }
+}
+ReactDOM.render(<ClassInstanceTestRef />, document.getElementById("app"));
+
+# 实现
+// react.js中
+function createRef () {
+  return { current: null }
+}
+
+// react-dom.js中
+function mountClassComponent (vDom) {
+  ...
+  instance.oldRenderVdom = vDom.oldRenderVdom = renderVdom
+  if (ref) {
+    ref.current = instance
+  }
+  return createDOM(renderVdom)
+}
+```
+
+### 9.3 实现函数组件上的ref
+
+```react
+# 示例
+function Func(props, ref) {
+  return <input type="text" ref={ref} />;
+}
+// 转发ref到Func中
+const ForwardFunc = React.forwardRef(Func);
+class FuncTestRef extends React.Component {
+  constructor(props) {
+    super(props);
+    this.instanceRef = React.createRef();
+  }
+  handleFocus = () => {
+    this.instanceRef.current.focus();
+  };
+  render() {
+    return (
+      <div>
+        {/* 需要使用forwardRef包裹一下 */}
+        <ForwardFunc ref={this.instanceRef} />
+        <button onClick={this.handleFocus}>获取焦点</button>
+      </div>
+    );
+  }
+}
+ReactDOM.render(<FuncTestRef />, document.getElementById("app"));
+
+# 实现
+// react.js中
+function createRef () {
+  return { current: null }
+}
+// react-dom.js中
+const REACTFORWARDREF = Symbol('react.forward_ref')
+function createDOM (vDom) {
+  ...
+  if (type === REACT_TEXT) {
+    dom = document.createTextNode(props.content)
+  } else if (type.$$typeof === REACTFORWARDREF) {
+    // forwardRef
+    return mountForwardComponent(vDom)
+  } else if (typeof type === 'function') {
+    ...
+  }
+  ...
+}
+function mountForwardComponent (vDom) {
+  const { type: FunctionComponent, props, ref } = vDom
+  const renderVdom = FunctionComponent.render(props, ref)
+  // // 添加旧的虚拟dom，方便后期去做diff
+  vDom.oldRenderVdom = renderVdom
+  return createDOM(renderVdom)
+}  
+```
+
+### 9.4 总结Ref
+
+- 在React元素上的ref，current指向真实的dom元素
+- 在类组件上的ref，current指向类组件实例
+- 在函数组件上的ref，需要使用`React.forwardRef包裹一层函数来达到转发ref的效果`，然后指向转发后ref被使用时的dom元素或实例
+
+## 10. 实现生命周期
 

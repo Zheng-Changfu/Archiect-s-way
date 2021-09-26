@@ -1,5 +1,4 @@
 import { wrapToVdom } from "./utils"
-import { REACTFORWARDREF } from './constants'
 import Component from './Component'
 /**
  * @description 创建一个React元素
@@ -28,26 +27,8 @@ function createElement (type, config, children) {
   return { type, ref, key, props }
 }
 
-function createRef () {
-  return { current: null }
-}
-
-/**
- * @description 转发ref到函数组件上
- * @param {*} render 函数本身
- * @returns 对象
- */
-function forwardRef (render) {
-  return {
-    $$typeof: REACTFORWARDREF,
-    render
-  }
-}
-
 const React = {
   createElement,
-  createRef,
-  forwardRef,
   Component
 }
 

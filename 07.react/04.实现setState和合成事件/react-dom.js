@@ -1,4 +1,4 @@
-import { REACTFORWARDREF, REACT_TEXT } from "./constants"
+import { REACT_TEXT } from "./constants"
 import { addEvent } from './events'
 function render (vDom, container) {
   mount(vDom, container)
@@ -23,13 +23,10 @@ function mount (vDom, parentDOM) {
  */
 export function createDOM (vDom) {
   if (!vDom) return null
-  const { type, props, ref } = vDom
+  const { type, props } = vDom
   let dom
   if (type === REACT_TEXT) {
     dom = document.createTextNode(props.content)
-  } else if (type.$$typeof === REACTFORWARDREF) {
-    // forward
-    return mountForwardComponent(vDom)
   } else if (typeof type === 'function') {
     if (type.isReactComponent) {
       // 类组件
@@ -58,18 +55,7 @@ export function createDOM (vDom) {
   }
   // 在虚拟节点上挂一个dom属性，此属性用来标识虚拟节点对应的真实dom
   vDom.dom = dom
-  if (ref) {
-    ref.current = dom
-  }
   return dom
-}
-
-function mountForwardComponent (vDom) {
-  const { type: FunctionComponent, props, ref } = vDom
-  const renderVdom = FunctionComponent.render(props, ref)
-  // // 添加旧的虚拟dom，方便后期去做diff
-  vDom.oldRenderVdom = renderVdom
-  return createDOM(renderVdom)
 }
 
 /**
@@ -78,15 +64,12 @@ function mountForwardComponent (vDom) {
  * @returns 真实dom
  */
 function mountClassComponent (vDom) {
-  const { type: ClassComponent, props, ref } = vDom
+  const { type: ClassComponent, props } = vDom
   const instance = new ClassComponent(props)
   const render = instance.render
   const renderVdom = render.call(instance)
   // 添加旧的虚拟dom，方便后期去做diff
   instance.oldRenderVdom = vDom.oldRenderVdom = renderVdom
-  if (ref) {
-    ref.current = instance
-  }
   return createDOM(renderVdom)
 }
 

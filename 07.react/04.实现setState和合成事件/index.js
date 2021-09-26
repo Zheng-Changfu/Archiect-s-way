@@ -9,17 +9,17 @@ class ClassComponent extends React.Component {
     }
   }
   handleClick = (e) => {
-    console.log(e, 'e')
-    console.log(this, 'this')
-    console.log(this.state.num, '0')
-    this.setState({
-      num: this.state.num + 1
-    })
-    console.log(this.state.num, '1')
-    this.setState({
-      num: this.state.num + 1
-    })
-    console.log(this.state.num, '2')
+    // console.log(e, 'e')
+    // console.log(this, 'this')
+    // console.log(this.state.num, '0')
+    // this.setState({
+    //   num: this.state.num + 1
+    // })
+    // console.log(this.state.num, '1')
+    // this.setState({
+    //   num: this.state.num + 1
+    // })
+    // console.log(this.state.num, '2')
 
 
     // console.log(this.state.num, '0')
@@ -28,17 +28,17 @@ class ClassComponent extends React.Component {
     // this.setState(state => ({ num: state.num + 1 }))
     // console.log(this.state.num, '2')
 
-    // setTimeout(() => {
-    //   console.log(this.state.num, '0')
-    //   this.setState({
-    //     num: this.state.num + 1
-    //   })
-    //   console.log(this.state.num, '1')
-    //   this.setState({
-    //     num: this.state.num + 1
-    //   })
-    //   console.log(this.state.num, '2')
-    // })
+    setTimeout(() => {
+      console.log(this.state.num, '0')
+      this.setState({
+        num: this.state.num + 1
+      })
+      console.log(this.state.num, '1')
+      this.setState({
+        num: this.state.num + 1
+      })
+      console.log(this.state.num, '2')
+    })
   }
   render () {
     return <div>
