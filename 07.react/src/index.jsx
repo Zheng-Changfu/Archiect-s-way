@@ -1,41 +1,15 @@
 import React from "./react";
 import ReactDOM from "./react-dom";
 
-class LifeCycle extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { number: 0 };
-    console.log("1. LifeCycle constructor");
-  }
-  handleAdd = () => this.setState({ number: this.state.number + 1 });
-
-  componentWillMount() {
-    console.log("2. LifeCycle componentWillMount");
-  }
-
-  shouldComponentUpdate() {
-    console.log("5. LifeCycle shouldComponentUpdate");
-    return !(this.state.num & 1);
-  }
-
-  componentWillUpdate() {
-    console.log("6. LifeCycle componentWillUpdate");
-  }
-
-  componentDidUpdate() {
-    console.log("7. LifeCycle componentDidUpdate");
-  }
-
+class Fragment extends React.Component {
   render() {
-    console.log("3. LifeCycle render");
     return (
-      <div>
-        <h1>{this.state.number}</h1>
-        <button onClick={this.handleAdd}>click me </button>
-      </div>
+      <React.Fragment>
+        <h1>hello</h1>
+        <h1>world</h1>
+      </React.Fragment>
     );
   }
-  componentDidMount() {
-    console.log("4. LifeCycle componentDidMount");
-  }
 }
+
+ReactDOM.render(<Fragment />, document.getElementById("app"));

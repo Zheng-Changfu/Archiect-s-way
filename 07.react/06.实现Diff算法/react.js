@@ -1,5 +1,5 @@
 import { wrapToVdom } from "./utils"
-import { REACTFORWARDREF, REACTFRAGMENT } from './constants'
+import { REACTFORWARDREF } from './constants'
 import Component from './Component'
 /**
  * @description 创建一个React元素
@@ -48,8 +48,7 @@ const React = {
   createElement,
   createRef,
   forwardRef,
-  Component,
-  Fragment: REACTFRAGMENT
+  Component
 }
 
 export default React

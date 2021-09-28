@@ -777,5 +777,332 @@ function mountForwardComponent (vDom) {
 - 在类组件上的ref，current指向类组件实例
 - 在函数组件上的ref，需要使用`React.forwardRef包裹一层函数来达到转发ref的效果`，然后指向转发后ref被使用时的dom元素或实例
 
-## 10. 实现生命周期
+## 10. 生命周期
+
+### 10.1 旧版生命周期
+
+![](/assets/React-lifecycle-old.jpg)  
+
+### 10.2 新版生命周期
+
+![](/assets/React-lifecycle-new.png) 
+
+## 11. 实现Diff算法
+
+### 11.1 diff描述
+
+> 框架中的概念都有一种思想：数据驱动视图，也就是说数据一旦发生变化，页面也会随之更新
+>
+> 对于使用者而言：不需要关注dom是怎么被操作的，让开发功能变得更集中化
+>
+> 对于框架本身而言：需要根据状态去推断出哪一个dom要发生变化，然后局部更新这个dom在呈现到页面上即可
+>
+> 这时候就出现了`虚拟DOM`和`Diff算法`
+>
+> `虚拟DOM`：本质其实就是一个js对象，描述一个真实DOM信息，从而避免频繁对`DOM`的取值和更新
+>
+> `diff算法`：根据`虚拟DOM`的一些状态信息来计算出哪些`DOM`要被移动、删除、更新、添加，复用已经存在但不需要更新的`DOM`节点来提高性能
+
+### 11.2 React中Diff算法
+
+- tree diff：分层求异，同层级比较，不会跨级比较
+
+  ![](/assets/React-diff-treediff.png) 
+
+  ![](/assets/React-diff-treediff-2.png)  
+
+- component diff：如果是同一类型的组件，就按照tree diff进行对比，如果不是同一类型的组件，就会把原来的组件标记为dirty component（脏组件），从而替换整个组件下的所有子节点，也可以通过shouldComponentUpdate来决定组件是否需要更新
+
+  ![](/assets/React-diff-componentdiff.png) 
+
+- 使用唯一key来帮助React识别列表中所有元素和组件
+
+  ![](/assets/React-diff-elementdiff-1.png) 
+
+  ![](/assets/React-diff-elementdiff-2.png) 
+
+  ![](/assets/React-diff-elementdiff-3.png) 
+
+### 11.3 Diff算法逻辑
+
+- 老新都没有，什么都不做
+
+- 老的有，新的没有  --> 清空虚拟dom信息，卸载老节点，如果有子节点，递归卸载
+
+- 老的没有，新的有 --> 创建新的虚拟dom挂载到父节点上
+
+- 老的有，新的也有，但是类型不同（一个span,一个div）---> 清空虚拟dom信息，卸载老节点，如果有子节点，递归卸载，创建新的虚拟dom挂载到父节点上
+
+- 老的有，新的也有，类型也一样（深度对比）
+  - 5.1 如果都是文本，比对文本（更新 `旧节点文本为新的节点文本`，更新 `新的dom为老的dom，复用老的`）
+  - 5.2 如果都是元素，比对属性、比对子节点
+  - 5.3 如果是函数，区分类组件还是函数组件
+  -  5.4 如果是类组件，更新 `props`，更新 `新的组件实例为老的组件实例，复用老的`,外界可以通过`shouldComponentUpdate`来决定是否需要更新页面,state和props总是会被更新，因为`shouldComponentUpdate`只能控制页面是否更新，state和props是一定会被更新的
+  -  5.5 如果是函数组件,进行2次的虚拟dom比较，更新老的虚拟dom
+
+### 11.4 Diff算法-伪代码
+
+```js
+function compareTwoVDom (parentNode, oldVDom, newVDom, nextDOM) {
+  if (!oldVDom && !newVDom) { // 老新都没有，什么都不做
+    return null
+  } else if (oldVDom && !newVDom) { // 老的有，新的没有
+    unmountVDom(oldVDom) // 卸载老节点
+  } else if (!oldVDom && newVDom) { // 老的没有，新的有
+    const currentDOM = createDOM(newVDom) // 创建dom插入
+    if (nextDOM) {
+      parentNode.insertBefore(currentDOM, nextDOM)
+    } else {
+      parentNode.appendChild(currentDOM)
+    }
+  } else if (oldVDom && newVDom && oldVDom.type !== newVDom.type) { // 老的有，新的也有，但是类型不同
+    unmountVDom(oldVDom) // 卸载老节点
+    const currentDOM = createDOM(newVDom) // 创建dom插入
+    if (nextDOM) {
+      parentNode.insertBefore(currentDOM, nextDOM)
+    } else {
+      parentNode.appendChild(currentDOM)
+    }
+  } else { // 老的有，新的也有，类型也一样
+    updateElement(oldVDom, newVDom) // 深度对比
+  }
+}
+
+function updateElement (oldVDom, newVDom) {
+  if (oldVDom.type === REACT_TEXT) { // 都是文本
+    updateText(oldVDom, newVDom) // 更新文本
+  } else if (typeof oldVDom.type === 'string') { // 都是元素
+    const currentDOM = newVDom.dom = findDOM(oldVDom)
+    updateProps(currentDOM, oldVDom.props, newVDom.props) // 更新属性
+    updateChildren(currentDOM, oldVDom.props.children, newVDom.props.children) // 更新子节点
+  } else if (typeof oldVDom.type === 'function') { // 都是函数
+    const isReactComponent = oldVDom.type.isReactComponent
+    if (isReactComponent) { // 类组件
+      updateClassComponent(oldVDom, newVDom) // 更新类组件
+    } else { // 函数组件
+      updateFunctionComponent(oldVDom, newVDom) // 更新函数组件
+    }
+  }
+}
+```
+
+### 11.5 Diff算法-全代码
+
+```js
+/**
+ * @description diff比较
+ * @param {*} parentNode 父节点
+ * @param {*} oldVDom 老的虚拟dom
+ * @param {*} newVDom 新的虚拟dom
+ */
+function compareTwoVDom (parentNode, oldVDom, newVDom, nextDOM) {
+  if (!oldVDom && !newVDom) { // 老新都没有，什么都不做
+    return null
+  } else if (oldVDom && !newVDom) { // 老的有，新的没有
+    unmountVDom(oldVDom) // 卸载老节点
+  } else if (!oldVDom && newVDom) { // 老的没有，新的有
+    const currentDOM = createDOM(newVDom)
+    if (nextDOM) {
+      parentNode.insertBefore(currentDOM, nextDOM)
+    } else {
+      parentNode.appendChild(currentDOM)
+    }
+  } else if (oldVDom && newVDom && oldVDom.type !== newVDom.type) { // 老的有，新的也有，但是类型不同
+    unmountVDom(oldVDom)
+    const currentDOM = createDOM(newVDom)
+    if (nextDOM) {
+      parentNode.insertBefore(currentDOM, nextDOM)
+    } else {
+      parentNode.appendChild(currentDOM)
+    }
+  } else { // 老的有，新的也有，类型也一样
+    updateElement(oldVDom, newVDom)
+  }
+}
+
+function updateElement (oldVDom, newVDom) {
+  if (oldVDom.type === REACT_TEXT) { // 都是文本
+    updateText(oldVDom, newVDom)
+  } else if (typeof oldVDom.type === 'string') { // 都是元素
+    const currentDOM = newVDom.dom = findDOM(oldVDom)
+    updateProps(currentDOM, oldVDom.props, newVDom.props)
+    updateChildren(currentDOM, oldVDom.props.children, newVDom.props.children)
+  } else if (typeof oldVDom.type === 'function') { // 都是函数
+    const isReactComponent = oldVDom.type.isReactComponent
+    if (isReactComponent) { // 类组件
+      updateClassComponent(oldVDom, newVDom)
+    } else { // 函数组件
+      updateFunctionComponent(oldVDom, newVDom)
+    }
+  }
+}
+
+// 更新类组件
+function updateClassComponent (oldVDom, newVDom) {
+  const classInstance = newVDom.classInstance = oldVDom.classInstance
+  classInstance.updater.emitUpdate(newVDom.props)
+}
+
+// 更新函数组件
+function updateFunctionComponent (oldVDom, newVDom) {
+  const currentDOM = findDOM(oldVDom)
+  const parentDOM = currentDOM.parentNode
+  const newRenderDOM = newVDom.type(newVDom.props)
+  compareTwoVDom(parentDOM, oldVDom.oldRenderVdom, newRenderDOM)
+  newVDom.oldRenderVdom = newRenderDOM
+}
+
+// 更新子节点集合
+function updateChildren (dom, oldVChildren, newVChildren) {
+  oldVChildren = Array.isArray(oldVChildren) ? oldVChildren : oldVChildren ? [oldVChildren] : []
+  newVChildren = Array.isArray(newVChildren) ? newVChildren : newVChildren ? [newVChildren] : []
+  const oldVChildMap = {} // 映射表
+  let lastPlacedIndex = 0
+  let patch = [] // 存放操作的数组
+
+  oldVChildren.forEach((oldVChild, index) => { // 填充映射表
+    const key = oldVChild.key || index // 没有key就用index
+    oldVChildMap[key] = oldVChild
+  })
+
+  newVChildren.forEach((newVChild, index) => {
+    newVChild._mountIndex = index // 挂载的索引
+    const newVChildKey = newVChild.key || index
+    const oldVChild = oldVChildMap[newVChildKey]
+
+    if (oldVChild) {
+      // 此节点更新前更新后都是存在的
+      // 递归比对元素，属性,这里省略属性比对
+      updateElement(oldVChild, newVChild)
+      if (oldVChild._mountIndex < lastPlacedIndex) { // 要被移动
+        /*使用key更新前
+          *节点key:   A B C D 
+          *节点索引:  0 1 2 3
+         * 
+         *使用key更新中
+          *节点key:   B C D A
+          *节点索引:  1 2 3 0
+        
+         * 第一次: lastPlacedIndex=0,_mountIndex=1,不变,lastPlacedIndex=1
+           第二次: lastPlacedIndex=1,_mountIndex=2,不变,lastPlacedIndex=2
+           第三次: lastPlacedIndex=2,_mountIndex=3,不变,lastPlacedIndex=3
+           第四次: lastPlacedIndex=3,_mountIndex=0,A要从_mountIndex(0)移动到当前index(3),lastPlacedIndex=3
+
+           结果为B、C、D、A
+         */
+        patch.push({
+          type: MOVE,
+          oldVChild,
+          newVChild,
+          fromIndex: oldVChild._mountIndex,
+          toIndex: index
+        })
+      }
+      // 删除存在的oldVChild
+      delete oldVChildMap[newVChildKey]
+      // 更新lastPlacedIndex
+      lastPlacedIndex = Math.max(oldVChild._mountIndex, lastPlacedIndex)
+
+    } else { // 新增节点
+      patch.push({
+        type: PLACEMENT,
+        newVChild,
+        toIndex: index
+      })
+    }
+  })
+
+  // removeChild方法只会把元素从页面中移除，还是会短暂的存在内存中一段时间
+  const moveChilds = patch.filter(action => action === MOVE).map(item => item.oldVChild)
+  // oldVChildMap中多余的要被清空掉,删除节点
+  Object.values(oldVChildMap).concat(moveChilds).forEach(oldVChild => {
+    const currentDOM = findDOM(oldVChild)
+    currentDOM.parentNode.removeChild(currentDOM)
+  })
+
+  patch.forEach(action => {
+    const { type, newVChild, oldVChild, fromIndex, toIndex } = action
+    const childNodes = dom.childNodes // 获取真实的子DOM元素的集合[A,C,E]
+    if (type === PLACEMENT) { // 新增新的DOM
+      const currentDOM = createDOM(newVChild)
+      const childDomNode = childNodes[toIndex]
+      if (childDomNode) {
+        dom.insertBefore(currentDOM, childDomNode)
+      } else {
+        dom.appendChild(currentDOM)
+      }
+    } else if (type === MOVE) { // 移动老的DOM
+      const oldDom = findDOM(oldVChild)
+      const childDomNode = childNodes[toIndex]
+      if (childDomNode) {
+        dom.insertBefore(oldDom, childDomNode)
+      } else {
+        dom.appendChild(oldDom)
+      }
+    }
+  })
+}
+
+// 更新文本
+function updateText (oldVDom, newVDom) {
+  const currentDOM = newVDom.dom = findDOM(oldVDom)
+  if (oldVDom.props.content !== newVDom.props.content) {
+    currentDOM.textContent = newVDom.props.content
+  }
+}
+
+/**
+ * @description 卸载虚拟DOM
+ * @param {*} vDom 虚拟DOM
+ */
+function unmountVDom (vDom) {
+  const { props, ref } = vDom
+  const currentDom = findDOM(vDom)
+  // 移除ref
+  if (ref) {
+    ref.current = null
+  }
+  if (props.children) {
+    // 一个为对象，多个为数组，这里统一处理
+    props.children = Array.isArray(props.children) ? props.children : [props.children]
+    // 如果父节点被卸载，递归卸载子节点
+    props.children.forEach(unmountVDom)
+  }
+  // 页面中移除DOM
+  if (currentDom) {
+    currentDom.parentNode.removeChild(currentDom)
+  }
+}
+
+/**
+ * @description 根据虚拟dom找到对应的真实dom
+ * @param {*} vDom 虚拟dom
+ * @returns 真实DOM | null
+ */
+function findDOM (vDom) {
+  // 递归
+  // if (!vDom) return null
+  // if (vDom.dom) {
+  //   // 真实元素
+  //   return vDom.dom
+  // } else {
+  //   // 组件就继续找
+  //   return findDOM(vDom.oldRenderVdom)
+  // }
+
+  // 迭代
+  const stack = [vDom]
+  while (stack.length) {
+    const vdom = stack.pop()
+    if (!vdom) return null
+    if (vdom.dom) return vdom.dom
+    stack.push(vdom.oldRenderVdom)
+  }
+
+}
+```
+
+## 12. 实现React.Fragment
+
+### 12.1 描述
 

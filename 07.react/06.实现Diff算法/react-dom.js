@@ -1,4 +1,4 @@
-import { MOVE, PLACEMENT, REACTFORWARDREF, REACTFRAGMENT, REACT_TEXT } from "./constants"
+import { MOVE, PLACEMENT, REACTFORWARDREF, REACT_TEXT } from "./constants"
 import { addEvent } from './events'
 function render (vDom, container) {
   mount(vDom, container)
@@ -28,11 +28,8 @@ export function createDOM (vDom) {
   if (type === REACT_TEXT) {
     dom = document.createTextNode(props.content)
   } else if (type.$$typeof === REACTFORWARDREF) {
-    // react.forward
+    // forward
     return mountForwardComponent(vDom)
-  } else if (type === REACTFRAGMENT) {
-    // 创建文档碎片 react.fragment
-    dom = document.createDocumentFragment()
   } else if (typeof type === 'function') {
     if (type.isReactComponent) {
       // 类组件

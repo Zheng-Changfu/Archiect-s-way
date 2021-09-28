@@ -599,18 +599,12 @@
 
       this.cannoNameEndFix = 'png'; // 图片详情
 
-<<<<<<< HEAD
-      this.imgInfo = {}; // 炮台动画帧
-
-      this.frame = 0;
-=======
       this.imgInfo = {}; // 
 
       this.frame = 0;
       this.bulltes = []; // {type:?,x:?,y:?,arc:?}
 
       this.positionInfo = {};
->>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
     } // 安装炮台底座
 
 
@@ -671,11 +665,7 @@
       exports.ctx.save();
       exports.ctx.translate(x + w / 2, y + h / 10);
       exports.ctx.rotate(arc);
-<<<<<<< HEAD
       exports.ctx.drawImage(img, 0, h / 5 * frame, w, h / 5, -w / 2, -(h / 10), w, h / 5);
-=======
-      exports.ctx.drawImage(img, 0, h / 5 * this.frame, w, h / 5, -w / 2, -(h / 10), w, h / 5);
->>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
       exports.ctx.restore();
       this.positionInfo = { ...this.positionInfo,
         x: x + w / 2,
@@ -718,7 +708,6 @@
   const createInstance = (instance, options = {}) => {
     return new instance(options);
   };
-<<<<<<< HEAD
   function registerListener(eventName, el) {
     let handles = {};
     handles[eventName] = {};
@@ -749,21 +738,6 @@
 
     removeBullte(bullte) {}
 
-=======
-  function registerListener(eventName, el, cb) {
-    let handles = {
-      mousemove: {},
-      click: {}
-    };
-    el.addEventListener(eventName, e => {
-      handles[eventName] = {
-        x: e.clientX,
-        y: e.clientY
-      };
-      cb && cb(e);
-    });
-    return handles;
->>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
   }
 
   class Canno {
@@ -786,23 +760,12 @@
     }; // 安装炮弹
 
     installBullte = () => {
-<<<<<<< HEAD
       const bulletInstance = this.bulletInstance ? this.bulletInstance : createInstance(Bullet, {
         data: this.data,
         type: this.type
       });
       this.bulletInstance = bulletInstance;
       bulletInstance.installBullte(); // {type:?,arc:?,speed:?,x:?,y:?}
-=======
-      cannoInstance.installBullte(this.data, this.type);
-    }; // 添加炮弹
-
-    addBullte = () => {
-      registerListener('click', exports.ctx.canvas, () => {
-        cannoInstance.addBullte();
-        cannoInstance.setFrame();
-      });
->>>>>>> 652c38b29ccb3ec4e778d400cad96402c51c6059
     };
     install = () => {
       window.requestAnimationFrame(this.draw);

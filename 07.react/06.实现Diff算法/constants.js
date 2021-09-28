@@ -1,5 +1,4 @@
 export const REACT_TEXT = Symbol('REACT_TEXT')
-export const REACTFRAGMENT = Symbol('react.fragment')
 export const REACTFORWARDREF = Symbol('react.forward_ref')
 export const MOVE = Symbol('move')
 export const PLACEMENT = Symbol('PLACEMENT')
