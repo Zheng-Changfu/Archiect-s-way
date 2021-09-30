@@ -1106,3 +1106,61 @@ function findDOM (vDom) {
 
 ### 12.1 描述
 
+> Fragments 允许你将子列表分组，而无需向 DOM 添加额外节点
+
+### 12.2 用法
+
+```js
+# 写法1
+<React.Fragment>
+  <h1>hello</h1>
+  <h1>world</h1>
+</React.Fragment>
+
+# 写法2
+<>
+  <h1>hello</h1>
+  <h1>world</h1>
+</>
+```
+
+### 12.3 实现React.Fragment
+
+```js
+const REACTFRAGMENT = Symbol('react.fragment')
+const React = {
+  ...
+  Fragment: REACTFRAGMENT
+}
+function createDOM (vDom) {
+  if (!vDom) return null
+  const { type, props, ref } = vDom
+  let dom
+  if (type === REACT_TEXT) {
+   	...
+  } else if (type.$$typeof === REACTFORWARDREF) {
+    ...
+  } else if (type === REACTFRAGMENT) {
+    // 创建文档碎片 react.fragment
+    dom = document.createDocumentFragment()
+  } else if (typeof type === 'function') {
+      ...
+  }
+  return dom
+}
+```
+
+## 13. 实现Context
+
+## 14. 认识HOC(高阶组件)
+
+## 15. 认识renderProps
+
+## 16. 实现PureComponent
+
+## 17. 实现React.memo
+
+## 18. 实现React.createPortal
+
+## 19. 认识Hooks
+
