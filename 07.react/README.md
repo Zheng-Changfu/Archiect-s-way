@@ -1152,7 +1152,313 @@ function createDOM (vDom) {
 
 ## 13. 实现Context
 
+### 13.1 描述
+
+> Context 提供了一个无需为每层组件手动添加 props，就能在组件树间进行数据传递的方法
+>
+> React.createContext：创建一个 Context 对象,返回这个Context对象
+>
+> Context.Provider：订阅内容
+>
+> Context.Consumer/static contextType：消费内容
+
+### 13.2 用法
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+
+let Context = React.createContext(); // 创建Context对象
+class ContextTest extends React.Component {
+  state = {
+    theme: "pink",
+  };
+  changeTheme = (color) => this.setState({ theme: color });
+  render() {
+    const themes = {
+      color: this.state.theme,
+      changeColor: this.changeTheme,
+    };
+    const style = {
+      border: `1px solid ${themes.color}`,
+    };
+    return (
+      <Context.Provider value={themes} style={style}>
+        <div>
+          <Header />
+          <Main />
+          <Footer />
+        </div>
+      </Context.Provider>
+    );
+  }
+}
+
+class Header extends React.Component {
+  static contextType = Context;
+  render() {
+    const style = {
+      border: `1px solid ${this.context.color}`,
+    };
+    return <header style={style}>header...</header>;
+  }
+}
+
+class Main extends React.Component {
+  static contextType = Context;
+  render() {
+    const style = {
+      border: `1px solid ${this.context.color}`,
+    };
+    return (
+      <main style={style}>
+        <SideBar />
+        <Content />
+      </main>
+    );
+  }
+}
+
+class SideBar extends React.Component {
+  static contextType = Context;
+  render() {
+    const style = {
+      border: `1px solid ${this.context.color}`,
+    };
+    return (
+      <div>
+        <button style={style} onClick={() => this.context.changeColor("red")}>
+          改变主题色 ---&gt; 红色
+        </button>
+      </div>
+    );
+  }
+}
+
+function Content() {
+  return (
+    <div>
+      <Context.Consumer>
+        {(context) => {
+          const style = {
+            border: `1px solid ${context.color}`,
+          };
+          return (
+            <button style={style} onClick={() => context.changeColor("blue")}>
+              改变主题色 ---&gt; 蓝色
+            </button>
+          );
+        }}
+      </Context.Consumer>
+    </div>
+  );
+}
+
+class Footer extends React.Component {
+  static contextType = Context;
+  render() {
+    const style = {
+      border: `1px solid ${this.context.color}`,
+    };
+    return <footer style={style}>footer...</footer>;
+  }
+}
+
+ReactDOM.render(<ContextTest />, document.getElementById("app"));
+
+```
+
+### 13.3 实现Context
+
+```js
+# 1. React.createContext
+function createContext () {
+  // 用循环引用的方式来保证Provider和Consumer都可以拿到context对象
+  const context = { $$typeof: CONTEXT, currentValue: undefined }
+  context.Provider = {
+    $$typeof: PROVIDER,
+    _context: context
+  }
+  context.Consumer = {
+    $$typeof: CONTEXT,
+    _context: context
+  }
+  return context
+}
+
+# 2. mountProvider
+function mountProvider (vdom) {
+  const { type, props } = vdom
+  const context = type._context
+  // 传递到Provider上的value会被赋值给currentValue
+  context.currentValue = props.value
+  // 对于Provider来说，真正要渲染的其实是他的孩子
+  const renderVdom = props.children
+  vdom.oldRenderVdom = renderVdom
+  return createDOM(renderVdom)
+}
+
+# 3. mountContext
+function mountContext (vdom) {
+  const { type, props } = vdom
+  const context = type._context
+  const currentValue = context.currentValue
+  // 对于Consumer来说，他的孩子必须是一个函数，接受currentValue值作为参数
+  const renderVdom = props.children(currentValue)
+  vdom.oldRenderVdom = renderVdom
+  return createDOM(renderVdom)
+}
+
+# 4. static contextType
+function mountClassComponent (vDom) {
+  ...
+  if (ClassComponent.contextType) {
+    // 使用了Context对象,会给当前组件实例上挂载一个context属性
+    const currentValue = ClassComponent.contextType.currentValue
+    instance.context = currentValue
+  }
+  ...
+  return createDOM(renderVdom)
+}
+
+# 5. updateProvider
+function updateProvider (oldVDom, newVDom) {
+  const currentDOM = findDOM(oldVDom)
+  const parentDOM = currentDOM.parentNode
+  const { type, props } = newVDom
+  const context = type._context
+  // 更新value值
+  context.currentValue = props.value
+  const newRenderDOM = props.children
+  compareTwoVDom(parentDOM, oldVDom.oldRenderVdom, newRenderDOM)
+  newVDom.oldRenderVdom = newRenderDOM
+}
+
+# 6. updateContext
+function updateContext (oldVDom, newVDom) {
+  const currentDOM = findDOM(oldVDom)
+  const parentDOM = currentDOM.parentNode
+  const { type, props } = newVDom
+  const context = type._context
+  const currentValue = context.currentValue
+  // 调用孩子函数，传递最新的currentValue，因为在上面已经更新了value值了
+  const newRenderDOM = props.children(currentValue)
+  compareTwoVDom(parentDOM, oldVDom.oldRenderVdom, newRenderDOM)
+  newVDom.oldRenderVdom = newRenderDOM
+}
+```
+
 ## 14. 认识HOC(高阶组件)
+
+### 14.1 描述
+
+> HOC 自身不是 React API 的一部分，它是一种基于 React 的组合特性而形成的设计模式
+>
+> HOC 本质上是一个函数，接受一个组件作为参数，返回一个新组件，新组件内部套着旧组件，实现代码和逻辑的复用
+
+### 14.2 实现拖拽
+
+```js 
+import React from "react";
+import ReactDOM from "react-dom";
+function withDrag(Component) {
+  return class extends React.Component {
+    state = {
+      x: 0,
+      y: 0,
+    };
+    dragContainer = React.createRef();
+    handleMouseEnter = (e) => {
+      const clientX = e.clientX;
+      const clientY = e.clientY;
+      this.setState({ x: clientX, y: clientY });
+      this.dragContainer.current.addEventListener(
+        "mousemove",
+        this.handleMouseMove
+      );
+      this.dragContainer.current.addEventListener(
+        "mouseup",
+        this.handleMouseUp
+      );
+    };
+    handleMouseMove = (e) => {
+      const clientX = e.clientX;
+      const clientY = e.clientY;
+      const moveX = clientX - this.state.x;
+      const moveY = clientY - this.state.y;
+      this.dragContainer.current.style.left = moveX + "px";
+      this.dragContainer.current.style.top = moveY + "px";
+    };
+    handleMouseUp = (e) => {
+      this.dragContainer.current.removeEventListener(
+        "mousemove",
+        this.handleMouseMove
+      );
+      this.dragContainer.current.removeEventListener(
+        "mouseup",
+        this.handleMouseUp
+      );
+    };
+    render() {
+      const style = {
+        position: "relative",
+      };
+      return (
+        <div
+          ref={this.dragContainer}
+          style={style}
+          onMouseDown={this.handleMouseEnter}
+        >
+          {/* 透传其他属性 */}
+          <Component {...this.props} />
+        </div>
+      );
+    }
+  };
+}
+
+class Test1 extends React.Component {
+  render() {
+    const style = {
+      width: "300px",
+      height: "200px",
+      border: "1px solid #ccc",
+    };
+    return <div style={style}>{this.props.title}</div>;
+  }
+}
+
+class Test2 extends React.Component {
+  render() {
+    const style = {
+      width: "300px",
+      height: "200px",
+      border: "1px solid #ccc",
+    };
+    return <div style={style}>{this.props.title}</div>;
+  }
+}
+
+const WrapTest1 = withDrag(Test1);
+const WrapTest2 = withDrag(Test2);
+
+class App extends React.Component {
+  render() {
+    return (
+      <>
+        <WrapTest1 title={"拖拽1"} />
+        <WrapTest2 title={"拖拽2"} />
+      </>
+    );
+  }
+}
+ReactDOM.render(<App />, document.getElementById("app"));
+
+```
+
+### 14.3 总结
+
+> 我们使用了 HOC 来完成的拖拽功能，这样我们就实现了一个通用的拖拽功能，任何组件想要拥有拖拽的功能，只需要用高阶组件包裹一层即可
 
 ## 15. 认识renderProps
 
