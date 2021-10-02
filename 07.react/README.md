@@ -1453,7 +1453,6 @@ class App extends React.Component {
   }
 }
 ReactDOM.render(<App />, document.getElementById("app"));
-
 ```
 
 ### 14.3 总结
