@@ -1461,6 +1461,114 @@ ReactDOM.render(<App />, document.getElementById("app"));
 
 ## 15. 认识renderProps
 
+### 15.1 描述
+
+> 具有 render prop 的组件接受一个函数，该函数返回一个 React 元素并调用它而不是实现自己的渲染逻辑
+
+### 15.2 实现拖拽
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+
+class Test1 extends React.Component {
+  render() {
+    const style = {
+      width: "300px",
+      height: "200px",
+      border: "1px solid #ccc",
+    };
+    return <div style={style}>{this.props.title}</div>;
+  }
+}
+
+class Test2 extends React.Component {
+  render() {
+    const style = {
+      width: "300px",
+      height: "200px",
+      border: "1px solid #ccc",
+    };
+    return <div style={style}>{this.props.title}</div>;
+  }
+}
+
+class RenderProps extends React.Component {
+  state = {
+    x: 0,
+    y: 0,
+  };
+  dragContainer = React.createRef();
+  handleMouseEnter = (e) => {
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+    this.setState({ x: clientX, y: clientY });
+    this.dragContainer.current.addEventListener(
+      "mousemove",
+      this.handleMouseMove
+    );
+    this.dragContainer.current.addEventListener("mouseup", this.handleMouseUp);
+  };
+  handleMouseMove = (e) => {
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+    const moveX = clientX - this.state.x;
+    const moveY = clientY - this.state.y;
+    this.dragContainer.current.style.left = moveX + "px";
+    this.dragContainer.current.style.top = moveY + "px";
+  };
+  handleMouseUp = (e) => {
+    this.dragContainer.current.removeEventListener(
+      "mousemove",
+      this.handleMouseMove
+    );
+    this.dragContainer.current.removeEventListener(
+      "mouseup",
+      this.handleMouseUp
+    );
+  };
+  render() {
+    const style = {
+      position: "relative",
+    };
+    return (
+      <div
+        ref={this.dragContainer}
+        style={style}
+        onMouseDown={this.handleMouseEnter}
+      >
+        {this.props.children(this.state)}
+      </div>
+    );
+  }
+}
+
+class App extends React.Component {
+  render() {
+    return (
+      <>
+        <RenderProps>
+          {(props) => (
+            <>
+              <Test1 title={"拖拽1"} {...props} />
+              <Test2 title={"拖拽2"} {...props} />
+            </>
+          )}
+        </RenderProps>
+      </>
+    );
+  }
+}
+ReactDOM.render(<App />, document.getElementById("app"));
+
+```
+
+### 15.3 总结(和高阶组件区别)
+
+> 高阶组件：装饰组件能力，在原有组件上扩展额外的逻辑和交互，控制的权力在高阶组件上
+>
+> renderProps：提供能力给原有组件，原有组件内部的逻辑和交互不管，控制的权力在原有组件上
+
 ## 16. 实现PureComponent
 
 ## 17. 实现React.memo
